@@ -1,0 +1,15 @@
+export enum StrikeWeightLevel {
+  Level1 = 'SW#1',
+  Level2 = 'SW#2',
+  Level3 = 'SW#3',
+  Level4 = 'SW#4',
+  Level5 = 'SW#5',
+  Level6 = 'SW#6',
+  Level7 = 'SW#7',
+  Level8 = 'SW#8',
+  Level9 = 'SW#9',
+  Level10 = 'SW#10',
+  Level11 = 'SW#11',
+  Level12 = 'SW#12',
+  Level13 = 'SW#13',
+}
