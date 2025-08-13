@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import * as sortKeysFix from 'eslint-plugin-sort-keys-fix';
+import reactHooks from 'eslint-plugin-react-hooks';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -11,14 +13,12 @@ export default tseslint.config(
         project: true,
       },
     },
-    rules: {},
-  },
-  {
     plugins: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      'react-hooks': reactHooks,
       'sort-keys-fix': sortKeysFix,
     },
     rules: {
+      ...reactHooks.configs.recommended.rules,
       'sort-keys-fix/sort-keys-fix': 'warn',
     },
   },

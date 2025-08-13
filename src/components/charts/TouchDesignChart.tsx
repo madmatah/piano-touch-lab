@@ -1,3 +1,4 @@
+import { keyboardLength } from '@/lib/constants';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 
@@ -67,7 +68,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     xAxis: {
       axisLabel: {
         customValues: [
-          ...Array(88)
+          ...Array(keyboardLength)
             .keys()
             .filter((i) => i == 0 || (i + 1) % 5 === 0 || i == 87),
         ],
@@ -76,7 +77,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
       },
       axisTick: { alignWithLabel: true },
       data: [
-        ...Array(88)
+        ...Array(keyboardLength)
           .keys()
           .map((i) => `${i + 1}`),
       ],
