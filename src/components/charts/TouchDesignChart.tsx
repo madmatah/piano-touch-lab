@@ -20,7 +20,7 @@ export interface TouchDesignChartProps {
 }
 
 const getEchartSeriePropertiesByVariant = (
-  variant: TouchDesignSerieVariant
+  variant: TouchDesignSerieVariant,
 ): Partial<EChartsOption['series']> => {
   switch (variant) {
     case TouchDesignSerieVariant.DefaultBold:
@@ -48,7 +48,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     smooth: 0.3,
     type: 'line',
     ...getEchartSeriePropertiesByVariant(
-      serie.variant ?? TouchDesignSerieVariant.Default
+      serie.variant ?? TouchDesignSerieVariant.Default,
     ),
   }));
 

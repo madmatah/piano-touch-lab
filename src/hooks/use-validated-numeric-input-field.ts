@@ -5,11 +5,11 @@ import { useCallback, useState } from 'react';
 export const useValidatedNumericInputField = (
   inputValue: NumericUserInput,
   onUpdate: (value: NumericUserInput) => void,
-  validator: Joi.Schema = Joi.number().optional()
+  validator: Joi.Schema = Joi.number().optional(),
 ) => {
   const [error, setError] = useState<string | null>(null);
   const [currentValue, setCurrentValue] = useState<string>(
-    inputValue?.toString() ?? ''
+    inputValue?.toString() ?? '',
   );
 
   const getSanitizedValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ export const useValidatedNumericInputField = (
       setError(error?.message ?? null);
       return !hasError;
     },
-    [validator]
+    [validator],
   );
 
   const onInputChange = useCallback(
@@ -39,7 +39,7 @@ export const useValidatedNumericInputField = (
         onUpdate(parseNumericValue(value));
       }
     },
-    [checkIsInputValid, onUpdate]
+    [checkIsInputValid, onUpdate],
   );
 
   return { error, inputValue: currentValue, onInputChange };

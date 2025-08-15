@@ -19,18 +19,18 @@ interface MeasuresStoreActions {
   updateKeyMeasure: (
     keyIndex: number,
     property: keyof KeyMeasureRequirements,
-    value: NumericUserInput
+    value: NumericUserInput,
   ) => void;
   updateKeyMeasures: (
     keyIndex: number,
-    keySpec: KeyMeasureRequirements
+    keySpec: KeyMeasureRequirements,
   ) => void;
   updateGlobalMeasure: (
     property: keyof Pick<
       MeasureRequirements,
       'keyWeightRatio' | 'wippenWeight'
     >,
-    value: NumericUserInput
+    value: NumericUserInput,
   ) => void;
 }
 
@@ -55,14 +55,14 @@ export const useMeasuresStore = (measureProfileName: string = 'default') =>
         updateKeyMeasure: (keyIndex, property, value) =>
           set((state) => ({
             keys: state.keys.map((spec, index) =>
-              index === keyIndex ? { ...spec, [property]: value } : spec
+              index === keyIndex ? { ...spec, [property]: value } : spec,
             ),
           })),
 
         updateKeyMeasures: (keyIndex, keySpec) =>
           set((state) => ({
             keys: state.keys.map((spec, index) =>
-              index === keyIndex ? keySpec : spec
+              index === keyIndex ? keySpec : spec,
             ),
           })),
 
@@ -78,16 +78,16 @@ export const useMeasuresStore = (measureProfileName: string = 'default') =>
           version: state.version,
           wippenWeight: state.wippenWeight,
         }),
-      }
-    )
+      },
+    ),
   );
 
 export const useKeyMeasures = (
   keyIndex: number,
-  measureProfileName?: string
+  measureProfileName?: string,
 ) => {
   return useMeasuresStore(measureProfileName)(
-    useShallow((state: MeasuresStore) => state.keys?.[keyIndex])
+    useShallow((state: MeasuresStore) => state.keys?.[keyIndex]),
   );
 };
 
@@ -96,7 +96,7 @@ export const useGlobalMeasures = (measureProfileName?: string) => {
     useShallow((state: MeasuresStore) => ({
       keyWeightRatio: state.keyWeightRatio,
       wippenWeight: state.wippenWeight,
-    }))
+    })),
   );
 };
 
@@ -106,6 +106,6 @@ export const useMeasureActions = (measureProfileName?: string) => {
       updateGlobalMeasure: state.updateGlobalMeasure,
       updateKeyMeasure: state.updateKeyMeasure,
       updateKeyMeasures: state.updateKeyMeasures,
-    }))
+    })),
   );
 };

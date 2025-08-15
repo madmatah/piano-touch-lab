@@ -34,6 +34,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
-
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["dist", "node_modules"]
 }

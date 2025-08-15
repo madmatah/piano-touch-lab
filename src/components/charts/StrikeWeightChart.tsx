@@ -42,7 +42,7 @@ export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
       variant: seriesWithBoldVariant.includes(hammerLevel)
         ? TouchDesignSerieVariant.DefaultBold
         : TouchDesignSerieVariant.Default,
-    })
+    }),
   );
 
   return <TouchDesignChart series={series} yAxisName="Strike Weight" />;
