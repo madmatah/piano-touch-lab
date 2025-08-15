@@ -21,7 +21,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   const { error, inputValue, onInputChange } = useValidatedNumericInputField(
     defaultValue,
     onUpdate,
-    validator
+    validator,
   );
   const [isFocused, setIsFocused] = useState(false);
 
@@ -33,7 +33,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
     shouldShowErrorState &&
       'ring-1 ring-red-500 focus:ring-red-500 bg-red-100 text-red-900',
     shouldShowSuccessState &&
-      'bg-gray-100 ring-1 ring-gray-500 focus:ring-gray-500'
+      'bg-gray-100 ring-1 ring-gray-500 focus:ring-gray-500',
   );
 
   return (

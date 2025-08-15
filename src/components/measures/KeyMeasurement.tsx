@@ -22,7 +22,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       (value: NumericUserInput) => {
         updateKeyMeasure(keyIndex, keyProperty, value);
       },
-    [keyIndex, updateKeyMeasure]
+    [keyIndex, updateKeyMeasure],
   );
 
   return (

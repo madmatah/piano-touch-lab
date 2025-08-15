@@ -22,5 +22,13 @@ export default tseslint.config(
       'sort-keys-fix/sort-keys-fix': 'warn',
     },
   },
-  { ignores: ['./build.ts', './src/components/ui/**/*.tsx', './dist/**'] }
+  {
+    ignores: [
+      './build.ts',
+      './src/components/ui/**/*.tsx',
+      './dist/**',
+      './bun-env.d.ts',
+      './eslint.config.js',
+    ],
+  },
 );

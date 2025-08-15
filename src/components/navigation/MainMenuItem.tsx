@@ -12,7 +12,7 @@ export interface MainMenuItemProps {
 }
 
 export const MainMenuItem: React.FC<MainMenuItemProps> = (
-  props: MainMenuItemProps
+  props: MainMenuItemProps,
 ) => {
   return (
     <NavigationMenuItem>

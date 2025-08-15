@@ -33,7 +33,7 @@ export const FrontWeightChart = (props: FrontWeightChartProps) => {
       variant: seriesWithBoldVariant.includes(fwLevel)
         ? TouchDesignSerieVariant.DefaultBold
         : TouchDesignSerieVariant.Default,
-    })
+    }),
   );
 
   return <TouchDesignChart series={series} yAxisName="Front Weight" />;
