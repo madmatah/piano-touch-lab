@@ -36,7 +36,7 @@ interface MeasuresStoreActions {
 
 type MeasuresStore = MeasuresStoreState & MeasuresStoreActions;
 
-export const useMeasuresStore = (measureProfileName: string = 'default') =>
+const createMeasuresStore = (measureProfileName: string) =>
   create<MeasuresStore>()(
     persist(
       (set) => ({
@@ -81,6 +81,21 @@ export const useMeasuresStore = (measureProfileName: string = 'default') =>
       },
     ),
   );
+
+type MeasuresBoundStore = ReturnType<typeof createMeasuresStore>;
+
+const measuresStoreRegistry: Record<string, MeasuresBoundStore> = {};
+
+export const useMeasuresStore = (
+  measureProfileName: string = 'default',
+): MeasuresBoundStore => {
+  let store = measuresStoreRegistry[measureProfileName];
+  if (!store) {
+    store = createMeasuresStore(measureProfileName);
+    measuresStoreRegistry[measureProfileName] = store;
+  }
+  return store;
+};
 
 export const useKeyMeasures = (
   keyIndex: number,
