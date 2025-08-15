@@ -10,6 +10,7 @@ export interface MeasureInputFieldProps {
   onUpdate: (value: NumericUserInput) => void;
   validator?: Joi.Schema;
   placeholder?: string;
+  tabIndex?: number;
 }
 
 export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
@@ -17,6 +18,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   placeholder,
   validator,
   onUpdate,
+  tabIndex,
 }) => {
   const { error, inputValue, onInputChange } = useValidatedNumericInputField(
     defaultValue,
@@ -49,6 +51,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
             setIsFocused(false);
             onInputChange(e);
           }}
+          tabIndex={tabIndex}
           className={inputClassName}
         />
       </TooltipTrigger>

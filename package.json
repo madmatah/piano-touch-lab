@@ -8,6 +8,8 @@
     "start": "NODE_ENV=production bun src/index.tsx",
     "build": "bun run build.ts",
     "lint": "bunx eslint && bun format:check",
+    "test": "bun test --bail --silent",
+    "test:watch": "bun test --watch",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -43,6 +45,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@happy-dom/global-registrator": "^16.7.3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",

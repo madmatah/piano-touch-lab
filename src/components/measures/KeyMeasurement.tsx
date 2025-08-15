@@ -5,6 +5,7 @@ import type {
 import { useCallback } from 'react';
 import { MeasureInputField } from './MeasureInputField';
 import { useKeyMeasures, useMeasureActions } from '@/hooks/use-measure-store';
+import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
 
 export interface KeyMeasurementProps {
   keyNumber: number;
@@ -25,6 +26,19 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     [keyIndex, updateKeyMeasure],
   );
 
+  const { getTabIndexFor, orderedProperties } = useKeyTabIndex(keyIndex, [
+    ['downWeight', 'upWeight'],
+    ['frontWeight'],
+    ['strikeWeight'],
+  ]);
+
+  const placeholders: { [key in keyof KeyMeasureRequirements]: string } = {
+    downWeight: 'D',
+    frontWeight: 'FW',
+    strikeWeight: 'SW',
+    upWeight: 'U',
+  };
+
   return (
     keySpec && (
       <div className="group/key hover:bg-purple-50 p-1 px-3">
@@ -32,34 +46,15 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
           <div className="w-10  shrink text-sm font-medium text-gray-700 self-center">
             #{keyNumber}
           </div>
-          <div className="self-center">
+          {orderedProperties.map((property) => (
             <MeasureInputField
-              defaultValue={keySpec.strikeWeight}
-              onUpdate={onUpdateKeyProperty('strikeWeight')}
-              placeholder="SW"
+              key={property}
+              defaultValue={keySpec[property]}
+              onUpdate={onUpdateKeyProperty(property)}
+              placeholder={placeholders[property]}
+              tabIndex={getTabIndexFor(property)}
             />
-          </div>
-          <div className="">
-            <MeasureInputField
-              defaultValue={keySpec.upWeight}
-              onUpdate={onUpdateKeyProperty('upWeight')}
-              placeholder="U"
-            />
-          </div>
-          <div className="">
-            <MeasureInputField
-              defaultValue={keySpec.downWeight}
-              onUpdate={onUpdateKeyProperty('downWeight')}
-              placeholder="D"
-            />
-          </div>
-          <div className="flex-3 shrink">
-            <MeasureInputField
-              defaultValue={keySpec.frontWeight}
-              onUpdate={onUpdateKeyProperty('frontWeight')}
-              placeholder="FW"
-            />
-          </div>
+          ))}
         </div>
       </div>
     )
