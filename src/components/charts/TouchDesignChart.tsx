@@ -6,6 +6,7 @@ export enum TouchDesignSerieVariant {
   DefaultBold = 1,
   Default = 2,
   Target = 3,
+  Measured = 4,
 }
 
 export interface TouchDesignSerie {
@@ -35,6 +36,14 @@ const getEchartSeriePropertiesByVariant = (
       return {
         itemStyle: { color: 'rgba(0, 255, 0, 0.5)' },
       };
+    case TouchDesignSerieVariant.Measured:
+      return {
+        connectNulls: false,
+        itemStyle: { color: 'rgba(0, 0, 255, 0.5)' },
+        showSymbol: true,
+        smooth: false,
+        symbolSize: 6,
+      };
     default:
       return {};
   }
@@ -63,7 +72,8 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
         label: { formatter: 'Key {value}' },
       },
       trigger: 'axis',
-      valueFormatter: (value: number) => `${Math.round(value * 10) / 10} g`,
+      valueFormatter: (value: number) =>
+        value !== undefined ? `${Math.round(value * 10) / 10} g` : '-',
     },
     xAxis: {
       axisLabel: {

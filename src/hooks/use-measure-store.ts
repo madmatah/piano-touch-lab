@@ -106,10 +106,11 @@ export const useKeyMeasures = (
   );
 };
 
-export const useGlobalMeasures = (measureProfileName?: string) => {
+export const usePianoMeasures = (measureProfileName?: string) => {
   return useMeasuresStore(measureProfileName)(
     useShallow((state: MeasuresStore) => ({
       keyWeightRatio: state.keyWeightRatio,
+      keys: state.keys,
       wippenWeight: state.wippenWeight,
     })),
   );
