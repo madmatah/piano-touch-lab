@@ -2,11 +2,11 @@ import { MainLayout } from '../MainLayout';
 import { Scale } from 'lucide-react';
 import { KeyMeasureList } from '../measures/KeyMeasureList';
 
-export const MeasuresPage = () => {
+export const MeasurePage = () => {
   return (
     <MainLayout>
       <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance flex items-center justify-center gap-2 mb-5">
-        Measures <Scale className="w-8 h-8 stroke-primary" />
+        <Scale className="w-11 h-11 stroke-primary pr-2" /> Measure
       </h1>
 
       <section className="container p-6">

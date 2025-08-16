@@ -1,10 +1,10 @@
-import type { NumericUserInput } from '@/lib/touch-design/measure-requirements';
+import type { OptionalNumber } from '@/lib/touch-design/measure-requirements';
 import Joi from 'joi';
 import { useCallback, useState } from 'react';
 
 export const useValidatedNumericInputField = (
-  inputValue: NumericUserInput,
-  onUpdate: (value: NumericUserInput) => void,
+  inputValue: OptionalNumber,
+  onUpdate: (value: OptionalNumber) => void,
   validator: Joi.Schema = Joi.number().optional(),
 ) => {
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export const useValidatedNumericInputField = (
     return e.target.value.replaceAll(',', '.').replace(/[\s]/g, '');
   };
 
-  const parseNumericValue = (value: string): NumericUserInput => {
+  const parseNumericValue = (value: string): OptionalNumber => {
     const numValue = parseFloat(value);
     return isNaN(numValue) ? null : numValue;
   };

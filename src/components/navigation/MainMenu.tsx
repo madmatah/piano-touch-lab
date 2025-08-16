@@ -5,6 +5,7 @@ import {
 import { MainMenuItem } from './MainMenuItem';
 import {
   BadgeQuestionMark,
+  ChartLine,
   FileDown,
   FlaskConical,
   Scale,
@@ -25,9 +26,14 @@ export const MainMenu = () => {
       <NavigationMenu>
         <NavigationMenuList>
           <MainMenuItem
-            destinationUrl="/measures"
-            label="Measures"
+            destinationUrl="/measure"
+            label="Measure"
             icon={<Scale />}
+          />
+          <MainMenuItem
+            destinationUrl="/analyze"
+            label="Analyze"
+            icon={<ChartLine />}
           />
           <MainMenuItem
             destinationUrl="/design"
