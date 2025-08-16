@@ -1,5 +1,5 @@
 import type {
-  NumericUserInput,
+  OptionalNumber,
   KeyMeasureRequirements,
 } from '@/lib/touch-design/measure-requirements';
 import { useCallback } from 'react';
@@ -19,10 +19,9 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   const { updateKeyMeasure } = useMeasureActions('default');
 
   const onUpdateKeyProperty = useCallback(
-    (keyProperty: keyof KeyMeasureRequirements) =>
-      (value: NumericUserInput) => {
-        updateKeyMeasure(keyIndex, keyProperty, value);
-      },
+    (keyProperty: keyof KeyMeasureRequirements) => (value: OptionalNumber) => {
+      updateKeyMeasure(keyIndex, keyProperty, value);
+    },
     [keyIndex, updateKeyMeasure],
   );
 

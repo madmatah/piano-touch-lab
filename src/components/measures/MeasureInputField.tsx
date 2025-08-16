@@ -1,4 +1,4 @@
-import type { NumericUserInput } from '@/lib/touch-design/measure-requirements';
+import type { OptionalNumber } from '@/lib/touch-design/measure-requirements';
 import Joi from 'joi';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -6,8 +6,8 @@ import { useValidatedNumericInputField } from '@/hooks/use-validated-numeric-inp
 import { cn } from '@/lib/utils';
 
 export interface MeasureInputFieldProps {
-  defaultValue: NumericUserInput;
-  onUpdate: (value: NumericUserInput) => void;
+  defaultValue: OptionalNumber;
+  onUpdate: (value: OptionalNumber) => void;
   validator?: Joi.Schema;
   placeholder?: string;
   tabIndex?: number;

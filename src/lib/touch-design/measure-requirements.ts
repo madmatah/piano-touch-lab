@@ -1,15 +1,14 @@
-export type NumericUserInput = number | null;
+export type OptionalNumber = number | null;
 
 export interface KeyMeasureRequirements {
-  downWeight: NumericUserInput;
-  frontWeight: NumericUserInput;
-  strikeWeight: NumericUserInput;
-  upWeight: NumericUserInput;
+  downWeight: OptionalNumber;
+  frontWeight: OptionalNumber;
+  strikeWeight: OptionalNumber;
+  upWeight: OptionalNumber;
 }
 
 export interface MeasureRequirements {
   keys: KeyMeasureRequirements[];
-  keyWeightRatio: NumericUserInput;
-  version: number;
-  wippenWeight: NumericUserInput;
+  keyWeightRatio: OptionalNumber;
+  wippenWeight: OptionalNumber;
 }
