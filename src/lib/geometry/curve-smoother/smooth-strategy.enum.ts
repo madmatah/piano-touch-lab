@@ -1,0 +1,4 @@
+export enum SmoothStrategy {
+  LOESS = 'LOESS',
+  LEAST_SQUARES_REGRESSION = 'LEAST_SQUARES_REGRESSION',
+}

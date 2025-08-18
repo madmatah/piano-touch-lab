@@ -16,6 +16,7 @@
         "bun-plugin-tailwind": "^0.0.15",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "commons-math-interpolation": "^2.2.4",
         "echarts": "^6.0.0",
         "echarts-for-react": "^3.0.2",
         "inversify": "^7.7.1",
@@ -350,6 +351,8 @@
     "color-convert": ["color-convert@2.0.1", "", { "dependencies": { "color-name": "~1.1.4" } }, "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ=="],
 
     "color-name": ["color-name@1.1.4", "", {}, "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA=="],
+
+    "commons-math-interpolation": ["commons-math-interpolation@2.2.4", "", {}, "sha512-1CS9PTIXcTbB7AfowrOv8KEd0gTz8BdM8b+CfBwp3Sr6WLXF8Cw5tK41Yjx2HOOm+qZ1Ao6O/nft4Uci6LUDEQ=="],
 
     "concat-map": ["concat-map@0.0.1", "", {}, "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg=="],
 

@@ -6,28 +6,19 @@ import {
   TouchDesignSerieVariant,
   type TouchDesignSerie,
 } from './TouchDesignChart';
-import { usePianoMeasures } from '@/hooks/use-measure-store';
-import { useMemo } from 'react';
+import { useMeasuredSerie } from './hooks/use-measured-serie';
 
 export interface FrontWeightChartProps {
   defaultFrontWeightLevelsToInclude?: FrontWeightLevel[];
 }
 
 export const FrontWeightChart = (props: FrontWeightChartProps) => {
-  const measures = usePianoMeasures();
-  const measuredSerie: TouchDesignSerie = useMemo(() => {
-    return {
-      data:
-        measures.keys?.map((key) =>
-          key.frontWeight ? Number(key.frontWeight) : undefined,
-        ) ?? [],
-      name: 'Measured',
-      variant: TouchDesignSerieVariant.Measured,
-    };
-  }, [measures]);
-  const shouldDisplayMeasuredSerie = useMemo(() => {
-    return measuredSerie.data.some((data) => data !== undefined);
-  }, [measuredSerie]);
+  const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
+    useMeasuredSerie(
+      (key) => key.frontWeight,
+      'Measured',
+      TouchDesignSerieVariant.Measured,
+    );
 
   const seriesWithBoldVariant = [
     FrontWeightLevel.Level5,
