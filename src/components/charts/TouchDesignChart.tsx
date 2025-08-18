@@ -13,6 +13,7 @@ export interface TouchDesignSerie {
   name: string;
   data: Array<number | undefined>;
   variant?: TouchDesignSerieVariant;
+  color?: string;
 }
 
 export interface TouchDesignChartProps {
@@ -22,24 +23,28 @@ export interface TouchDesignChartProps {
 
 const getEchartSeriePropertiesByVariant = (
   variant: TouchDesignSerieVariant,
+  color?: string,
 ): Partial<EChartsOption['series']> => {
   switch (variant) {
     case TouchDesignSerieVariant.DefaultBold:
       return {
-        itemStyle: { color: 'rgba(255, 0, 0, 0.5)' },
+        itemStyle: { color: color ?? 'rgba(255, 0, 0, 0.25)' },
       };
     case TouchDesignSerieVariant.Default:
       return {
-        itemStyle: { color: 'rgba(0, 0, 0, 0.2)' },
+        itemStyle: { color: color ?? 'rgba(0, 0, 0, 0.15)' },
       };
     case TouchDesignSerieVariant.Target:
       return {
-        itemStyle: { color: 'rgba(0, 255, 0, 0.5)' },
+        itemStyle: { color: color ?? 'rgba(0, 173, 87, 0.8)' },
+        lineStyle: {
+          width: 5,
+        },
       };
     case TouchDesignSerieVariant.Measured:
       return {
         connectNulls: false,
-        itemStyle: { color: 'rgba(0, 0, 255, 0.5)' },
+        itemStyle: { color: color ?? 'rgba(0, 0, 255, 0.5)' },
         showSymbol: true,
         smooth: false,
         symbolSize: 6,
@@ -58,6 +63,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     type: 'line',
     ...getEchartSeriePropertiesByVariant(
       serie.variant ?? TouchDesignSerieVariant.Default,
+      serie.color,
     ),
   }));
 

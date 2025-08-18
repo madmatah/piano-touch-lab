@@ -6,12 +6,20 @@ import {
   TouchDesignSerieVariant,
   type TouchDesignSerie,
 } from './TouchDesignChart';
+import { useMeasuredSerie } from './hooks/use-measured-serie';
 
 export interface StrikeWeightChartProps {
   defaultHammerWeightLevelsToInclude?: StrikeWeightLevel[];
 }
 
 export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
+  const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
+    useMeasuredSerie(
+      (key) => key.strikeWeight,
+      'Measured',
+      TouchDesignSerieVariant.Measured,
+    );
+
   const seriesWithBoldVariant = [
     StrikeWeightLevel.Level1,
     StrikeWeightLevel.Level5,
@@ -35,7 +43,7 @@ export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
     StrikeWeightLevel.Level13,
   ];
 
-  const series: TouchDesignSerie[] = defaultSeriesToInclude.map(
+  const defaultSeries = defaultSeriesToInclude.map(
     (hammerLevel): TouchDesignSerie => ({
       data: strikeWeightData[hammerLevel],
       name: `${hammerLevel}`,
@@ -44,6 +52,11 @@ export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
         : TouchDesignSerieVariant.Default,
     }),
   );
+
+  const series: TouchDesignSerie[] = [
+    ...defaultSeries,
+    ...(shouldDisplayMeasuredSerie ? [measuredSerie] : []),
+  ];
 
   return <TouchDesignChart series={series} yAxisName="Strike Weight" />;
 };
