@@ -9,6 +9,7 @@ import {
 } from '@/lib/touch-design/touch-weight-analyzer-requirements';
 import { useInjection } from 'inversify-react';
 import { useMemo } from 'react';
+import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 
 export const AnalyzePage = () => {
   const measures = usePianoMeasures();
@@ -39,6 +40,13 @@ export const AnalyzePage = () => {
           Front Weight
         </h2>
         <FrontWeightChart />
+      </section>
+
+      <section>
+        <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+          Strike Weight
+        </h2>
+        <StrikeWeightChart />
       </section>
     </MainLayout>
   );
