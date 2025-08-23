@@ -10,6 +10,7 @@ import { useMeasuredSerie } from './hooks/use-measured-serie';
 
 export interface StrikeWeightChartProps {
   defaultHammerWeightLevelsToInclude?: StrikeWeightLevel[];
+  chartHeight: number;
 }
 
 export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
@@ -58,5 +59,12 @@ export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
     ...(shouldDisplayMeasuredSerie ? [measuredSerie] : []),
   ];
 
-  return <TouchDesignChart series={series} yAxisName="Strike Weight" />;
+  return (
+    <TouchDesignChart
+      title="Strike Weight"
+      chartHeight={props.chartHeight}
+      series={series}
+      yAxisName="Strike Weight"
+    />
+  );
 };

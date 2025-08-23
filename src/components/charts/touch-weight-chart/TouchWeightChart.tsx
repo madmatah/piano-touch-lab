@@ -7,6 +7,7 @@ import type { SeriesOption } from 'echarts';
 
 export interface TouchWeightChartProps {
   keysData: TouchWeightKeyData[];
+  chartHeight: number;
 }
 
 const getFrictionChartOptions = (
@@ -14,11 +15,14 @@ const getFrictionChartOptions = (
 ): { series: SeriesOption[] } => ({ series: frictionZonesSeries });
 
 export const TouchWeightChart = (props: TouchWeightChartProps) => {
-  const shouldRender = props.keysData.some((key) => key.balanceWeight !== null);
-
   const frictionZonesSeries = useFrictionZonesSeries();
   const { downWeight, balanceWeight, upWeight, frictionWeight, verticalLines } =
     useTouchWeightSeries(props.keysData);
+
+  const maxDownWeight: number = useMemo(
+    () => Math.max(...downWeight.map(([, dw]) => dw ?? 0), 60),
+    [downWeight],
+  );
 
   const frictionChartOptions = useMemo(
     () => getFrictionChartOptions(frictionZonesSeries),
@@ -26,6 +30,9 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
   );
 
   const option = {
+    grid: {
+      left: 'left',
+    },
     legend: {
       bottom: 20,
       data: [
@@ -101,6 +108,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     },
     yAxis: [
       {
+        max: maxDownWeight,
         min: 0,
         name: 'Weight in Grams',
         type: 'value',
@@ -108,7 +116,13 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     ],
   };
 
-  return shouldRender ? (
-    <ReactECharts option={option} style={{ height: 800 }} lazyUpdate={true} />
-  ) : null;
+  return (
+    <div>
+      <ReactECharts
+        option={option}
+        style={{ height: props.chartHeight }}
+        lazyUpdate={true}
+      />
+    </div>
+  );
 };

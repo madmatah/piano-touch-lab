@@ -4,11 +4,7 @@ import { BadgeQuestionMark } from 'lucide-react';
 
 export const HelpPage = () => {
   return (
-    <MainLayout>
-      <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance flex items-center justify-center gap-2 mb-5">
-        <BadgeQuestionMark className="w-11 h-11 stroke-primary pr-2" /> Help
-      </h1>
-
+    <MainLayout pageTitle="Help" pageIcon={<BadgeQuestionMark />}>
       <div className="flex flex-col gap-20">
         <section>
           <h2 className="scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0">

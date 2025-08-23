@@ -10,6 +10,7 @@ import { useMeasuredSerie } from './hooks/use-measured-serie';
 
 export interface FrontWeightChartProps {
   defaultFrontWeightLevelsToInclude?: FrontWeightLevel[];
+  chartHeight: number;
 }
 
 export const FrontWeightChart = (props: FrontWeightChartProps) => {
@@ -47,5 +48,12 @@ export const FrontWeightChart = (props: FrontWeightChartProps) => {
     ...(shouldDisplayMeasuredSerie ? [measuredSerie] : []),
   ].filter((serie) => serie !== undefined);
 
-  return <TouchDesignChart series={series} yAxisName="Front Weight" />;
+  return (
+    <TouchDesignChart
+      title="Front Weight"
+      chartHeight={props.chartHeight}
+      series={series}
+      yAxisName="Front Weight"
+    />
+  );
 };
