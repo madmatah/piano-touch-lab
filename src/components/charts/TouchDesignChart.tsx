@@ -17,8 +17,10 @@ export interface TouchDesignSerie {
 }
 
 export interface TouchDesignChartProps {
+  title: string;
   series: TouchDesignSerie[];
   yAxisName: string;
+  chartHeight: number;
 }
 
 const getEchartSeriePropertiesByVariant = (
@@ -69,10 +71,17 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
 
   const option = {
     animation: false,
+    grid: {
+      left: 'left',
+    },
     legend: {
       data: props.series.map((serie) => serie.name),
     },
     series,
+    title: {
+      left: 'center',
+      text: props.title,
+    },
     tooltip: {
       axisPointer: {
         label: { formatter: 'Key {value}' },
@@ -104,6 +113,10 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
   };
 
   return (
-    <ReactECharts option={option} style={{ height: 800 }} lazyUpdate={true} />
+    <ReactECharts
+      option={option}
+      style={{ height: props.chartHeight }}
+      lazyUpdate={true}
+    />
   );
 };

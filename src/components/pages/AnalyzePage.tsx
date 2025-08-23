@@ -10,8 +10,10 @@ import {
 import { useInjection } from 'inversify-react';
 import { useMemo } from 'react';
 import { StrikeWeightChart } from '../charts/StrikeWeightChart';
+import { useChartDimension } from '../charts/hooks/use-chart-dimension';
 
 export const AnalyzePage = () => {
+  const { chartHeight } = useChartDimension();
   const measures = usePianoMeasures();
   const touchWeightAnalyzer = useInjection<TouchWeightAnalyzerRequirements>(
     touchWeightAnalyzerRequirementsSymbol,
@@ -23,31 +25,23 @@ export const AnalyzePage = () => {
   );
 
   return (
-    <MainLayout>
-      <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance flex items-center justify-center gap-2 mb-5">
-        <ChartLine className="w-11 h-11 stroke-primary pr-2" /> Analyze
-      </h1>
+    <MainLayout pageTitle="Analyze" pageIcon={<ChartLine />}>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <section>
+          <TouchWeightChart
+            chartHeight={chartHeight}
+            keysData={touchWeightData.keys}
+          />
+        </section>
 
-      <section>
-        <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Touch Weight
-        </h2>
-        <TouchWeightChart keysData={touchWeightData.keys} />
-      </section>
+        <section>
+          <FrontWeightChart chartHeight={chartHeight} />
+        </section>
 
-      <section>
-        <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Front Weight
-        </h2>
-        <FrontWeightChart />
-      </section>
-
-      <section>
-        <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Strike Weight
-        </h2>
-        <StrikeWeightChart />
-      </section>
+        <section>
+          <StrikeWeightChart chartHeight={chartHeight} />
+        </section>
+      </div>
     </MainLayout>
   );
 };
