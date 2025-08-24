@@ -6,7 +6,7 @@ import {
 import type {
   KeyMeasureRequirements,
   OptionalNumber,
-} from '@/lib/touch-design/measure-requirements';
+} from '@/lib/piano/touch-design/measure-requirements';
 import { useMemo } from 'react';
 
 export interface UseMeasuredSerieResult {

@@ -1,4 +1,4 @@
-import type { TouchWeightKeyData } from '@/lib/touch-design/touch-weight-data.requirements';
+import type { TouchWeightKeyData } from '@/lib/piano/touch-design/touch-weight-data.requirements';
 import ReactECharts from 'echarts-for-react';
 import { useMemo } from 'react';
 import { useFrictionZonesSeries } from './hooks/use-friction-zones-series';

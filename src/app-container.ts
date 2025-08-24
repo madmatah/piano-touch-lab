@@ -2,8 +2,8 @@ import { Container } from 'inversify';
 import {
   type TouchWeightAnalyzerRequirements,
   touchWeightAnalyzerRequirementsSymbol,
-} from './lib/touch-design/touch-weight-analyzer-requirements';
-import { TouchWeightAnalyzer } from './lib/touch-design/touch-weight-analyzer';
+} from './lib/piano/touch-design/touch-weight-analyzer-requirements';
+import { TouchWeightAnalyzer } from './lib/piano/touch-design/touch-weight-analyzer';
 import {
   curveSmootherRequirementsSymbol,
   type CurveSmootherRequirements,

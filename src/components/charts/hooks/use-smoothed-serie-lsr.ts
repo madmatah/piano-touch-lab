@@ -9,8 +9,8 @@ import {
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { useNamedInjection } from '@/hooks/use-named-injection';
 import type { CurveSmootherLeastSquaresRegressionOptions } from '@/lib/geometry/curve-smoother/curve-smoother-least-squares-regression';
-import { StrikeWeightLevel } from '@/lib/touch-design/hammer-weight-level';
-import { strikeWeightData } from '@/lib/touch-design/data/strike-weight';
+import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
+import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
 
 export const useSmoothedSerieLsr = (
   serie: (number | undefined)[],

@@ -1,4 +1,4 @@
-import type { KeyMeasureRequirements } from '@/lib/touch-design/measure-requirements';
+import type { KeyMeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
 import { keyboardLength } from '@/lib/constants';
 
 type KeyProperty = keyof KeyMeasureRequirements;

@@ -5,7 +5,7 @@ import type {
   KeyMeasureRequirements,
   OptionalNumber,
   MeasureRequirements,
-} from '@/lib/touch-design/measure-requirements';
+} from '@/lib/piano/touch-design/measure-requirements';
 import { keyboardLength } from '@/lib/constants';
 
 interface MeasuresStoreState extends MeasureRequirements {

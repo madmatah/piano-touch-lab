@@ -1,5 +1,5 @@
-import type { OptionalNumber } from '@/lib/touch-design/measure-requirements';
-import type { TouchWeightKeyData } from '@/lib/touch-design/touch-weight-data.requirements';
+import type { OptionalNumber } from '@/lib/piano/touch-design/measure-requirements';
+import type { TouchWeightKeyData } from '@/lib/piano/touch-design/touch-weight-data.requirements';
 import { useMemo } from 'react';
 
 export interface TouchWeightSeries {
