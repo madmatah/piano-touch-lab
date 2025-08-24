@@ -4,9 +4,12 @@ import {
   getKeyboardFrictionThresholds,
   type KeyFrictionThresholds,
 } from './friction';
-import { keyboardLength } from '@/lib/constants';
+import { KeyboardFactory } from '@/lib/piano/keyboard/keyboard-factory';
+import { Standard88Layout } from '@/lib/piano/keyboard';
 
 describe('Friction functions', () => {
+  const fakeKeyboard = KeyboardFactory.fromLayout(Standard88Layout);
+
   describe('The getKeyFrictionThresholds() function', () => {
     describe.each([
       {
@@ -42,7 +45,7 @@ describe('Friction functions', () => {
       const expectedZoneLength = 4;
 
       beforeEach(() => {
-        result = getKeyFrictionThresholds(key);
+        result = getKeyFrictionThresholds(key, fakeKeyboard.size);
       });
 
       it('should return correct friction thresholds', () => {
@@ -91,17 +94,20 @@ describe('Friction functions', () => {
 
   describe('The getKeyboardFrictionThresholds() function', () => {
     it('should return array with correct length', () => {
-      const result = getKeyboardFrictionThresholds();
+      const result = getKeyboardFrictionThresholds(fakeKeyboard);
 
-      expect(result).toHaveLength(keyboardLength);
+      expect(result).toHaveLength(fakeKeyboard.size);
     });
 
     it('should call getKeyFrictionThresholds() for each key', () => {
-      const result = getKeyboardFrictionThresholds();
+      const result = getKeyboardFrictionThresholds(fakeKeyboard);
 
       for (let i = 0; i < result.length; i++) {
         const keyNumber = i + 1;
-        const expectedThresholds = getKeyFrictionThresholds(keyNumber);
+        const expectedThresholds = getKeyFrictionThresholds(
+          keyNumber,
+          fakeKeyboard.size,
+        );
 
         expect(result[i]).toEqual(expectedThresholds);
       }

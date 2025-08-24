@@ -6,7 +6,8 @@ import type {
   OptionalNumber,
   MeasureRequirements,
 } from '@/lib/piano/touch-design/measure-requirements';
-import { keyboardLength } from '@/lib/constants';
+import { useKeyboard } from './use-keyboard';
+import type { KeyboardRequirements } from '@/lib/piano/keyboard';
 
 interface MeasuresStoreState extends MeasureRequirements {
   version: number;
@@ -33,12 +34,15 @@ interface MeasuresStoreActions {
 
 type MeasuresStore = MeasuresStoreState & MeasuresStoreActions;
 
-const createMeasuresStore = (measureProfileName: string) =>
+const createMeasuresStore = (
+  measureProfileName: string,
+  keyboard: KeyboardRequirements,
+) =>
   create<MeasuresStore>()(
     persist(
       (set) => ({
         keyWeightRatio: null,
-        keys: Array.from({ length: keyboardLength }, () => ({
+        keys: Array.from({ length: keyboard.size }, () => ({
           downWeight: null,
           frontWeight: null,
           strikeWeight: null,
@@ -86,9 +90,11 @@ const measuresStoreRegistry: Record<string, MeasuresBoundStore> = {};
 export const useMeasuresStore = (
   measureProfileName: string = 'default',
 ): MeasuresBoundStore => {
+  const { keyboard } = useKeyboard();
+
   let store = measuresStoreRegistry[measureProfileName];
   if (!store) {
-    store = createMeasuresStore(measureProfileName);
+    store = createMeasuresStore(measureProfileName, keyboard);
     measuresStoreRegistry[measureProfileName] = store;
   }
   return store;

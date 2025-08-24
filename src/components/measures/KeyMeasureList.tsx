@@ -1,8 +1,11 @@
-import { keyboardLength } from '@/lib/constants';
 import { KeyMeasurement } from './KeyMeasurement';
+import { useKeyboard } from '@/hooks/use-keyboard';
+import { useMemo } from 'react';
 
 export const KeyMeasureList = () => {
-  const keyNumbers = Array.from({ length: keyboardLength }, (_, i) => i + 1);
+  const { keyboard } = useKeyboard();
+
+  const keyNumbers = useMemo(() => keyboard.getKeyNumbers(), [keyboard]);
 
   return (
     <div>
