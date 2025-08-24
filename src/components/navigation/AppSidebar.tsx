@@ -7,19 +7,36 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarGroupContent,
+  SidebarMenuAction,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from '@/components/ui/sidebar';
 import { NavLink } from 'react-router-dom';
 import {
   BadgeQuestionMark,
   ChartLine,
+  ChevronRight,
   FileDown,
+  FileText,
+  FileUp,
   FlaskConical,
   Scale,
   Settings2,
 } from 'lucide-react';
 import { AppSidebarItem } from './AppSidebarItem';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '../ui/collapsible';
+import { useExportMeasures } from '@/hooks/backup/use-export-measures';
+import { useImportMeasures } from '../../hooks/backup/use-import-measures';
 
-export function AppSidebar() {
+export const AppSidebar = () => {
+  const { exportMeasures } = useExportMeasures();
+  const { inputRef, onInputFileChange, triggerImport } = useImportMeasures();
+
   const menuEntries = [
     {
       icon: Scale,
@@ -37,13 +54,6 @@ export function AppSidebar() {
       name: 'Design',
       url: '/design',
     },
-
-    {
-      icon: FileDown,
-      name: 'Backup',
-      url: '/backup',
-    },
-
     {
       icon: BadgeQuestionMark,
       name: 'Help',
@@ -83,10 +93,68 @@ export function AppSidebar() {
                   icon={<project.icon />}
                 />
               ))}
+
+              <Collapsible>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton asChild tooltip="Files">
+                      <a className="cursor-pointer">
+                        <FileText />
+                        <span>Data</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuAction className="data-[state=open]:rotate-90">
+                        <ChevronRight />
+                        <span className="sr-only">Toggle</span>
+                      </SidebarMenuAction>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild>
+                            <div>
+                              <FileDown />
+                              <a
+                                onClick={exportMeasures}
+                                className="cursor-pointer"
+                              >
+                                <span>Save to file</span>
+                              </a>
+                            </div>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild>
+                            <div>
+                              <input
+                                ref={inputRef}
+                                type="file"
+                                accept="application/json"
+                                className="hidden"
+                                onChange={onInputFileChange}
+                              />
+                              <FileUp />
+                              <a
+                                onClick={triggerImport}
+                                className="cursor-pointer"
+                              >
+                                <span>Load from file</span>
+                              </a>
+                            </div>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </>
+                </SidebarMenuItem>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
-}
+};
