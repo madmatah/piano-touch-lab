@@ -11,20 +11,23 @@ import { DesignPage } from './components/pages/DesignPage';
 
 import { container } from './app-container';
 import { AnalyzePage } from './components/pages/AnalyzePage';
+import { KeyboardProvider } from './contexts/keyboard-context';
 
 export function App() {
   return (
     <Provider container={container}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" Component={Homepage} />
-          <Route path="/analyze" Component={AnalyzePage} />
-          <Route path="/backup" Component={BackupPage} />
-          <Route path="/design" Component={DesignPage} />
-          <Route path="/help" Component={HelpPage} />
-          <Route path="/measure" Component={MeasurePage} />
-        </Routes>
-      </BrowserRouter>
+      <KeyboardProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" Component={Homepage} />
+            <Route path="/analyze" Component={AnalyzePage} />
+            <Route path="/backup" Component={BackupPage} />
+            <Route path="/design" Component={DesignPage} />
+            <Route path="/help" Component={HelpPage} />
+            <Route path="/measure" Component={MeasurePage} />
+          </Routes>
+        </BrowserRouter>
+      </KeyboardProvider>
     </Provider>
   );
 }

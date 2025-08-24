@@ -1,6 +1,8 @@
+import { useKeyboard } from '@/hooks/use-keyboard';
 import type { XYCoordinates } from '@/lib/geometry/coordinates';
 import { computePolygonCentroid } from '@/lib/geometry/polygon/compute-polygon-centroid';
 import type { Polygon } from '@/lib/geometry/polygon/polygon';
+import type { KeyboardRequirements } from '@/lib/piano/keyboard';
 import {
   getKeyboardFrictionThresholds,
   type FrictionZone,
@@ -48,9 +50,10 @@ export const buildFrictionZonePolygon = (
 };
 
 export const buildFrictionZoneSeries = (
+  keyboard: KeyboardRequirements,
   rotationRad: number = FRICTION_LABEL_ROTATION_RAD,
 ): SeriesOption[] => {
-  const thresholds = getKeyboardFrictionThresholds();
+  const thresholds = getKeyboardFrictionThresholds(keyboard);
 
   const highZonePolygon = buildFrictionZonePolygon(
     thresholds,
@@ -137,5 +140,6 @@ export const buildFrictionZoneSeries = (
 };
 
 export const useFrictionZonesSeries = () => {
-  return useMemo(() => buildFrictionZoneSeries(), []);
+  const { keyboard } = useKeyboard();
+  return useMemo(() => buildFrictionZoneSeries(keyboard), [keyboard]);
 };

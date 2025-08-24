@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
+import { KeyboardProvider } from '@/contexts/keyboard-context';
 import type { KeyMeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
 
 describe('The useKeyTabIndex hook', () => {
@@ -10,13 +11,18 @@ describe('The useKeyTabIndex hook', () => {
     ['strikeWeight'],
   ];
 
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <KeyboardProvider>{children}</KeyboardProvider>
+  );
+
   describe('The orderedProperties property', () => {
     let orderedProperties: Array<keyof KeyMeasureRequirements>;
     const fakeKeyIndex = 0;
 
     beforeEach(() => {
-      const { result } = renderHook(() =>
-        useKeyTabIndex(fakeKeyIndex, fakeTabGroups),
+      const { result } = renderHook(
+        () => useKeyTabIndex(fakeKeyIndex, fakeTabGroups),
+        { wrapper },
       );
       orderedProperties = result.current.orderedProperties;
     });
@@ -83,8 +89,9 @@ describe('The useKeyTabIndex hook', () => {
         },
       ])('keyIndex = $keyIndex', ({ keyIndex, expectedValues }) => {
         beforeEach(() => {
-          const { result } = renderHook(() =>
-            useKeyTabIndex(keyIndex, fakeTabGroups),
+          const { result } = renderHook(
+            () => useKeyTabIndex(keyIndex, fakeTabGroups),
+            { wrapper },
           );
           getTabIndexFor = result.current.getTabIndexFor;
         });
@@ -103,8 +110,9 @@ describe('The useKeyTabIndex hook', () => {
 
       describe('when a property is not present in any group', () => {
         beforeEach(() => {
-          const { result } = renderHook(() =>
-            useKeyTabIndex(0, [['downWeight']]),
+          const { result } = renderHook(
+            () => useKeyTabIndex(0, [['downWeight']]),
+            { wrapper },
           );
           getTabIndexFor = result.current.getTabIndexFor;
         });

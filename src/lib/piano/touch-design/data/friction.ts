@@ -1,4 +1,4 @@
-import { keyboardLength } from '@/lib/constants';
+import type { KeyboardRequirements } from '../../keyboard';
 
 export interface FrictionZone {
   lower: number;
@@ -20,11 +20,12 @@ const lowFrictionZoneLength = 4;
 
 export const getKeyFrictionThresholds = (
   key: number,
+  keyboardSize: number,
 ): KeyFrictionThresholds => {
   const mediumFrictionWeightForKey =
     mediumFrictionBassWeight +
     ((mediumFrictionTrebleWeight - mediumFrictionBassWeight) * (key - 1)) /
-      (keyboardLength - 1);
+      (keyboardSize - 1);
 
   return {
     highZone: {
@@ -48,8 +49,10 @@ export const getKeyFrictionThresholds = (
   };
 };
 
-export const getKeyboardFrictionThresholds = (): KeyFrictionThresholds[] => {
-  return Array.from({ length: keyboardLength }, (_, i) =>
-    getKeyFrictionThresholds(i + 1),
+export const getKeyboardFrictionThresholds = (
+  keyboard: KeyboardRequirements,
+): KeyFrictionThresholds[] => {
+  return Array.from({ length: keyboard.size }, (_, i) =>
+    getKeyFrictionThresholds(i + 1, keyboard.size),
   );
 };
