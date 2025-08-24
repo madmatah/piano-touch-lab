@@ -1,5 +1,5 @@
-import { strikeWeightData } from '@/lib/touch-design/data/strike-weight';
-import { StrikeWeightLevel } from '@/lib/touch-design/hammer-weight-level';
+import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
+import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 
 import {
   TouchDesignChart,

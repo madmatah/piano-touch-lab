@@ -1,5 +1,5 @@
-import { frontWeightData } from '@/lib/touch-design/data/front-weights';
-import { FrontWeightLevel } from '@/lib/touch-design/front-weight-level';
+import { frontWeightData } from '@/lib/piano/touch-design/data/front-weights';
+import { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
 
 import {
   TouchDesignChart,

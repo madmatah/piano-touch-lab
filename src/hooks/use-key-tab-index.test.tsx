@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
-import type { KeyMeasureRequirements } from '@/lib/touch-design/measure-requirements';
+import type { KeyMeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
 
 describe('The useKeyTabIndex hook', () => {
   const fakeTabGroups: Array<Array<keyof KeyMeasureRequirements>> = [

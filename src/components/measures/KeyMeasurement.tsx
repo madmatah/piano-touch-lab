@@ -1,7 +1,7 @@
 import type {
   OptionalNumber,
   KeyMeasureRequirements,
-} from '@/lib/touch-design/measure-requirements';
+} from '@/lib/piano/touch-design/measure-requirements';
 import { useCallback } from 'react';
 import { MeasureInputField } from './MeasureInputField';
 import { useKeyMeasures, useMeasureActions } from '@/hooks/use-measure-store';

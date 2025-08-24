@@ -6,7 +6,7 @@ import { usePianoMeasures } from '@/hooks/use-measure-store';
 import {
   touchWeightAnalyzerRequirementsSymbol,
   type TouchWeightAnalyzerRequirements,
-} from '@/lib/touch-design/touch-weight-analyzer-requirements';
+} from '@/lib/piano/touch-design/touch-weight-analyzer-requirements';
 import { useInjection } from 'inversify-react';
 import { useMemo } from 'react';
 import { StrikeWeightChart } from '../charts/StrikeWeightChart';

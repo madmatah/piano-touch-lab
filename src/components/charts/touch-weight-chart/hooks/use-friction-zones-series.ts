@@ -5,7 +5,7 @@ import {
   getKeyboardFrictionThresholds,
   type FrictionZone,
   type KeyFrictionThresholds,
-} from '@/lib/touch-design/data/friction';
+} from '@/lib/piano/touch-design/data/friction';
 import type {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,

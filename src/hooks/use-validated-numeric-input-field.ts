@@ -1,4 +1,4 @@
-import type { OptionalNumber } from '@/lib/touch-design/measure-requirements';
+import type { OptionalNumber } from '@/lib/piano/touch-design/measure-requirements';
 import Joi from 'joi';
 import { useCallback, useState } from 'react';
 
