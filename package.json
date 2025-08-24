@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --hot src/index.tsx",
-    "start": "NODE_ENV=production bun src/index.tsx",
     "build": "bun run build.ts",
-    "lint": "bunx eslint && bun format:check",
-    "test": "bun test --bail --silent",
-    "test:watch": "bun test --watch",
+    "dev": "bun --hot src/index.tsx",
+    "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "lint": "bunx eslint && bun format:check",
+    "start": "NODE_ENV=production bun src/index.tsx",
+    "test:watch": "bun test --watch",
+    "test": "bun test --bail --silent",
+    "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
