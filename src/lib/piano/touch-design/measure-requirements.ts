@@ -10,5 +10,5 @@ export interface KeyMeasureRequirements {
 export interface MeasureRequirements {
   keys: KeyMeasureRequirements[];
   keyWeightRatio: OptionalNumber;
-  wippenWeight: OptionalNumber;
+  wippenRadiusWeight: OptionalNumber;
 }

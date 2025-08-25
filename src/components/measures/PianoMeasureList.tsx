@@ -3,8 +3,8 @@ import { MeasureInputField } from './MeasureInputField';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measure-requirements';
 import { useCallback } from 'react';
 import {
-  DEFAULT_KEY_RATIO,
-  DEFAULT_WIPPEN_WEIGHT,
+  DEFAULT_KEY_WEIGHT_RATIO,
+  DEFAULT_WIPPEN_RADIUS_WEIGHT,
 } from '@/lib/piano/touch-design/constants';
 import Joi from 'joi';
 
@@ -19,9 +19,9 @@ export const PianoMeasureList = () => {
     [updateGlobalMeasure],
   );
 
-  const onUpdateWippenWeight = useCallback(
+  const onUpdateWippenRadiusWeight = useCallback(
     (value: OptionalNumber) => {
-      updateGlobalMeasure('wippenWeight', value);
+      updateGlobalMeasure('wippenRadiusWeight', value);
     },
     [updateGlobalMeasure],
   );
@@ -35,7 +35,7 @@ export const PianoMeasureList = () => {
             className="w-15"
             defaultValue={pianoMeasures.keyWeightRatio}
             onUpdate={onUpdateKeyRatio}
-            placeholder={DEFAULT_KEY_RATIO.toString()}
+            placeholder={DEFAULT_KEY_WEIGHT_RATIO.toString()}
             validator={Joi.number().min(0.1).max(1).optional()}
           />
         </div>
@@ -46,9 +46,9 @@ export const PianoMeasureList = () => {
         <div>
           <MeasureInputField
             className="w-15"
-            defaultValue={pianoMeasures.wippenWeight}
-            onUpdate={onUpdateWippenWeight}
-            placeholder={DEFAULT_WIPPEN_WEIGHT.toString()}
+            defaultValue={pianoMeasures.wippenRadiusWeight}
+            onUpdate={onUpdateWippenRadiusWeight}
+            placeholder={DEFAULT_WIPPEN_RADIUS_WEIGHT.toString()}
           />
         </div>
       </div>

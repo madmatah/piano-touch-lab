@@ -1,2 +1,2 @@
-export const DEFAULT_KEY_RATIO = 0.5;
-export const DEFAULT_WIPPEN_WEIGHT = 18;
+export const DEFAULT_KEY_WEIGHT_RATIO = 0.5;
+export const DEFAULT_WIPPEN_RADIUS_WEIGHT = 18;
