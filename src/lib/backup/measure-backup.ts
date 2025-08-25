@@ -17,7 +17,7 @@ export const makeDataSchema = (expectedLength: number) =>
     .object({
       keyWeightRatio: OptionalNumberSchema,
       keys: z.array(KeyMeasureSchema).length(expectedLength),
-      wippenWeight: OptionalNumberSchema,
+      wippenRadiusWeight: OptionalNumberSchema,
     })
     .strict();
 

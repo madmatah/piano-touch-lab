@@ -42,7 +42,7 @@ export const useImportMeasures = () => {
         measuresStore.setState({
           keyWeightRatio: parsed.data.keyWeightRatio,
           keys: nextKeys,
-          wippenWeight: parsed.data.wippenWeight,
+          wippenRadiusWeight: parsed.data.wippenRadiusWeight,
         });
         toast.success('Import completed');
         return true;

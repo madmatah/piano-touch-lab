@@ -26,7 +26,7 @@ interface MeasuresStoreActions {
   updateGlobalMeasure: (
     property: keyof Pick<
       MeasureRequirements,
-      'keyWeightRatio' | 'wippenWeight'
+      'keyWeightRatio' | 'wippenRadiusWeight'
     >,
     value: OptionalNumber,
   ) => void;
@@ -69,7 +69,7 @@ const createMeasuresStore = (
 
         version: 1,
 
-        wippenWeight: null,
+        wippenRadiusWeight: null,
       }),
       {
         name: `piano-touch.measures.${measureProfileName}`,
@@ -77,7 +77,7 @@ const createMeasuresStore = (
           keyWeightRatio: state.keyWeightRatio,
           keys: state.keys,
           version: state.version,
-          wippenWeight: state.wippenWeight,
+          wippenRadiusWeight: state.wippenRadiusWeight,
         }),
       },
     ),
@@ -114,7 +114,7 @@ export const usePianoMeasures = (measureProfileName?: string) => {
     useShallow<MeasuresStore, MeasureRequirements>((state: MeasuresStore) => ({
       keyWeightRatio: state.keyWeightRatio,
       keys: state.keys,
-      wippenWeight: state.wippenWeight,
+      wippenRadiusWeight: state.wippenRadiusWeight,
     })),
   );
 };
