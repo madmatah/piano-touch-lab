@@ -6,19 +6,23 @@ import { useValidatedNumericInputField } from '@/hooks/use-validated-numeric-inp
 import { cn } from '@/lib/utils';
 
 export interface MeasureInputFieldProps {
+  className?: string;
   defaultValue: OptionalNumber;
   onUpdate: (value: OptionalNumber) => void;
   validator?: Joi.Schema;
   placeholder?: string;
   tabIndex?: number;
+  tooltip?: string | React.ReactNode;
 }
 
 export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
+  className,
   defaultValue,
   placeholder,
   validator,
   onUpdate,
   tabIndex,
+  tooltip: tooltipContent,
 }) => {
   const { error, inputValue, onInputChange } = useValidatedNumericInputField(
     defaultValue,
@@ -32,6 +36,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
 
   const inputClassName = cn(
     'w-15 p-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary',
+    className,
     shouldShowErrorState &&
       'ring-1 ring-red-500 focus:ring-red-500 bg-red-100 text-red-900',
     shouldShowSuccessState &&
@@ -39,7 +44,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   );
 
   return (
-    <Tooltip open={!!error && isFocused}>
+    <Tooltip open={isFocused && (!!error || !!tooltipContent)}>
       <TooltipTrigger asChild>
         <input
           type="text"
@@ -62,6 +67,11 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
           arrowClassName="bg-red-100 fill-red-100"
         >
           {error}
+        </TooltipContent>
+      )}
+      {isFocused && !error && !!tooltipContent && (
+        <TooltipContent textColor="text-background">
+          {tooltipContent}
         </TooltipContent>
       )}
     </Tooltip>

@@ -6,6 +6,12 @@ import { useCallback } from 'react';
 import { MeasureInputField } from './MeasureInputField';
 import { useKeyMeasures, useMeasureActions } from '@/hooks/use-measure-store';
 import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
+import {
+  ArrowDownFromLine,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Hammer,
+} from 'lucide-react';
 
 export interface KeyMeasurementProps {
   keyNumber: number;
@@ -31,11 +37,48 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     ['strikeWeight'],
   ]);
 
-  const placeholders: { [key in keyof KeyMeasureRequirements]: string } = {
-    downWeight: 'D',
-    frontWeight: 'FW',
-    strikeWeight: 'SW',
-    upWeight: 'U',
+  const measureSpecs: {
+    [key in keyof KeyMeasureRequirements]: {
+      placeholder: string;
+      tooltip: string | React.ReactNode;
+    };
+  } = {
+    downWeight: {
+      placeholder: 'D',
+      tooltip: (
+        <div className="flex items-center gap-2">
+          <ArrowDownToLine className="w-3 h-3 stroke-3" />
+          Down Weight (g)
+        </div>
+      ),
+    },
+    frontWeight: {
+      placeholder: 'FW',
+      tooltip: (
+        <div className="flex items-center gap-2">
+          <ArrowDownFromLine className="w-3 h-3 stroke-3" />
+          Front Weight (g)
+        </div>
+      ),
+    },
+    strikeWeight: {
+      placeholder: 'SW',
+      tooltip: (
+        <div className="flex items-center gap-2">
+          <Hammer className="w-3 h-3 stroke-3" />
+          Strike Weight (g)
+        </div>
+      ),
+    },
+    upWeight: {
+      placeholder: 'U',
+      tooltip: (
+        <div className="flex items-center gap-2">
+          <ArrowUpFromLine className="w-3 h-3 stroke-3" />
+          Up Weight (g)
+        </div>
+      ),
+    },
   };
 
   return (
@@ -50,7 +93,8 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
               key={property}
               defaultValue={keySpec[property]}
               onUpdate={onUpdateKeyProperty(property)}
-              placeholder={placeholders[property]}
+              placeholder={measureSpecs[property].placeholder}
+              tooltip={measureSpecs[property].tooltip}
               tabIndex={getTabIndexFor(property)}
             />
           ))}
