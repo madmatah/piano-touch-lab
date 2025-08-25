@@ -11,6 +11,7 @@ import { useInjection } from 'inversify-react';
 import { useMemo } from 'react';
 import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 import { useChartDimension } from '../charts/hooks/use-chart-dimension';
+import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
 
 export const AnalyzePage = () => {
   const { chartHeight } = useChartDimension();
@@ -40,6 +41,13 @@ export const AnalyzePage = () => {
 
         <section>
           <StrikeWeightChart chartHeight={chartHeight} />
+        </section>
+
+        <section>
+          <StrikeWeightRatioChart
+            chartHeight={chartHeight}
+            keysData={touchWeightData.keys}
+          />
         </section>
       </div>
     </MainLayout>
