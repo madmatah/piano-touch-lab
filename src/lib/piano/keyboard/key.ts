@@ -6,3 +6,5 @@ export interface Key {
   name: string;
   octave: number;
 }
+
+export type KeyWith<TPayload> = Key & { payload: TPayload };
