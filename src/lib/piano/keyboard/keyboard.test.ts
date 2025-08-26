@@ -70,6 +70,100 @@ describe('The Keyboard class', () => {
     });
   });
 
+  describe('The getKeyByNumber() method', () => {
+    let result: Key | undefined;
+
+    describe('When the number exists', () => {
+      beforeEach(() => {
+        result = model.getKeyByNumber(1);
+      });
+
+      it('should return the expected key information', () => {
+        expect(result).toEqual({
+          color: KeyColor.White,
+          name: 'A0',
+          number: 1,
+          octave: 0,
+        });
+      });
+    });
+
+    describe('When the number does not exist', () => {
+      beforeEach(() => {
+        result = model.getKeyByNumber(999);
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('The getKeyNumbers() method', () => {
+    let result: readonly number[];
+
+    beforeEach(() => {
+      result = model.getKeyNumbers();
+    });
+
+    it('should return an array of key numbers in order', () => {
+      expect(result).toEqual([1, 2]);
+    });
+  });
+
+  describe('The size property', () => {
+    it('should return the number of keys', () => {
+      expect(model.size).toBe(2);
+    });
+  });
+
+  describe('The map() method', () => {
+    let result: Keyboard<Key & { payload: string }>;
+
+    beforeEach(() => {
+      result = model.map((key) => `Key ${key.name}`);
+    });
+
+    it('should return a new Keyboard instance', () => {
+      expect(result).toBeInstanceOf(Keyboard);
+      expect(result).not.toBe(model);
+    });
+
+    it('should transform each key with the payload', () => {
+      const mappedKeys = result.getKeys();
+      expect(mappedKeys).toHaveLength(2);
+      expect(mappedKeys[0]?.payload).toBe('Key A0');
+      expect(mappedKeys[1]?.payload).toBe('Key B0');
+    });
+
+    it('should preserve original key properties', () => {
+      const mappedKeys = result.getKeys();
+      expect(mappedKeys[0]).toMatchObject({
+        color: KeyColor.White,
+        name: 'A0',
+        number: 1,
+        octave: 0,
+        payload: 'Key A0',
+      });
+    });
+  });
+
+  describe('The mapToArray() method', () => {
+    let result: string[];
+
+    beforeEach(() => {
+      result = model.mapToArray((key) => `${key.color} ${key.name}`);
+    });
+
+    it('should return an array of transformed values', () => {
+      expect(result).toEqual(['white A0', 'white B0']);
+    });
+
+    it('should have the same length as the original keys', () => {
+      expect(result).toHaveLength(model.size);
+    });
+  });
+
   describe('The getKeys() method', () => {
     describe('When pushing into the keys array', () => {
       let act: () => unknown;
