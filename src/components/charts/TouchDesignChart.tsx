@@ -103,11 +103,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
         showMinLabel: true,
       },
       axisTick: { alignWithLabel: true },
-      data: [
-        ...Array(keyboard.size)
-          .keys()
-          .map((i) => `${i + 1}`),
-      ],
+      data: [...keyboard.mapToArray((key) => `${key.number}`)],
       name: 'Key Number',
       type: 'category',
     },

@@ -14,6 +14,7 @@ export interface FrontWeightChartProps {
 }
 
 export const FrontWeightChart = (props: FrontWeightChartProps) => {
+  const { chartHeight } = props;
   const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
     useMeasuredSerie(
       (key) => key.frontWeight,
@@ -51,7 +52,7 @@ export const FrontWeightChart = (props: FrontWeightChartProps) => {
   return (
     <TouchDesignChart
       title="Front Weight"
-      chartHeight={props.chartHeight}
+      chartHeight={chartHeight}
       series={series}
       yAxisName="Front Weight"
     />

@@ -1,4 +1,4 @@
-import type { TouchWeightKeyData } from '@/lib/piano/touch-design/touch-weight-data.requirements';
+import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import ReactECharts from 'echarts-for-react';
 import { useMemo } from 'react';
 import { useFrictionZonesSeries } from './hooks/use-friction-zones-series';
@@ -6,7 +6,7 @@ import { useTouchWeightSeries } from './hooks/use-touch-weight-series';
 import type { SeriesOption } from 'echarts';
 
 export interface TouchWeightChartProps {
-  keysData: TouchWeightKeyData[];
+  analyzedKeyboard: TouchWeightAnalyzedKeyboard;
   chartHeight: number;
 }
 
@@ -15,9 +15,10 @@ const getFrictionChartOptions = (
 ): { series: SeriesOption[] } => ({ series: frictionZonesSeries });
 
 export const TouchWeightChart = (props: TouchWeightChartProps) => {
+  const { analyzedKeyboard, chartHeight } = props;
   const frictionZonesSeries = useFrictionZonesSeries();
   const { downWeight, balanceWeight, upWeight, frictionWeight, verticalLines } =
-    useTouchWeightSeries(props.keysData);
+    useTouchWeightSeries(analyzedKeyboard);
 
   const maxDownWeight: number = useMemo(
     () => Math.max(...downWeight.map(([, dw]) => dw ?? 0), 60),
@@ -120,7 +121,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     <div>
       <ReactECharts
         option={option}
-        style={{ height: props.chartHeight }}
+        style={{ height: chartHeight }}
         lazyUpdate={true}
       />
     </div>

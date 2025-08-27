@@ -1,14 +1,25 @@
 import { z } from 'zod';
-import type { MeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
+import type {
+  MeasuredKeyRequirements,
+  OptionalNumber,
+} from '@/lib/piano/touch-design/measured-key.requirements';
 
 export const OptionalNumberSchema = z.number().finite().nullable();
+
+export interface MeasureBackupRequirements {
+  keys: MeasuredKeyRequirements[];
+  keyWeightRatio: OptionalNumber;
+  wippenRadiusWeight: OptionalNumber;
+}
 
 export const KeyMeasureSchema = z
   .object({
     downWeight: OptionalNumberSchema,
     frontWeight: OptionalNumberSchema,
+    keyWeightRatio: OptionalNumberSchema,
     strikeWeight: OptionalNumberSchema,
     upWeight: OptionalNumberSchema,
+    wippenRadiusWeight: OptionalNumberSchema,
   })
   .strict();
 
@@ -63,7 +74,7 @@ export function parseMeasuresBackupText(
 }
 
 export function buildMeasuresExportPayload(
-  measures: MeasureRequirements,
+  measures: MeasureBackupRequirements,
   profile: string = 'default',
 ) {
   return {

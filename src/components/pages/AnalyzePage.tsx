@@ -2,28 +2,15 @@ import { FrontWeightChart } from '../charts/FrontWeightChart';
 import { TouchWeightChart } from '../charts/touch-weight-chart/TouchWeightChart';
 import { MainLayout } from '../MainLayout';
 import { ChartLine } from 'lucide-react';
-import { usePianoMeasures } from '@/hooks/use-measure-store';
-import {
-  touchWeightAnalyzerRequirementsSymbol,
-  type TouchWeightAnalyzerRequirements,
-} from '@/lib/piano/touch-design/touch-weight-analyzer-requirements';
-import { useInjection } from 'inversify-react';
-import { useMemo } from 'react';
 import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 import { useChartDimension } from '../charts/hooks/use-chart-dimension';
 import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
+import { useAnalyzedKeyboard } from '../charts/hooks/use-analyzed-keyboard';
 
 export const AnalyzePage = () => {
   const { chartHeight } = useChartDimension();
-  const measures = usePianoMeasures();
-  const touchWeightAnalyzer = useInjection<TouchWeightAnalyzerRequirements>(
-    touchWeightAnalyzerRequirementsSymbol,
-  );
 
-  const touchWeightData = useMemo(
-    () => touchWeightAnalyzer.analyze(measures),
-    [measures, touchWeightAnalyzer],
-  );
+  const analyzedKeyboard = useAnalyzedKeyboard();
 
   return (
     <MainLayout pageTitle="Analyze" pageIcon={<ChartLine />}>
@@ -31,7 +18,7 @@ export const AnalyzePage = () => {
         <section>
           <TouchWeightChart
             chartHeight={chartHeight}
-            keysData={touchWeightData.keys}
+            analyzedKeyboard={analyzedKeyboard}
           />
         </section>
 
@@ -46,7 +33,7 @@ export const AnalyzePage = () => {
         <section>
           <StrikeWeightRatioChart
             chartHeight={chartHeight}
-            keysData={touchWeightData.keys}
+            analyzedKeyboard={analyzedKeyboard}
           />
         </section>
       </div>

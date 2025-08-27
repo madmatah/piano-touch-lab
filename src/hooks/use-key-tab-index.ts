@@ -1,9 +1,6 @@
-import type { KeyMeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
 import { useKeyboard } from './use-keyboard';
 
-type KeyProperty = keyof KeyMeasureRequirements;
-
-export const useKeyTabIndex = (
+export const useKeyTabIndex = <KeyProperty>(
   keyIndex: number,
   tabGroups: Array<Array<KeyProperty>>,
 ) => {

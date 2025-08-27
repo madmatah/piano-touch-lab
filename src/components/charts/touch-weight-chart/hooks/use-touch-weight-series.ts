@@ -1,42 +1,43 @@
-import type { OptionalNumber } from '@/lib/piano/touch-design/measure-requirements';
-import type { TouchWeightKeyData } from '@/lib/piano/touch-design/touch-weight-data.requirements';
+import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
+import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import { useMemo } from 'react';
 
 export interface TouchWeightSeries {
-  downWeight: [number, OptionalNumber][];
   balanceWeight: [number, OptionalNumber][];
-  upWeight: [number, OptionalNumber][];
+  downWeight: [number, OptionalNumber][];
   frictionWeight: [number, OptionalNumber][];
+  upWeight: [number, OptionalNumber][];
   verticalLines: { coords: [number, OptionalNumber][] }[];
 }
 
 export const useTouchWeightSeries = (
-  keysData: TouchWeightKeyData[],
+  analyzedKeyboard: TouchWeightAnalyzedKeyboard,
 ): TouchWeightSeries => {
   return useMemo(() => {
-    const downWeight = keysData.map<[number, OptionalNumber]>((key, idx) => [
-      idx + 1,
-      key.downWeight,
-    ]);
-    const balanceWeight = keysData.map<[number, OptionalNumber]>((key, idx) => [
-      idx + 1,
-      key.balanceWeight,
-    ]);
-    const upWeight = keysData.map<[number, OptionalNumber]>((key, idx) => [
-      idx + 1,
-      key.upWeight,
-    ]);
-    const frictionWeight = keysData.map<[number, OptionalNumber]>(
-      (key, idx) => [idx + 1, key.frictionWeight],
+    const downWeight = analyzedKeyboard.mapToArray<[number, OptionalNumber]>(
+      (key) => [key.number, key.payload.downWeight],
     );
-    const verticalLines = keysData.map<{ coords: [number, OptionalNumber][] }>(
-      (key, idx) => ({
-        coords: [
-          [idx + 1, key.upWeight],
-          [idx + 1, key.downWeight],
-        ],
-      }),
+
+    const balanceWeight = analyzedKeyboard.mapToArray<[number, OptionalNumber]>(
+      (key) => [key.number, key.payload.balanceWeight],
     );
+
+    const upWeight = analyzedKeyboard.mapToArray<[number, OptionalNumber]>(
+      (key) => [key.number, key.payload.upWeight],
+    );
+
+    const frictionWeight = analyzedKeyboard.mapToArray<
+      [number, OptionalNumber]
+    >((key) => [key.number, key.payload.frictionWeight]);
+
+    const verticalLines = analyzedKeyboard.mapToArray<{
+      coords: [number, OptionalNumber][];
+    }>((key) => ({
+      coords: [
+        [key.number, key.payload.upWeight],
+        [key.number, key.payload.downWeight],
+      ],
+    }));
 
     return {
       balanceWeight,
@@ -45,5 +46,5 @@ export const useTouchWeightSeries = (
       upWeight,
       verticalLines,
     };
-  }, [keysData]);
+  }, [analyzedKeyboard]);
 };
