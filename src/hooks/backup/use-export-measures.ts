@@ -1,4 +1,4 @@
-import { usePianoMeasures } from '@/hooks/use-measure-store';
+import { useMeasuresStore } from '@/hooks/use-measure-store';
 import {
   buildMeasuresExportPayload,
   createMeasuresExportBlob,
@@ -6,9 +6,17 @@ import {
 import { useCallback, useState } from 'react';
 import { useDownloadBlob } from './use-download-blob';
 import { formatISO } from 'date-fns';
+import { useShallow } from 'zustand/shallow';
 
 export const useExportMeasures = (profile: string = 'default') => {
-  const measures = usePianoMeasures();
+  const measureStoreState = useMeasuresStore(profile)(
+    useShallow((state) => ({
+      keyWeightRatio: state.keyWeightRatio,
+      keys: state.keys,
+      wippenRadiusWeight: state.wippenRadiusWeight,
+    })),
+  );
+
   const [isExporting, setIsExporting] = useState(false);
   const { downloadBlob } = useDownloadBlob();
 
@@ -17,13 +25,20 @@ export const useExportMeasures = (profile: string = 'default') => {
     const filename = `piano-touch-export-${currentDay}.json`;
     setIsExporting(true);
     try {
-      const payload = buildMeasuresExportPayload(measures, profile);
+      const payload = buildMeasuresExportPayload(
+        {
+          keyWeightRatio: measureStoreState.keyWeightRatio,
+          keys: measureStoreState.keys,
+          wippenRadiusWeight: measureStoreState.wippenRadiusWeight,
+        },
+        profile,
+      );
       const blob = createMeasuresExportBlob(payload);
       downloadBlob(blob, filename);
     } finally {
       setIsExporting(false);
     }
-  }, [downloadBlob, measures, profile]);
+  }, [downloadBlob, measureStoreState, profile]);
 
   return { exportMeasures, isExporting };
 };

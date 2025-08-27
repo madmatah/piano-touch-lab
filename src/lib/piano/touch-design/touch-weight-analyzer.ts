@@ -1,41 +1,29 @@
+import type { KeyWith } from '../keyboard';
 import {
   DEFAULT_KEY_WEIGHT_RATIO,
   DEFAULT_WIPPEN_RADIUS_WEIGHT,
 } from './constants';
 import type {
-  KeyMeasureRequirements,
-  MeasureRequirements,
+  MeasuredKeyRequirements,
   OptionalNumber,
-} from './measure-requirements';
+} from './measured-key.requirements';
 import type { TouchWeightAnalyzerRequirements } from './touch-weight-analyzer-requirements';
-import type {
-  TouchWeightDataRequirements,
-  TouchWeightKeyData,
-} from './touch-weight-data.requirements';
+import type { TouchWeightKeyAnalysis } from './touch-weight-key-analysis';
 
 export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
-  public analyze(input: MeasureRequirements): TouchWeightDataRequirements {
-    const keyWeightRatio = input.keyWeightRatio ?? DEFAULT_KEY_WEIGHT_RATIO;
+  public analyzeKey(
+    key: KeyWith<MeasuredKeyRequirements>,
+  ): TouchWeightKeyAnalysis {
+    const keyMeasurements = key.payload;
+    const keyWeightRatio =
+      keyMeasurements?.keyWeightRatio ?? DEFAULT_KEY_WEIGHT_RATIO;
     const wippenRadiusWeight =
-      input.wippenRadiusWeight ?? DEFAULT_WIPPEN_RADIUS_WEIGHT;
+      keyMeasurements?.wippenRadiusWeight ?? DEFAULT_WIPPEN_RADIUS_WEIGHT;
+
     const wippenBalanceWeight = this.computeWippenBalanceWeight(
       keyWeightRatio,
       wippenRadiusWeight,
     );
-    return {
-      keyWeightRatio,
-      keys: input.keys.map((keyMeasurements) =>
-        this.analyzeKey(keyMeasurements, wippenBalanceWeight),
-      ),
-      wippenBalanceWeight,
-      wippenRadiusWeight,
-    };
-  }
-
-  private analyzeKey(
-    keyMeasurements: KeyMeasureRequirements,
-    wippenBalanceWeight: number,
-  ): TouchWeightKeyData {
     const balanceWeight = this.computeBalanceWeight(keyMeasurements);
     const frictionWeight = this.computeFrictionWeight(keyMeasurements);
     const strikeWeightRatio = this.computeStrikeWeightRatio(
@@ -49,11 +37,12 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
       balanceWeight,
       frictionWeight,
       strikeWeightRatio,
+      wippenBalanceWeight,
     };
   }
 
   private computeBalanceWeight(
-    keyMeasurements: KeyMeasureRequirements,
+    keyMeasurements: MeasuredKeyRequirements,
   ): OptionalNumber {
     const { upWeight, downWeight } = keyMeasurements;
 
@@ -65,7 +54,7 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
   }
 
   private computeFrictionWeight(
-    keyMeasurements: KeyMeasureRequirements,
+    keyMeasurements: MeasuredKeyRequirements,
   ): OptionalNumber {
     const { upWeight, downWeight } = keyMeasurements;
 
@@ -77,7 +66,7 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
   }
 
   private computeStrikeWeightRatio(
-    keyMeasurements: KeyMeasureRequirements,
+    keyMeasurements: MeasuredKeyRequirements,
     balanceWeight: OptionalNumber,
     wippenBalanceWeight: number,
   ): OptionalNumber {

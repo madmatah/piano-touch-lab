@@ -1,10 +1,10 @@
 import type {
   OptionalNumber,
-  KeyMeasureRequirements,
-} from '@/lib/piano/touch-design/measure-requirements';
+  MeasuredKeyRequirements,
+} from '@/lib/piano/touch-design/measured-key.requirements';
 import { useCallback } from 'react';
 import { MeasureInputField } from './MeasureInputField';
-import { useKeyMeasures, useMeasureActions } from '@/hooks/use-measure-store';
+import { useMeasuredKey, useMeasureActions } from '@/hooks/use-measure-store';
 import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
 import {
   ArrowDownFromLine,
@@ -21,24 +21,30 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   keyNumber,
 }) => {
   const keyIndex = keyNumber - 1;
-  const keySpec = useKeyMeasures(keyIndex, 'default');
+  const keySpec = useMeasuredKey(keyIndex, 'default');
   const { updateKeyMeasure } = useMeasureActions('default');
 
   const onUpdateKeyProperty = useCallback(
-    (keyProperty: keyof KeyMeasureRequirements) => (value: OptionalNumber) => {
+    (keyProperty: keyof MeasuredKeyRequirements) => (value: OptionalNumber) => {
       updateKeyMeasure(keyIndex, keyProperty, value);
     },
     [keyIndex, updateKeyMeasure],
   );
 
-  const { getTabIndexFor, orderedProperties } = useKeyTabIndex(keyIndex, [
-    ['downWeight', 'upWeight'],
-    ['frontWeight'],
-    ['strikeWeight'],
-  ]);
+  type MeasuredProperties = keyof Pick<
+    MeasuredKeyRequirements,
+    'downWeight' | 'frontWeight' | 'strikeWeight' | 'upWeight'
+  >;
+
+  const { getTabIndexFor, orderedProperties } =
+    useKeyTabIndex<MeasuredProperties>(keyIndex, [
+      ['downWeight', 'upWeight'],
+      ['frontWeight'],
+      ['strikeWeight'],
+    ]);
 
   const measureSpecs: {
-    [key in keyof KeyMeasureRequirements]: {
+    [key in MeasuredProperties]: {
       placeholder: string;
       tooltip: string | React.ReactNode;
     };

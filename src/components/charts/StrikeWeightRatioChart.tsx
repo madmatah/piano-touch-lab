@@ -1,4 +1,4 @@
-import type { TouchWeightKeyData } from '@/lib/piano/touch-design/touch-weight-data.requirements';
+import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import {
   TouchDesignChart,
   TouchDesignSerieVariant,
@@ -6,13 +6,15 @@ import {
 } from './TouchDesignChart';
 
 export interface StrikeWeightRatioChartProps {
-  keysData: TouchWeightKeyData[];
+  analyzedKeyboard: TouchWeightAnalyzedKeyboard;
   chartHeight: number;
 }
 
 export const StrikeWeightRatioChart = (props: StrikeWeightRatioChartProps) => {
-  const strikeWeightRatio = props.keysData.map<number | undefined>(
-    (key) => key.strikeWeightRatio ?? undefined,
+  const { analyzedKeyboard } = props;
+
+  const strikeWeightRatio = analyzedKeyboard.mapToArray<number | undefined>(
+    (key) => key.payload.strikeWeightRatio ?? undefined,
   );
 
   const series: TouchDesignSerie[] = [

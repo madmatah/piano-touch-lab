@@ -2,10 +2,12 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
 import { KeyboardProvider } from '@/contexts/keyboard-context';
-import type { KeyMeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
+import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
 
 describe('The useKeyTabIndex hook', () => {
-  const fakeTabGroups: Array<Array<keyof KeyMeasureRequirements>> = [
+  type KeyProperty = 'downWeight' | 'upWeight' | 'frontWeight' | 'strikeWeight';
+
+  const fakeTabGroups: Array<Array<KeyProperty>> = [
     ['downWeight', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
@@ -16,12 +18,12 @@ describe('The useKeyTabIndex hook', () => {
   );
 
   describe('The orderedProperties property', () => {
-    let orderedProperties: Array<keyof KeyMeasureRequirements>;
+    let orderedProperties: Array<keyof MeasuredKeyRequirements>;
     const fakeKeyIndex = 0;
 
     beforeEach(() => {
       const { result } = renderHook(
-        () => useKeyTabIndex(fakeKeyIndex, fakeTabGroups),
+        () => useKeyTabIndex<KeyProperty>(fakeKeyIndex, fakeTabGroups),
         { wrapper },
       );
       orderedProperties = result.current.orderedProperties;
@@ -38,7 +40,9 @@ describe('The useKeyTabIndex hook', () => {
   });
 
   describe('The getTabIndexFor property', () => {
-    let getTabIndexFor: ReturnType<typeof useKeyTabIndex>['getTabIndexFor'];
+    let getTabIndexFor: ReturnType<
+      typeof useKeyTabIndex<KeyProperty>
+    >['getTabIndexFor'];
 
     describe('with provided tab groups', () => {
       describe.each([

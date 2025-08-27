@@ -1,6 +1,8 @@
 import { useMeasuresStore } from '@/hooks/use-measure-store';
-import type { MeasureRequirements } from '@/lib/piano/touch-design/measure-requirements';
-import { parseMeasuresBackupText } from '@/lib/backup/measure-backup';
+import {
+  type MeasureBackupRequirements,
+  parseMeasuresBackupText,
+} from '@/lib/backup/measure-backup';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -30,14 +32,15 @@ export const useImportMeasures = () => {
           return false;
         }
 
-        const nextKeys: MeasureRequirements['keys'] = parsed.data.keys.map(
-          (k) => ({
+        const nextKeys: MeasureBackupRequirements['keys'] =
+          parsed.data.keys.map((k) => ({
             downWeight: k.downWeight,
             frontWeight: k.frontWeight,
+            keyWeightRatio: k.keyWeightRatio,
             strikeWeight: k.strikeWeight,
             upWeight: k.upWeight,
-          }),
-        );
+            wippenRadiusWeight: k.wippenRadiusWeight,
+          }));
 
         measuresStore.setState({
           keyWeightRatio: parsed.data.keyWeightRatio,

@@ -1,12 +1,12 @@
-import { usePianoMeasures } from '@/hooks/use-measure-store';
+import { useMeasuredKeyboard } from '@/hooks/use-measure-store';
 import {
   TouchDesignSerieVariant,
   type TouchDesignSerie,
 } from '../TouchDesignChart';
 import type {
-  KeyMeasureRequirements,
+  MeasuredKeyRequirements,
   OptionalNumber,
-} from '@/lib/piano/touch-design/measure-requirements';
+} from '@/lib/piano/touch-design/measured-key.requirements';
 import { useMemo } from 'react';
 
 export interface UseMeasuredSerieResult {
@@ -15,15 +15,19 @@ export interface UseMeasuredSerieResult {
 }
 
 export const useMeasuredSerie = (
-  measureSelector: (key: KeyMeasureRequirements) => OptionalNumber,
+  measureSelector: (key: MeasuredKeyRequirements) => OptionalNumber,
   name: string,
   variant: TouchDesignSerieVariant = TouchDesignSerieVariant.Measured,
 ): UseMeasuredSerieResult => {
-  const measures = usePianoMeasures();
+  const measuredKeyboard = useMeasuredKeyboard();
 
   const data = useMemo(
-    () => measures.keys?.map(measureSelector).map((v) => v ?? undefined) ?? [],
-    [measures, measureSelector],
+    () =>
+      measuredKeyboard
+        .mapToArray((key) => key.payload)
+        .map(measureSelector)
+        .map((v) => v ?? undefined),
+    [measuredKeyboard, measureSelector],
   );
 
   const result: UseMeasuredSerieResult = useMemo(

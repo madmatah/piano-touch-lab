@@ -52,7 +52,7 @@ export const getKeyFrictionThresholds = (
 export const getKeyboardFrictionThresholds = (
   keyboard: KeyboardRequirements,
 ): KeyFrictionThresholds[] => {
-  return Array.from({ length: keyboard.size }, (_, i) =>
-    getKeyFrictionThresholds(i + 1, keyboard.size),
+  return keyboard.mapToArray((key) =>
+    getKeyFrictionThresholds(key.number, keyboard.size),
   );
 };

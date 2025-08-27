@@ -1,10 +1,11 @@
-import type { MeasureRequirements } from './measure-requirements';
-import type { TouchWeightDataRequirements } from './touch-weight-data.requirements';
+import type { KeyWith } from '../keyboard';
+import type { MeasuredKeyRequirements } from './measured-key.requirements';
+import type { TouchWeightKeyAnalysis } from './touch-weight-key-analysis';
 
 export const touchWeightAnalyzerRequirementsSymbol = Symbol(
   'TouchWeightAnalyzerRequirements',
 );
 
 export interface TouchWeightAnalyzerRequirements {
-  analyze(input: MeasureRequirements): TouchWeightDataRequirements;
+  analyzeKey(key: KeyWith<MeasuredKeyRequirements>): TouchWeightKeyAnalysis;
 }
