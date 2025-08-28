@@ -1,7 +1,5 @@
-import type {
-  TouchDesignSerie,
-  TouchDesignSerieVariant,
-} from '../TouchDesignChart';
+import type { TouchDesignSerieVariant } from '../TouchDesignChart';
+import type { TouchDesignSerie } from '../interfaces';
 import {
   curveSmootherRequirementsSymbol,
   type CurveSmootherRequirements,

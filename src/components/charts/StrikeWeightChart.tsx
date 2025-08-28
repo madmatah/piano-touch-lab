@@ -1,11 +1,8 @@
 import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
 import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 
-import {
-  TouchDesignChart,
-  TouchDesignSerieVariant,
-  type TouchDesignSerie,
-} from './TouchDesignChart';
+import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
+import { type TouchDesignSerie } from './interfaces';
 import { useMeasuredSerie } from './hooks/use-measured-serie';
 
 export interface StrikeWeightChartProps {
@@ -15,11 +12,12 @@ export interface StrikeWeightChartProps {
 
 export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
   const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
-    useMeasuredSerie(
-      (key) => key.strikeWeight,
-      'Measured',
-      TouchDesignSerieVariant.Measured,
-    );
+    useMeasuredSerie((key) => key.strikeWeight, 'Measured', {
+      sharpItemStyle: {
+        color: '#333',
+      },
+      variant: TouchDesignSerieVariant.Measured,
+    });
 
   const seriesWithBoldVariant = [
     StrikeWeightLevel.Level1,

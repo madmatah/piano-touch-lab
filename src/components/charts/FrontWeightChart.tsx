@@ -1,11 +1,8 @@
 import { frontWeightData } from '@/lib/piano/touch-design/data/front-weights';
 import { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
 
-import {
-  TouchDesignChart,
-  TouchDesignSerieVariant,
-  type TouchDesignSerie,
-} from './TouchDesignChart';
+import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
+import { type TouchDesignSerie } from './interfaces';
 import { useMeasuredSerie } from './hooks/use-measured-serie';
 
 export interface FrontWeightChartProps {
@@ -16,11 +13,12 @@ export interface FrontWeightChartProps {
 export const FrontWeightChart = (props: FrontWeightChartProps) => {
   const { chartHeight } = props;
   const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
-    useMeasuredSerie(
-      (key) => key.frontWeight,
-      'Measured',
-      TouchDesignSerieVariant.Measured,
-    );
+    useMeasuredSerie((key) => key.frontWeight, 'Measured', {
+      sharpItemStyle: {
+        color: '#333',
+      },
+      variant: TouchDesignSerieVariant.Measured,
+    });
 
   const seriesWithBoldVariant = [
     FrontWeightLevel.Level5,

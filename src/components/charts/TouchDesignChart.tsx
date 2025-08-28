@@ -1,19 +1,14 @@
 import { useKeyboard } from '@/hooks/use-keyboard';
+import { KeyColor, type KeyboardRequirements } from '@/lib/piano/keyboard';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
+import type { TouchDesignSerie } from './interfaces';
 
 export enum TouchDesignSerieVariant {
   DefaultBold = 1,
   Default = 2,
   Target = 3,
   Measured = 4,
-}
-
-export interface TouchDesignSerie {
-  name: string;
-  data: Array<number | undefined>;
-  variant?: TouchDesignSerieVariant;
-  color?: string;
 }
 
 export interface TouchDesignChartProps {
@@ -56,11 +51,27 @@ const getEchartSeriePropertiesByVariant = (
   }
 };
 
+const generateSerieData = (
+  serie: TouchDesignSerie,
+  keyboard: KeyboardRequirements,
+) => {
+  const sharpItemStyle = serie.sharpItemStyle ?? {};
+  const flatItemStyle = serie.flatItemStyle ?? {};
+
+  return serie.data.map((value, index) => {
+    const key = keyboard.getKeyByNumber(index + 1);
+    return {
+      itemStyle: key?.color === KeyColor.Black ? sharpItemStyle : flatItemStyle,
+      value,
+    };
+  });
+};
+
 export const TouchDesignChart = (props: TouchDesignChartProps) => {
   const { keyboard } = useKeyboard();
 
   const series = props.series.map((serie) => ({
-    data: serie.data,
+    data: generateSerieData(serie, keyboard),
     name: serie.name,
     showSymbol: false,
     smooth: 0.3,
