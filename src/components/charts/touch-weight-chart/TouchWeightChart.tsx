@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 import { useFrictionZonesSeries } from './hooks/use-friction-zones-series';
 import { useTouchWeightSeries } from './hooks/use-touch-weight-series';
 import type { SeriesOption } from 'echarts';
+import { KeyColor } from '@/lib/piano/keyboard';
+import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 
 export interface TouchWeightChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
@@ -30,6 +32,16 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     [frictionZonesSeries],
   );
 
+  const toStyledDataItem = (value: [number, OptionalNumber]) => {
+    const key = analyzedKeyboard.getKeyByNumber(value[0]);
+    const itemStyle = key?.color === KeyColor.Black ? { color: '#333' } : {};
+
+    return {
+      itemStyle,
+      value,
+    };
+  };
+
   const option = {
     grid: {
       left: 'left',
@@ -46,31 +58,39 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     },
     series: [
       {
-        data: downWeight,
+        color: '#5470c6',
+        data: downWeight.map(toStyledDataItem),
         name: 'Down Weight',
         symbol: 'triangle',
         symbolRotate: 180,
+        symbolSize: 10,
         type: 'scatter',
       },
       {
-        data: balanceWeight,
+        color: '#5470c6',
+        data: balanceWeight.map(toStyledDataItem),
         name: 'Balance Weight',
         symbol: 'diamond',
+        symbolSize: 12,
         type: 'scatter',
       },
       {
-        data: upWeight,
+        color: '#5470c6',
+        data: upWeight.map(toStyledDataItem),
         name: 'Up Weight',
+
         symbol: 'triangle',
+        symbolSize: 10,
         type: 'scatter',
       },
       {
         data: frictionWeight,
         itemStyle: {
-          color: 'rgba(165, 0, 186, 0.8)',
+          color: '#ea7ccc',
+          opacity: 0.7,
         },
         name: 'Friction Weight',
-        showSymbol: false,
+        symbolSize: 9,
         type: 'scatter',
       },
       {

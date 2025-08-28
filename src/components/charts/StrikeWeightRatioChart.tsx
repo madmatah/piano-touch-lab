@@ -1,9 +1,6 @@
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
-import {
-  TouchDesignChart,
-  TouchDesignSerieVariant,
-  type TouchDesignSerie,
-} from './TouchDesignChart';
+import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
+import { type TouchDesignSerie } from './interfaces';
 
 export interface StrikeWeightRatioChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
@@ -21,6 +18,9 @@ export const StrikeWeightRatioChart = (props: StrikeWeightRatioChartProps) => {
     {
       data: strikeWeightRatio,
       name: 'Strike Weight Ratio',
+      sharpItemStyle: {
+        color: '#333',
+      },
       variant: TouchDesignSerieVariant.Measured,
     },
   ];
