@@ -4,7 +4,7 @@ import type {
   OptionalNumber,
 } from '@/lib/piano/touch-design/measured-key.requirements';
 
-export const OptionalNumberSchema = z.number().finite().nullable();
+export const OptionalNumberSchema = z.number().nullable();
 
 export interface MeasureBackupRequirements {
   keys: MeasuredKeyRequirements[];
@@ -14,21 +14,21 @@ export interface MeasureBackupRequirements {
 
 export const KeyMeasureSchema = z
   .object({
-    downWeight: OptionalNumberSchema,
-    frontWeight: OptionalNumberSchema,
-    keyWeightRatio: OptionalNumberSchema,
-    strikeWeight: OptionalNumberSchema,
-    upWeight: OptionalNumberSchema,
-    wippenRadiusWeight: OptionalNumberSchema,
+    downWeight: OptionalNumberSchema.optional(),
+    frontWeight: OptionalNumberSchema.optional(),
+    keyWeightRatio: OptionalNumberSchema.optional(),
+    strikeWeight: OptionalNumberSchema.optional(),
+    upWeight: OptionalNumberSchema.optional(),
+    wippenRadiusWeight: OptionalNumberSchema.optional(),
   })
   .strict();
 
 export const makeDataSchema = (expectedLength: number) =>
   z
     .object({
-      keyWeightRatio: OptionalNumberSchema,
+      keyWeightRatio: OptionalNumberSchema.optional(),
       keys: z.array(KeyMeasureSchema).length(expectedLength),
-      wippenRadiusWeight: OptionalNumberSchema,
+      wippenRadiusWeight: OptionalNumberSchema.optional(),
     })
     .strict();
 

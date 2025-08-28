@@ -34,18 +34,18 @@ export const useImportMeasures = () => {
 
         const nextKeys: MeasureBackupRequirements['keys'] =
           parsed.data.keys.map((k) => ({
-            downWeight: k.downWeight,
-            frontWeight: k.frontWeight,
-            keyWeightRatio: k.keyWeightRatio,
-            strikeWeight: k.strikeWeight,
-            upWeight: k.upWeight,
-            wippenRadiusWeight: k.wippenRadiusWeight,
+            downWeight: k.downWeight ?? null,
+            frontWeight: k.frontWeight ?? null,
+            keyWeightRatio: k.keyWeightRatio ?? null,
+            strikeWeight: k.strikeWeight ?? null,
+            upWeight: k.upWeight ?? null,
+            wippenRadiusWeight: k.wippenRadiusWeight ?? null,
           }));
 
         measuresStore.setState({
-          keyWeightRatio: parsed.data.keyWeightRatio,
+          keyWeightRatio: parsed.data.keyWeightRatio ?? null,
           keys: nextKeys,
-          wippenRadiusWeight: parsed.data.wippenRadiusWeight,
+          wippenRadiusWeight: parsed.data.wippenRadiusWeight ?? null,
         });
         toast.success('Import completed');
         return true;
