@@ -42,7 +42,7 @@ export const useImportMeasures = () => {
             wippenRadiusWeight: k.wippenRadiusWeight ?? null,
           }));
 
-        measuresStore.setState({
+        measuresStore.getState().updateState({
           keyWeightRatio: parsed.data.keyWeightRatio ?? null,
           keys: nextKeys,
           wippenRadiusWeight: parsed.data.wippenRadiusWeight ?? null,
