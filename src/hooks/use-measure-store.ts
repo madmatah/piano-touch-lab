@@ -42,6 +42,7 @@ interface MeasuresStoreActions {
     property: keyof GlobalMeasures,
     value: OptionalNumber,
   ) => void;
+  updateState: (newState: MeasuresStoreState) => void;
 }
 
 type MeasuresStore = VersionedMeasuresStoreState & MeasuresStoreActions;
@@ -66,23 +67,20 @@ const createMeasuresStore = (
           set(() => ({
             [property]: value,
           })),
-
         updateKeyMeasure: (keyIndex, property, value) =>
           set((state) => ({
             keys: state.keys.map((spec, index) =>
               index === keyIndex ? { ...spec, [property]: value } : spec,
             ),
           })),
-
         updateKeyMeasures: (keyIndex, keySpec) =>
           set((state) => ({
             keys: state.keys.map((spec, index) =>
               index === keyIndex ? keySpec : spec,
             ),
           })),
-
+        updateState: (newState: MeasuresStoreState) => set(() => newState),
         version: 1,
-
         wippenRadiusWeight: null,
       }),
       {
