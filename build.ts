@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import plugin from 'bun-plugin-tailwind';
 import { existsSync } from 'fs';
+import { cp } from 'fs/promises';
 import { rm } from 'fs/promises';
 import path from 'path';
 
@@ -128,6 +129,8 @@ console.log(
   `📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? 'file' : 'files'} to process\n`,
 );
 
+const appEnv = process.env.APP_ENV ?? 'production';
+
 const result = await Bun.build({
   entrypoints,
   outdir,
@@ -137,9 +140,15 @@ const result = await Bun.build({
   sourcemap: 'linked',
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
+    'process.env.APP_ENV': JSON.stringify(appEnv),
   },
   ...cliConfig,
 });
+
+if (appEnv === 'demo') {
+  console.log('📦 Copying demo-specific files...');
+  await cp('config/deploy/netlify/_redirects', path.join(outdir, '_redirects'));
+}
 
 const end = performance.now();
 
