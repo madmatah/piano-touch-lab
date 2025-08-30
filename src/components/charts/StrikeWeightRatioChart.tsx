@@ -4,7 +4,6 @@ import { type TouchDesignSerie } from './interfaces';
 
 export interface StrikeWeightRatioChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
-  chartHeight: number;
 }
 
 export const StrikeWeightRatioChart = (props: StrikeWeightRatioChartProps) => {
@@ -28,7 +27,6 @@ export const StrikeWeightRatioChart = (props: StrikeWeightRatioChartProps) => {
   return (
     <TouchDesignChart
       title="Strike Weight Ratio"
-      chartHeight={props.chartHeight}
       series={series}
       yAxisName="Strike Weight Ratio"
     />

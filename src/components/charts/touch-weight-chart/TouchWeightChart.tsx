@@ -9,7 +9,6 @@ import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requi
 
 export interface TouchWeightChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
-  chartHeight: number;
 }
 
 const getFrictionChartOptions = (
@@ -17,7 +16,7 @@ const getFrictionChartOptions = (
 ): { series: SeriesOption[] } => ({ series: frictionZonesSeries });
 
 export const TouchWeightChart = (props: TouchWeightChartProps) => {
-  const { analyzedKeyboard, chartHeight } = props;
+  const { analyzedKeyboard } = props;
   const frictionZonesSeries = useFrictionZonesSeries();
   const { downWeight, balanceWeight, upWeight, frictionWeight, verticalLines } =
     useTouchWeightSeries(analyzedKeyboard);
@@ -141,7 +140,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     <div>
       <ReactECharts
         option={option}
-        style={{ height: chartHeight }}
+        style={{ aspectRatio: 1.5, height: 'auto' }}
         lazyUpdate={true}
       />
     </div>
