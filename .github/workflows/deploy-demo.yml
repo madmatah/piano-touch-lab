@@ -16,6 +16,7 @@ jobs:
     environment: demo
     env:
       is_live_deploy: ${{ github.ref == 'refs/heads/main' }}
+      APP_ENV: demo
     steps:
       - name: Checkout
         uses: actions/checkout@v4
