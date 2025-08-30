@@ -1,28 +1,32 @@
-import { frontWeightData } from '@/lib/piano/touch-design/data/front-weights';
 import { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
 
 import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
 import { type TouchDesignSerie } from './interfaces';
-import { useMeasuredSerie } from './hooks/use-measured-serie';
+import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
+import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
+import { useKeyboardSerie } from './hooks/use-keyboard-serie';
+import { useFrontWeightStandardSeries } from './hooks/use-front-weight-standard-series';
 
-export interface FrontWeightChartProps {
+type KeyWithFrontWeight<T> = T & Pick<MeasuredKeyRequirements, 'frontWeight'>;
+
+export interface FrontWeightChartProps<T> {
+  keyboard: KeyboardLike<KeyWith<KeyWithFrontWeight<T>>>;
   defaultFrontWeightLevelsToInclude?: FrontWeightLevel[];
 }
 
-export const FrontWeightChart = (props: FrontWeightChartProps) => {
-  const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
-    useMeasuredSerie((key) => key.frontWeight, 'Measured', {
+export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
+  const { keyboard } = props;
+  const { serie: measuredSerie, isEmpty } = useKeyboardSerie(
+    keyboard,
+    (key) => key.payload.frontWeight,
+    'Front Weight',
+    {
       sharpItemStyle: {
         color: '#333',
       },
       variant: TouchDesignSerieVariant.Measured,
-    });
-
-  const seriesWithBoldVariant = [
-    FrontWeightLevel.Level5,
-    FrontWeightLevel.Level7,
-    FrontWeightLevel.Level9,
-  ];
+    },
+  );
 
   const defaultSeriesToInclude = props.defaultFrontWeightLevelsToInclude ?? [
     FrontWeightLevel.Level5,
@@ -32,17 +36,14 @@ export const FrontWeightChart = (props: FrontWeightChartProps) => {
     FrontWeightLevel.Level9,
   ];
 
+  const defaultSeries = useFrontWeightStandardSeries(
+    keyboard,
+    defaultSeriesToInclude,
+  );
+
   const series: TouchDesignSerie[] = [
-    ...defaultSeriesToInclude.map(
-      (fwLevel): TouchDesignSerie => ({
-        data: frontWeightData[fwLevel],
-        name: `${fwLevel}`,
-        variant: seriesWithBoldVariant.includes(fwLevel)
-          ? TouchDesignSerieVariant.DefaultBold
-          : TouchDesignSerieVariant.Default,
-      }),
-    ),
-    ...(shouldDisplayMeasuredSerie ? [measuredSerie] : []),
+    ...defaultSeries,
+    ...(!isEmpty ? [measuredSerie] : []),
   ].filter((serie) => serie !== undefined);
 
   return (

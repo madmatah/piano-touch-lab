@@ -6,14 +6,9 @@ import type {
   OptionalNumber,
 } from '@/lib/piano/touch-design/measured-key.requirements';
 import { useKeyboard } from './use-keyboard';
-import type {
-  KeyboardLike,
-  KeyboardRequirements,
-  KeyWith,
-} from '@/lib/piano/keyboard';
-import { useMemo } from 'react';
+import type { KeyboardRequirements } from '@/lib/piano/keyboard';
 
-interface MeasuresStoreState {
+export interface MeasuresStoreState {
   keys: MeasuredKeyRequirements[];
   keyWeightRatio: OptionalNumber;
   wippenRadiusWeight: OptionalNumber;
@@ -45,7 +40,7 @@ interface MeasuresStoreActions {
   updateState: (newState: MeasuresStoreState) => void;
 }
 
-type MeasuresStore = VersionedMeasuresStoreState & MeasuresStoreActions;
+export type MeasuresStore = VersionedMeasuresStoreState & MeasuresStoreActions;
 
 const createMeasuresStore = (
   measureProfileName: string,
@@ -130,45 +125,6 @@ export const useGlobalMeasures = (
       wippenRadiusWeight: state.wippenRadiusWeight,
     })),
   );
-};
-
-export const useMeasuredKeyboard = (
-  measureProfileName?: string,
-): KeyboardLike<KeyWith<MeasuredKeyRequirements>> => {
-  const pianoMeasureState = useMeasuresStore(measureProfileName)(
-    useShallow<MeasuresStore, MeasuresStoreState>((state: MeasuresStore) => ({
-      keyWeightRatio: state.keyWeightRatio,
-      keys: state.keys,
-      wippenRadiusWeight: state.wippenRadiusWeight,
-    })),
-  );
-
-  const { keyboard } = useKeyboard();
-  const measuredKeyboard = useMemo(
-    () =>
-      keyboard.map((key) => {
-        const storeIndex = key.number - 1;
-        const wippenRadiusWeight =
-          pianoMeasureState.keys[storeIndex]?.wippenRadiusWeight ??
-          pianoMeasureState.wippenRadiusWeight;
-        const keyWeightRatio =
-          pianoMeasureState.keys[storeIndex]?.keyWeightRatio ??
-          pianoMeasureState.keyWeightRatio;
-
-        const measuredKey: MeasuredKeyRequirements = pianoMeasureState.keys[
-          storeIndex
-        ] as MeasuredKeyRequirements;
-
-        return {
-          ...measuredKey,
-          keyWeightRatio,
-          wippenRadiusWeight,
-        };
-      }),
-    [keyboard, pianoMeasureState],
-  );
-
-  return measuredKeyboard;
 };
 
 export const useMeasureActions = (measureProfileName?: string) => {

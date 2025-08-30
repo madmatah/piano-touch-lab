@@ -4,7 +4,7 @@ import {
   touchWeightAnalyzerRequirementsSymbol,
   type TouchWeightAnalyzerRequirements,
 } from '@/lib/piano/touch-design/touch-weight-analyzer-requirements';
-import { useMeasuredKeyboard } from '@/hooks/use-measure-store';
+import { useMeasuredKeyboard } from './use-measured-keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
 export const useAnalyzedKeyboard = (): TouchWeightAnalyzedKeyboard => {

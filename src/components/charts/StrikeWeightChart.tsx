@@ -1,29 +1,33 @@
-import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
 import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 
 import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
 import { type TouchDesignSerie } from './interfaces';
-import { useMeasuredSerie } from './hooks/use-measured-serie';
+import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
+import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
+import { useKeyboardSerie } from './hooks/use-keyboard-serie';
+import { useStrikeWeightStandardSeries } from './hooks/use-strike-weight-standard-series';
 
-export interface StrikeWeightChartProps {
+type KeyWithStrikeWeight<T> = T & Pick<MeasuredKeyRequirements, 'strikeWeight'>;
+
+export interface StrikeWeightChartProps<T> {
+  keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeight<T>>>;
   defaultHammerWeightLevelsToInclude?: StrikeWeightLevel[];
 }
 
-export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
-  const { measuredSerie, shouldBeDisplayed: shouldDisplayMeasuredSerie } =
-    useMeasuredSerie((key) => key.strikeWeight, 'Measured', {
+export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
+  const { keyboard } = props;
+
+  const { serie: measuredSerie, isEmpty } = useKeyboardSerie(
+    keyboard,
+    (key) => key.payload.strikeWeight,
+    'Strike Weight',
+    {
       sharpItemStyle: {
         color: '#333',
       },
       variant: TouchDesignSerieVariant.Measured,
-    });
-
-  const seriesWithBoldVariant = [
-    StrikeWeightLevel.Level1,
-    StrikeWeightLevel.Level5,
-    StrikeWeightLevel.Level9,
-    StrikeWeightLevel.Level13,
-  ];
+    },
+  );
 
   const defaultSeriesToInclude = props.defaultHammerWeightLevelsToInclude ?? [
     StrikeWeightLevel.Level1,
@@ -41,19 +45,14 @@ export const StrikeWeightChart = (props: StrikeWeightChartProps) => {
     StrikeWeightLevel.Level13,
   ];
 
-  const defaultSeries = defaultSeriesToInclude.map(
-    (hammerLevel): TouchDesignSerie => ({
-      data: strikeWeightData[hammerLevel],
-      name: `${hammerLevel}`,
-      variant: seriesWithBoldVariant.includes(hammerLevel)
-        ? TouchDesignSerieVariant.DefaultBold
-        : TouchDesignSerieVariant.Default,
-    }),
+  const defaultSeries = useStrikeWeightStandardSeries(
+    keyboard,
+    defaultSeriesToInclude,
   );
 
   const series: TouchDesignSerie[] = [
     ...defaultSeries,
-    ...(shouldDisplayMeasuredSerie ? [measuredSerie] : []),
+    ...(!isEmpty ? [measuredSerie] : []),
   ];
 
   return (
