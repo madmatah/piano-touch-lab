@@ -15,7 +15,6 @@ export interface TouchDesignChartProps {
   title: string;
   series: TouchDesignSerie[];
   yAxisName: string;
-  chartHeight: number;
 }
 
 const getEchartSeriePropertiesByVariant = (
@@ -124,7 +123,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
   return (
     <ReactECharts
       option={option}
-      style={{ height: props.chartHeight }}
+      style={{ aspectRatio: 1.5, height: 'auto' }}
       lazyUpdate={true}
     />
   );
