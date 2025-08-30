@@ -6,24 +6,30 @@ import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
 import { useAnalyzedKeyboard } from '../charts/hooks/use-analyzed-keyboard';
 
+const ChartSection = ({ children }: { children: React.ReactNode }) => (
+  <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
+    {children}
+  </section>
+);
+
 export const AnalyzePage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
 
   return (
     <MainLayout pageTitle="Analyze" pageIcon={<ChartLine />}>
       <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 print:grid-cols-1 print:gap-0">
-        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
+        <ChartSection>
           <TouchWeightChart analyzedKeyboard={analyzedKeyboard} />
-        </section>
-        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
+        </ChartSection>
+        <ChartSection>
           <FrontWeightChart />
-        </section>
-        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
+        </ChartSection>
+        <ChartSection>
           <StrikeWeightChart />
-        </section>
-        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
+        </ChartSection>
+        <ChartSection>
           <StrikeWeightRatioChart analyzedKeyboard={analyzedKeyboard} />
-        </section>
+        </ChartSection>
       </div>
     </MainLayout>
   );
