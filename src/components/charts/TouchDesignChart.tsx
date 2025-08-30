@@ -1,5 +1,5 @@
 import { useKeyboard } from '@/hooks/use-keyboard';
-import { KeyColor, type KeyboardRequirements } from '@/lib/piano/keyboard';
+import { KeyColor } from '@/lib/piano/keyboard';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import type { TouchDesignSerie } from './interfaces';
@@ -50,18 +50,14 @@ const getEchartSeriePropertiesByVariant = (
   }
 };
 
-const generateSerieData = (
-  serie: TouchDesignSerie,
-  keyboard: KeyboardRequirements,
-) => {
+const generateSerieData = (serie: TouchDesignSerie) => {
   const sharpItemStyle = serie.sharpItemStyle ?? {};
   const flatItemStyle = serie.flatItemStyle ?? {};
 
-  return serie.data.map((value, index) => {
-    const key = keyboard.getKeyByNumber(index + 1);
+  return serie.data.map((key) => {
     return {
       itemStyle: key?.color === KeyColor.Black ? sharpItemStyle : flatItemStyle,
-      value,
+      value: [key.number, key.payload],
     };
   });
 };
@@ -70,7 +66,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
   const { keyboard } = useKeyboard();
 
   const series = props.series.map((serie) => ({
-    data: generateSerieData(serie, keyboard),
+    data: generateSerieData(serie),
     name: serie.name,
     showSymbol: false,
     smooth: 0.3,
@@ -96,7 +92,12 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     },
     tooltip: {
       axisPointer: {
-        label: { formatter: 'Key {value}' },
+        label: {
+          formatter: ({ value }: { value: number }) => {
+            const key = keyboard.getKeyByNumber(parseInt(value.toString()));
+            return `Key #${value} (${key?.name})`;
+          },
+        },
       },
       trigger: 'axis',
       valueFormatter: (value: number) =>
@@ -105,15 +106,17 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     xAxis: {
       axisLabel: {
         customValues: [
-          ...Array(keyboard.size)
-            .keys()
-            .filter((i) => i == 0 || (i + 1) % 5 === 0 || i == 87),
+          ...keyboard
+            .mapToArray((key) => key.number)
+            .filter((i) => i == 1 || i % 5 === 0 || i == keyboard.size),
         ],
         showMaxLabel: true,
         showMinLabel: true,
       },
       axisTick: { alignWithLabel: true },
-      data: [...keyboard.mapToArray((key) => `${key.number}`)],
+      data: [0, ...keyboard.mapToArray((key) => key.number)],
+      max: keyboard.size,
+      min: 1,
       name: 'Key Number',
       type: 'category',
     },

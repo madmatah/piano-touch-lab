@@ -1,5 +1,4 @@
-import type { TouchDesignSerieVariant } from '../TouchDesignChart';
-import type { TouchDesignSerie } from '../interfaces';
+import type { TouchDesignDataPoint, TouchDesignSerie } from '../interfaces';
 import {
   curveSmootherRequirementsSymbol,
   type CurveSmootherRequirements,
@@ -11,25 +10,27 @@ import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level'
 import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
 
 export const useSmoothedSerieLsr = (
-  serie: (number | undefined)[],
-  name: string,
-  variant: TouchDesignSerieVariant,
-): TouchDesignSerie | undefined => {
+  inputSerie: TouchDesignSerie,
+): TouchDesignSerie => {
   const lsrSmoother = useNamedInjection<
     CurveSmootherRequirements<CurveSmootherLeastSquaresRegressionOptions>
   >(curveSmootherRequirementsSymbol, SmoothStrategy.LEAST_SQUARES_REGRESSION);
 
-  if (!serie.some((v) => v !== undefined)) {
-    return undefined;
-  }
+  const inputData = inputSerie.data.map((dataPoint) => dataPoint.payload);
 
-  const smoothedData = lsrSmoother.smoothCurve(serie, {
+  const smoothedData = lsrSmoother.smoothCurve(inputData, {
     referenceCurve: strikeWeightData[StrikeWeightLevel.Level5],
   });
 
+  const outputData: TouchDesignDataPoint[] = inputSerie.data.map(
+    (dataPoint, index) => ({
+      ...dataPoint,
+      payload: smoothedData[index],
+    }),
+  );
+
   return {
-    data: smoothedData,
-    name,
-    variant,
+    ...inputSerie,
+    data: outputData,
   };
 };

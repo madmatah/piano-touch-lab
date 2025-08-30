@@ -1,5 +1,4 @@
-import type { TouchDesignSerieVariant } from '../TouchDesignChart';
-import type { TouchDesignSerie } from '../interfaces';
+import type { TouchDesignDataPoint, TouchDesignSerie } from '../interfaces';
 import {
   curveSmootherRequirementsSymbol,
   type CurveSmootherRequirements,
@@ -9,25 +8,27 @@ import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.en
 import { useNamedInjection } from '@/hooks/use-named-injection';
 
 export const useSmoothedSerieLoess = (
-  serie: (number | undefined)[],
-  name: string,
-  variant: TouchDesignSerieVariant,
-): TouchDesignSerie | undefined => {
+  inputSerie: TouchDesignSerie,
+): TouchDesignSerie => {
   const loessSmoother = useNamedInjection<
     CurveSmootherRequirements<CurveSmootherLoessOptions>
   >(curveSmootherRequirementsSymbol, SmoothStrategy.LOESS);
 
-  if (!serie.some((v) => v !== undefined)) {
-    return undefined;
-  }
+  const inputData = inputSerie.data.map((dataPoint) => dataPoint.payload);
 
-  const smoothedData = loessSmoother.smoothCurve(serie, {
+  const smoothedData = loessSmoother.smoothCurve(inputData, {
     bandwidthFraction: 1,
   });
 
+  const outputData: TouchDesignDataPoint[] = inputSerie.data.map(
+    (dataPoint, index) => ({
+      ...dataPoint,
+      payload: smoothedData[index],
+    }),
+  );
+
   return {
-    data: smoothedData,
-    name,
-    variant,
+    ...inputSerie,
+    data: outputData,
   };
 };

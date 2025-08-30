@@ -1,33 +1,36 @@
-import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
+import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
-import { type TouchDesignSerie } from './interfaces';
+import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
+import { useKeyboardSerie } from './hooks/use-keyboard-serie';
 
-export interface StrikeWeightRatioChartProps {
-  analyzedKeyboard: TouchWeightAnalyzedKeyboard;
+type KeyWithStrikeWeightRatio<T> = T &
+  Pick<TouchWeightKeyAnalysis, 'strikeWeightRatio'>;
+
+export interface StrikeWeightRatioChartProps<T> {
+  keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeightRatio<T>>>;
 }
 
-export const StrikeWeightRatioChart = (props: StrikeWeightRatioChartProps) => {
-  const { analyzedKeyboard } = props;
+export const StrikeWeightRatioChart = <T,>(
+  props: StrikeWeightRatioChartProps<T>,
+) => {
+  const { keyboard } = props;
 
-  const strikeWeightRatio = analyzedKeyboard.mapToArray<number | undefined>(
-    (key) => key.payload.strikeWeightRatio ?? undefined,
-  );
-
-  const series: TouchDesignSerie[] = [
+  const { serie: measuredSerie, isEmpty } = useKeyboardSerie(
+    keyboard,
+    (key) => key.payload.strikeWeightRatio,
+    'Strike Weight Ratio',
     {
-      data: strikeWeightRatio,
-      name: 'Strike Weight Ratio',
       sharpItemStyle: {
         color: '#333',
       },
       variant: TouchDesignSerieVariant.Measured,
     },
-  ];
+  );
 
   return (
     <TouchDesignChart
       title="Strike Weight Ratio"
-      series={series}
+      series={!isEmpty ? [measuredSerie] : []}
       yAxisName="Strike Weight Ratio"
     />
   );
