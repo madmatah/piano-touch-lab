@@ -12,16 +12,16 @@ export const AnalyzePage = () => {
   return (
     <MainLayout pageTitle="Analyze" pageIcon={<ChartLine />}>
       <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 print:grid-cols-1 print:gap-0">
-        <section>
+        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
           <TouchWeightChart analyzedKeyboard={analyzedKeyboard} />
         </section>
-        <section>
+        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
           <FrontWeightChart />
         </section>
-        <section>
+        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
           <StrikeWeightChart />
         </section>
-        <section>
+        <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
           <StrikeWeightRatioChart analyzedKeyboard={analyzedKeyboard} />
         </section>
       </div>

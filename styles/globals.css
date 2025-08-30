@@ -141,3 +141,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @media print {
+    [data-slot='sidebar'] {
+      display: none;
+    }
+  }
+}
