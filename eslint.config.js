@@ -25,7 +25,7 @@ export default tseslint.config(
   {
     ignores: [
       './build.ts',
-      './test/',
+      './config/',
       './src/components/ui/**/*.tsx',
       './dist/**',
       './bun-env.d.ts',
