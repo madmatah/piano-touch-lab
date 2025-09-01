@@ -6,29 +6,35 @@ import {
 import type { CurveSmootherLoessOptions } from '@/lib/geometry/curve-smoother/curve-smoother-loess';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { useNamedInjection } from '@/hooks/use-named-injection';
+import { useCallback } from 'react';
 
 export const useSmoothedSerieLoess = (
-  inputSerie: TouchDesignSerie,
-): TouchDesignSerie => {
+  options: CurveSmootherLoessOptions = {
+    bandwidthFraction: 1,
+  },
+) => {
   const loessSmoother = useNamedInjection<
     CurveSmootherRequirements<CurveSmootherLoessOptions>
   >(curveSmootherRequirementsSymbol, SmoothStrategy.LOESS);
 
-  const inputData = inputSerie.data.map((dataPoint) => dataPoint.payload);
+  const smoothLoess = useCallback(
+    (inputSerie: TouchDesignSerie) => {
+      const inputData = inputSerie.data.map((dataPoint) => dataPoint.payload);
+      const smoothedData = loessSmoother.smoothCurve(inputData, options);
+      const outputData: TouchDesignDataPoint[] = inputSerie.data.map(
+        (dataPoint, index) => ({
+          ...dataPoint,
+          payload: smoothedData[index],
+        }),
+      );
 
-  const smoothedData = loessSmoother.smoothCurve(inputData, {
-    bandwidthFraction: 1,
-  });
-
-  const outputData: TouchDesignDataPoint[] = inputSerie.data.map(
-    (dataPoint, index) => ({
-      ...dataPoint,
-      payload: smoothedData[index],
-    }),
+      return {
+        ...inputSerie,
+        data: outputData,
+      };
+    },
+    [loessSmoother, options],
   );
 
-  return {
-    ...inputSerie,
-    data: outputData,
-  };
+  return { smoothLoess };
 };
