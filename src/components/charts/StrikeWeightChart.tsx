@@ -40,21 +40,25 @@ export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
     [isSerieEmpty, measuredSerie],
   );
 
-  const defaultSeriesToInclude = props.defaultHammerWeightLevelsToInclude ?? [
-    StrikeWeightLevel.Level1,
-    StrikeWeightLevel.Level2,
-    StrikeWeightLevel.Level3,
-    StrikeWeightLevel.Level4,
-    StrikeWeightLevel.Level5,
-    StrikeWeightLevel.Level6,
-    StrikeWeightLevel.Level7,
-    StrikeWeightLevel.Level8,
-    StrikeWeightLevel.Level9,
-    StrikeWeightLevel.Level10,
-    StrikeWeightLevel.Level11,
-    StrikeWeightLevel.Level12,
-    StrikeWeightLevel.Level13,
-  ];
+  const defaultSeriesToInclude = useMemo(
+    () =>
+      props.defaultHammerWeightLevelsToInclude ?? [
+        StrikeWeightLevel.Level1,
+        StrikeWeightLevel.Level2,
+        StrikeWeightLevel.Level3,
+        StrikeWeightLevel.Level4,
+        StrikeWeightLevel.Level5,
+        StrikeWeightLevel.Level6,
+        StrikeWeightLevel.Level7,
+        StrikeWeightLevel.Level8,
+        StrikeWeightLevel.Level9,
+        StrikeWeightLevel.Level10,
+        StrikeWeightLevel.Level11,
+        StrikeWeightLevel.Level12,
+        StrikeWeightLevel.Level13,
+      ],
+    [props.defaultHammerWeightLevelsToInclude],
+  );
 
   const defaultSeries: TouchDesignSerie[] = useStrikeWeightStandardSeries(
     keyboard,

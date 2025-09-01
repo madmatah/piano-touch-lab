@@ -37,13 +37,17 @@ export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
     [isSerieEmpty, measuredSerie],
   );
 
-  const defaultSeriesToInclude = props.defaultFrontWeightLevelsToInclude ?? [
-    FrontWeightLevel.Level5,
-    FrontWeightLevel.Level6,
-    FrontWeightLevel.Level7,
-    FrontWeightLevel.Level8,
-    FrontWeightLevel.Level9,
-  ];
+  const defaultSeriesToInclude = useMemo(
+    () =>
+      props.defaultFrontWeightLevelsToInclude ?? [
+        FrontWeightLevel.Level5,
+        FrontWeightLevel.Level6,
+        FrontWeightLevel.Level7,
+        FrontWeightLevel.Level8,
+        FrontWeightLevel.Level9,
+      ],
+    [props.defaultFrontWeightLevelsToInclude],
+  );
 
   const defaultSeries = useFrontWeightStandardSeries(
     keyboard,
