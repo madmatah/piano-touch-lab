@@ -6,31 +6,35 @@ import {
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { useNamedInjection } from '@/hooks/use-named-injection';
 import type { CurveSmootherLeastSquaresRegressionOptions } from '@/lib/geometry/curve-smoother/curve-smoother-least-squares-regression';
-import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
-import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
+import { useCallback } from 'react';
 
 export const useSmoothedSerieLsr = (
-  inputSerie: TouchDesignSerie,
-): TouchDesignSerie => {
+  options: CurveSmootherLeastSquaresRegressionOptions,
+) => {
   const lsrSmoother = useNamedInjection<
     CurveSmootherRequirements<CurveSmootherLeastSquaresRegressionOptions>
   >(curveSmootherRequirementsSymbol, SmoothStrategy.LEAST_SQUARES_REGRESSION);
 
-  const inputData = inputSerie.data.map((dataPoint) => dataPoint.payload);
+  const smoothLsr = useCallback(
+    (inputSerie: TouchDesignSerie) => {
+      const inputData = inputSerie.data.map((dataPoint) => dataPoint.payload);
 
-  const smoothedData = lsrSmoother.smoothCurve(inputData, {
-    referenceCurve: strikeWeightData[StrikeWeightLevel.Level5],
-  });
+      const smoothedData = lsrSmoother.smoothCurve(inputData, options);
 
-  const outputData: TouchDesignDataPoint[] = inputSerie.data.map(
-    (dataPoint, index) => ({
-      ...dataPoint,
-      payload: smoothedData[index],
-    }),
+      const outputData: TouchDesignDataPoint[] = inputSerie.data.map(
+        (dataPoint, index) => ({
+          ...dataPoint,
+          payload: smoothedData[index],
+        }),
+      );
+
+      return {
+        ...inputSerie,
+        data: outputData,
+      };
+    },
+    [lsrSmoother, options],
   );
 
-  return {
-    ...inputSerie,
-    data: outputData,
-  };
+  return { smoothLsr };
 };

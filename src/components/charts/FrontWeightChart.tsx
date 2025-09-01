@@ -4,8 +4,9 @@ import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
 import { type TouchDesignSerie } from './interfaces';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
-import { useKeyboardSerie } from './hooks/use-keyboard-serie';
 import { useFrontWeightStandardSeries } from './hooks/use-front-weight-standard-series';
+import { useGenerateSerie } from './hooks/use-generate-serie';
+import { useMemo } from 'react';
 
 type KeyWithFrontWeight<T> = T & Pick<MeasuredKeyRequirements, 'frontWeight'>;
 
@@ -16,16 +17,24 @@ export interface FrontWeightChartProps<T> {
 
 export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
   const { keyboard } = props;
-  const { serie: measuredSerie, isEmpty } = useKeyboardSerie(
-    keyboard,
-    (key) => key.payload.frontWeight,
-    'Front Weight',
-    {
-      sharpItemStyle: {
-        color: '#333',
-      },
-      variant: TouchDesignSerieVariant.Measured,
-    },
+  const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
+  const measuredSerie = useMemo(
+    () =>
+      generateSerie(
+        (key) => key.payload.frontWeight,
+        'Front Weight',
+        TouchDesignSerieVariant.Measured,
+        {
+          sharpItemStyle: {
+            color: '#333',
+          },
+        },
+      ),
+    [generateSerie],
+  );
+  const isEmpty = useMemo(
+    () => isSerieEmpty(measuredSerie),
+    [isSerieEmpty, measuredSerie],
   );
 
   const defaultSeriesToInclude = props.defaultFrontWeightLevelsToInclude ?? [

@@ -1,7 +1,8 @@
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
-import { useKeyboardSerie } from './hooks/use-keyboard-serie';
+import { useMemo } from 'react';
+import { useGenerateSerie } from './hooks/use-generate-serie';
 
 type KeyWithStrikeWeightRatio<T> = T &
   Pick<TouchWeightKeyAnalysis, 'strikeWeightRatio'>;
@@ -15,16 +16,24 @@ export const StrikeWeightRatioChart = <T,>(
 ) => {
   const { keyboard } = props;
 
-  const { serie: measuredSerie, isEmpty } = useKeyboardSerie(
-    keyboard,
-    (key) => key.payload.strikeWeightRatio,
-    'Strike Weight Ratio',
-    {
-      sharpItemStyle: {
-        color: '#333',
-      },
-      variant: TouchDesignSerieVariant.Measured,
-    },
+  const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
+  const measuredSerie = useMemo(
+    () =>
+      generateSerie(
+        (key) => key.payload.strikeWeightRatio,
+        'Strike Weight Ratio',
+        TouchDesignSerieVariant.Measured,
+        {
+          sharpItemStyle: {
+            color: '#333',
+          },
+        },
+      ),
+    [generateSerie],
+  );
+  const isEmpty = useMemo(
+    () => isSerieEmpty(measuredSerie),
+    [isSerieEmpty, measuredSerie],
   );
 
   return (

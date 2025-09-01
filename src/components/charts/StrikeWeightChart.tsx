@@ -4,29 +4,40 @@ import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
 import { type TouchDesignSerie } from './interfaces';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
-import { useKeyboardSerie } from './hooks/use-keyboard-serie';
 import { useStrikeWeightStandardSeries } from './hooks/use-strike-weight-standard-series';
+import { useMemo } from 'react';
+import { useGenerateSerie } from './hooks/use-generate-serie';
 
 type KeyWithStrikeWeight<T> = T & Pick<MeasuredKeyRequirements, 'strikeWeight'>;
 
 export interface StrikeWeightChartProps<T> {
   keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeight<T>>>;
   defaultHammerWeightLevelsToInclude?: StrikeWeightLevel[];
+  targetSerie?: TouchDesignSerie;
 }
 
 export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
   const { keyboard } = props;
 
-  const { serie: measuredSerie, isEmpty } = useKeyboardSerie(
-    keyboard,
-    (key) => key.payload.strikeWeight,
-    'Strike Weight',
-    {
-      sharpItemStyle: {
-        color: '#333',
-      },
-      variant: TouchDesignSerieVariant.Measured,
-    },
+  const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
+  const measuredSerie = useMemo(
+    () =>
+      generateSerie(
+        (key) => key.payload.strikeWeight,
+        'Strike Weight',
+        TouchDesignSerieVariant.Measured,
+        {
+          sharpItemStyle: {
+            color: '#333',
+          },
+        },
+      ),
+    [generateSerie],
+  );
+
+  const isEmpty = useMemo(
+    () => isSerieEmpty(measuredSerie),
+    [isSerieEmpty, measuredSerie],
   );
 
   const defaultSeriesToInclude = props.defaultHammerWeightLevelsToInclude ?? [
@@ -45,15 +56,19 @@ export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
     StrikeWeightLevel.Level13,
   ];
 
-  const defaultSeries = useStrikeWeightStandardSeries(
+  const defaultSeries: TouchDesignSerie[] = useStrikeWeightStandardSeries(
     keyboard,
     defaultSeriesToInclude,
   );
 
-  const series: TouchDesignSerie[] = [
-    ...defaultSeries,
-    ...(!isEmpty ? [measuredSerie] : []),
-  ];
+  const series: TouchDesignSerie[] = useMemo(
+    () => [
+      ...defaultSeries,
+      ...(props.targetSerie ? [props.targetSerie] : []),
+      ...(!isEmpty ? [measuredSerie] : []),
+    ],
+    [defaultSeries, props.targetSerie, isEmpty, measuredSerie],
+  );
 
   return (
     <TouchDesignChart
