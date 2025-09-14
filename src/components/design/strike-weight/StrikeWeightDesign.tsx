@@ -19,6 +19,7 @@ import {} from '@/hooks/use-design-store';
 import { useStrikeWeightTargetSelector } from './hooks/use-strike-weight-target-selector';
 import { useStrikeWeightTargetSerie } from './hooks/use-strike-weight-target-serie';
 import { useStrikeWeightRecommendation } from './hooks/use-strike-weight-recommendation';
+import { useTranslation } from '@/hooks/use-translation';
 
 const standardCurveTargets: TargetSelectorTarget<StrikeWeightLevel>[] =
   Object.values(StrikeWeightLevel).map((level) => ({
@@ -26,22 +27,12 @@ const standardCurveTargets: TargetSelectorTarget<StrikeWeightLevel>[] =
     value: level,
   }));
 
-const smoothCurveTargets: TargetSelectorTarget<SmoothStrategy>[] = [
-  {
-    label: 'Smoothed with Least Squares Regression',
-    value: SmoothStrategy.LEAST_SQUARES_REGRESSION,
-  },
-  {
-    label: 'Smoothed with LOESS',
-    value: SmoothStrategy.LOESS,
-  },
-];
-
 export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   requiredDataPercentage,
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
+  const { t } = useTranslation();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const {
     strikeWeightDesignMode,
@@ -60,6 +51,16 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     strikeWeightDesignMode,
     strikeWeightDesignTarget,
   );
+  const smoothCurveTargets: TargetSelectorTarget<SmoothStrategy>[] = [
+    {
+      label: t('Smoothed with Least Squares Regression'),
+      value: SmoothStrategy.LEAST_SQUARES_REGRESSION,
+    },
+    {
+      label: t('Smoothed with LOESS'),
+      value: SmoothStrategy.LOESS,
+    },
+  ];
 
   const hasEnoughData =
     analyzedKeyboard
@@ -82,20 +83,21 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     StrikeWeightDesignTarget
   >[] = [
     {
-      description: 'Choose a target from the standard strike weight curves.',
-      label: 'Use standard curves',
+      description: t('Choose a target from the standard strike weight curves.'),
+      label: t('Use standard curves'),
       options: {
-        placeholder: 'Select your target curve',
+        placeholder: t('Select your target curve'),
         targets: standardCurveTargets,
       },
       value: StrikeWeightDesignMode.STANDARD_CURVES,
     },
     {
-      description:
+      description: t(
         'Create a custom smoothed curve based on your measured strike weight data.',
-      label: 'Generate a smoothed curve',
+      ),
+      label: t('Generate a smoothed curve'),
       options: {
-        placeholder: 'Select your smoothing algorithm',
+        placeholder: t('Select your smoothing algorithm'),
         targets: smoothCurveTargets,
       },
       value: StrikeWeightDesignMode.SMOOTHED,
@@ -107,7 +109,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
       <div className="flex flex-col gap-1 items-center">
         <div className="w-full max-w-[1000px]">
           <TargetSelector
-            title="Target selection"
+            title={t('Target selection')}
             modes={targetSelectorModes}
             selectedMode={strikeWeightDesignMode}
             selectedTarget={strikeWeightDesignTarget}

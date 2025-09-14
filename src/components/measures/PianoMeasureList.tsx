@@ -10,10 +10,12 @@ import {
   DEFAULT_WIPPEN_RADIUS_WEIGHT,
 } from '@/lib/piano/touch-design/constants';
 import Joi from 'joi';
+import { useTranslation } from '@/hooks/use-translation';
 
 export const PianoMeasureList = () => {
   const pianoGlobalMeasures = useGlobalMeasures();
   const { updateGlobalMeasure } = useMeasureActions();
+  const { t } = useTranslation();
 
   const onUpdateKeyRatio = useCallback(
     (value: OptionalNumber) => {
@@ -32,7 +34,7 @@ export const PianoMeasureList = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-row gap-10 flex-wrap items-center hover:bg-purple-50 p-2 px-3 max-w-fit">
-        <h3 className="text-sm font-bold w-40">Key weight ratio</h3>
+        <h3 className="text-sm font-bold w-40">{t('Key weight ratio')}</h3>
         <div>
           <MeasureInputField
             className="w-15"
@@ -45,7 +47,7 @@ export const PianoMeasureList = () => {
       </div>
 
       <div className="flex flex-row gap-10 flex-wrap items-center hover:bg-purple-50 p-2 px-3 max-w-fit">
-        <h3 className="text-sm font-bold w-40">Wippen radius weight</h3>
+        <h3 className="text-sm font-bold w-40">{t('Wippen radius weight')}</h3>
         <div>
           <MeasureInputField
             className="w-15"

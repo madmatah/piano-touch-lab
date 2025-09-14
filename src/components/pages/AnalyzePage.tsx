@@ -5,6 +5,7 @@ import { ChartLine } from 'lucide-react';
 import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
 import { useAnalyzedKeyboard } from '../../hooks/use-analyzed-keyboard';
+import { useTranslation } from '@/hooks/use-translation';
 
 const ChartSection = ({ children }: { children: React.ReactNode }) => (
   <section className="print:break-inside-avoid print:page-break-after-always print:flex print:flex-col print:justify-center">
@@ -14,9 +15,10 @@ const ChartSection = ({ children }: { children: React.ReactNode }) => (
 
 export const AnalyzePage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
+  const { t } = useTranslation();
 
   return (
-    <MainLayout pageTitle="Analyze" pageIcon={<ChartLine />}>
+    <MainLayout pageTitle={t('Analyze')} pageIcon={<ChartLine />}>
       <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 print:grid-cols-1 print:gap-0">
         <ChartSection>
           <TouchWeightChart analyzedKeyboard={analyzedKeyboard} />
