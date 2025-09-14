@@ -8,6 +8,9 @@ import {
   SelectValue,
 } from '../ui/select';
 import { RadioItem } from '../app-ui/RadioGroupItem';
+import { ValueSelector } from '../app-ui/value-selector/ValueSelector';
+
+type TargetSelectorUi = 'value-selector' | 'html-select';
 
 export interface TargetSelectorTarget<Target> {
   value: Target;
@@ -21,6 +24,7 @@ export interface TargetSelectorMode<Mode, Target> {
   options: {
     placeholder: string;
     targets: TargetSelectorTarget<Target>[];
+    selectorUi: TargetSelectorUi;
   };
 }
 
@@ -86,24 +90,36 @@ export const TargetSelector = <Mode extends string, Target extends string>(
           </div>
         )}
         {selectedMode && (
-          <div className="mt-4">
-            <Select
-              value={selectedTarget?.value || ''}
-              onValueChange={onTargetChange}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={selectedMode.options.placeholder}>
-                  {selectedTarget?.label}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {selectedMode.options.targets.map((target) => (
-                  <SelectItem key={target.value} value={target.value}>
-                    {target.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="mt-4 flex justify-center">
+            {selectedMode.options.selectorUi === 'html-select' && (
+              <Select
+                value={selectedTarget?.value || ''}
+                onValueChange={onTargetChange}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={selectedMode.options.placeholder}>
+                    {selectedTarget?.label}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {selectedMode.options.targets.map((target) => (
+                    <SelectItem key={target.value} value={target.value}>
+                      {target.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {selectedMode.options.selectorUi === 'value-selector' && (
+              <ValueSelector
+                currentValue={selectedTarget?.value}
+                onChange={onTargetChange}
+                values={selectedMode.options.targets.map((target) => ({
+                  label: target.label,
+                  value: target.value,
+                }))}
+              />
+            )}
           </div>
         )}
       </CardContent>

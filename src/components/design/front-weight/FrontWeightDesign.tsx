@@ -76,6 +76,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
       label: t('Use standard curves'),
       options: {
         placeholder: t('Select your target curve'),
+        selectorUi: 'value-selector',
         targets: standardCurveTargets,
       },
       value: FrontWeightDesignMode.STANDARD_CURVES,
