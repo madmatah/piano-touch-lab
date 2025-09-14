@@ -7,6 +7,7 @@ import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-
 import { useStrikeWeightStandardSeries } from './hooks/use-strike-weight-standard-series';
 import { useMemo } from 'react';
 import { useGenerateSerie } from './hooks/use-generate-serie';
+import { useTranslation } from '@/hooks/use-translation';
 
 type KeyWithStrikeWeight<T> = T & Pick<MeasuredKeyRequirements, 'strikeWeight'>;
 
@@ -18,13 +19,13 @@ export interface StrikeWeightChartProps<T> {
 
 export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
   const { keyboard } = props;
-
+  const { t } = useTranslation();
   const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
   const measuredSerie = useMemo(
     () =>
       generateSerie(
         (key) => key.payload.strikeWeight,
-        'Strike Weight',
+        t('Strike Weight'),
         TouchDesignSerieVariant.Measured,
         {
           sharpItemStyle: {
@@ -32,7 +33,7 @@ export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
           },
         },
       ),
-    [generateSerie],
+    [generateSerie, t],
   );
 
   const isEmpty = useMemo(
@@ -76,9 +77,9 @@ export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
 
   return (
     <TouchDesignChart
-      title="Strike Weight"
+      title={t('Strike Weight')}
       series={series}
-      yAxisName="Strike Weight"
+      yAxisName={t('Strike Weight')}
     />
   );
 };

@@ -1,14 +1,17 @@
 import { Glossary } from '../glossary/Glossary';
 import { MainLayout } from '../MainLayout';
 import { BadgeQuestionMark } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export const HelpPage = () => {
+  const { t } = useTranslation();
+
   return (
-    <MainLayout pageTitle="Help" pageIcon={<BadgeQuestionMark />}>
+    <MainLayout pageTitle={t('Help')} pageIcon={<BadgeQuestionMark />}>
       <div className="flex flex-col gap-20">
         <section>
           <h2 className="scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0">
-            Touch Weight Metrology cheat sheet
+            {t('Touch Weight Metrology cheat sheet')}
           </h2>
 
           <Glossary

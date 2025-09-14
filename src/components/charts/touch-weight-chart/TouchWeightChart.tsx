@@ -6,6 +6,7 @@ import { useTouchWeightSeries } from './hooks/use-touch-weight-series';
 import type { SeriesOption } from 'echarts';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
+import { useTranslation } from '@/hooks/use-translation';
 
 export interface TouchWeightChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
@@ -17,6 +18,7 @@ const getFrictionChartOptions = (
 
 export const TouchWeightChart = (props: TouchWeightChartProps) => {
   const { analyzedKeyboard } = props;
+  const { t } = useTranslation();
   const frictionZonesSeries = useFrictionZonesSeries();
   const { downWeight, balanceWeight, upWeight, frictionWeight, verticalLines } =
     useTouchWeightSeries(analyzedKeyboard);
@@ -48,18 +50,18 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     legend: {
       bottom: 20,
       data: [
-        'Down Weight',
-        'Balance Weight',
-        'Up Weight',
-        'Friction Weight',
-        'Zone',
+        t('Down Weight'),
+        t('Balance Weight'),
+        t('Up Weight'),
+        t('Friction Weight'),
+        t('Zone'),
       ],
     },
     series: [
       {
         color: '#5470c6',
         data: downWeight.map(toStyledDataItem),
-        name: 'Down Weight',
+        name: t('Down Weight'),
         symbol: 'triangle',
         symbolRotate: 180,
         symbolSize: 10,
@@ -68,7 +70,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
       {
         color: '#5470c6',
         data: balanceWeight.map(toStyledDataItem),
-        name: 'Balance Weight',
+        name: t('Balance Weight'),
         symbol: 'diamond',
         symbolSize: 12,
         type: 'scatter',
@@ -76,7 +78,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
       {
         color: '#5470c6',
         data: upWeight.map(toStyledDataItem),
-        name: 'Up Weight',
+        name: t('Up Weight'),
 
         symbol: 'triangle',
         symbolSize: 10,
@@ -88,7 +90,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
           color: '#ea7ccc',
           opacity: 0.7,
         },
-        name: 'Friction Weight',
+        name: t('Friction Weight'),
         symbolSize: 9,
         type: 'scatter',
       },
@@ -99,7 +101,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
           color: '#ccc',
           width: 1,
         },
-        name: 'Weight Range',
+        name: t('Weight Range'),
         silent: true,
         type: 'lines',
       },
@@ -107,7 +109,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     ],
     title: {
       left: 'center',
-      text: 'Touch Weight',
+      text: t('Touch Weight'),
     },
     tooltip: {
       axisPointer: {
@@ -123,14 +125,14 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     xAxis: {
       max: 88,
       min: 0,
-      name: 'Note',
+      name: t('Note'),
       type: 'value',
     },
     yAxis: [
       {
         max: maxDownWeight,
         min: 0,
-        name: 'Weight in Grams',
+        name: t('Weight in Grams'),
         type: 'value',
       },
     ],

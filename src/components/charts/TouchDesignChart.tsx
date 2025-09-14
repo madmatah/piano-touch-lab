@@ -3,6 +3,7 @@ import { KeyColor } from '@/lib/piano/keyboard';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import type { TouchDesignSerie } from './interfaces';
+import { useTranslation } from '@/hooks/use-translation';
 
 export enum TouchDesignSerieVariant {
   DefaultBold = 1,
@@ -64,7 +65,7 @@ const generateSerieData = (serie: TouchDesignSerie) => {
 
 export const TouchDesignChart = (props: TouchDesignChartProps) => {
   const { keyboard } = useKeyboard();
-
+  const { t } = useTranslation();
   const series = props.series.map((serie) => ({
     data: generateSerieData(serie),
     name: serie.name,
@@ -117,7 +118,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
       data: [0, ...keyboard.mapToArray((key) => key.number)],
       max: keyboard.size,
       min: 1,
-      name: 'Key Number',
+      name: t('Key Number'),
       type: 'category',
     },
     yAxis: { name: props.yAxisName, type: 'value' },

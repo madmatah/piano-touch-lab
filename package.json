@@ -8,6 +8,7 @@
     "dev": "bun --hot src/index.tsx",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
+    "i18nparse": "i18next --config config/i18next-parser.config.cjs",
     "lint": "bunx eslint && bun format:check",
     "start": "NODE_ENV=production bun src/index.tsx",
     "test:watch": "bun test --watch",
@@ -35,6 +36,8 @@
     "date-fns": "^4.1.0",
     "echarts": "^6.0.0",
     "echarts-for-react": "^3.0.2",
+    "i18next": "^25.5.2",
+    "i18next-browser-languagedetector": "^8.2.0",
     "inversify": "^7.7.1",
     "inversify-react": "^1.2.0",
     "joi": "^18.0.0",
@@ -43,6 +46,7 @@
     "react": "^19",
     "react-dom": "^19",
     "react-hook-form": "^7.62.0",
+    "react-i18next": "^15.7.3",
     "react-router-dom": "^7.8.0",
     "reflect-metadata": "^0.2.2",
     "sonner": "^2.0.7",
@@ -66,6 +70,7 @@
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
+    "i18next-parser": "^9.3.0",
     "prettier": "^3.3.3",
     "typescript-eslint": "^8.39.0"
   }

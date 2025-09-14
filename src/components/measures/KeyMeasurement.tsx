@@ -12,6 +12,7 @@ import {
   ArrowUpFromLine,
   Hammer,
 } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export interface KeyMeasurementProps {
   keyNumber: number;
@@ -23,6 +24,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   const keyIndex = keyNumber - 1;
   const keySpec = useMeasuredKey(keyIndex, 'default');
   const { updateKeyMeasure } = useMeasureActions('default');
+  const { t } = useTranslation();
 
   const onUpdateKeyProperty = useCallback(
     (keyProperty: keyof MeasuredKeyRequirements) => (value: OptionalNumber) => {
@@ -54,7 +56,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       tooltip: (
         <div className="flex items-center gap-2">
           <ArrowDownToLine className="w-3 h-3 stroke-3" />
-          Down Weight (g)
+          {t('Down Weight (g)')}
         </div>
       ),
     },
@@ -63,7 +65,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       tooltip: (
         <div className="flex items-center gap-2">
           <ArrowDownFromLine className="w-3 h-3 stroke-3" />
-          Front Weight (g)
+          {t('Front Weight (g)')}
         </div>
       ),
     },
@@ -72,7 +74,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       tooltip: (
         <div className="flex items-center gap-2">
           <Hammer className="w-3 h-3 stroke-3" />
-          Strike Weight (g)
+          {t('Strike Weight (g)')}
         </div>
       ),
     },
@@ -81,7 +83,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       tooltip: (
         <div className="flex items-center gap-2">
           <ArrowUpFromLine className="w-3 h-3 stroke-3" />
-          Up Weight (g)
+          {t('Up Weight (g)')}
         </div>
       ),
     },

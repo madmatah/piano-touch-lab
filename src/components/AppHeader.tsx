@@ -2,6 +2,7 @@ import { Separator } from './ui/separator';
 import { useSidebar } from './ui/sidebar';
 import { AppSidebarTrigger } from './navigation/AppSidebarTrigger';
 import React, { type ReactElement } from 'react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export interface AppHeaderProps {
   title?: string;
@@ -10,6 +11,7 @@ export interface AppHeaderProps {
 
 export const AppHeader = ({ title, icon }: AppHeaderProps) => {
   const { isMobile } = useSidebar();
+  const { t } = useTranslation();
   const iconElement =
     icon && React.isValidElement(icon)
       ? React.cloneElement(icon, {
@@ -32,7 +34,7 @@ export const AppHeader = ({ title, icon }: AppHeaderProps) => {
               </>
             ) : null}
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-medium">Piano Touch Lab</h1>
+              <h1 className="text-base font-medium">{t('Piano Touch Lab')}</h1>
             </div>
           </div>
         </div>

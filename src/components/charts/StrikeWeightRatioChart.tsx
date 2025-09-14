@@ -3,6 +3,7 @@ import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import { useMemo } from 'react';
 import { useGenerateSerie } from './hooks/use-generate-serie';
+import { useTranslation } from '@/hooks/use-translation';
 
 type KeyWithStrikeWeightRatio<T> = T &
   Pick<TouchWeightKeyAnalysis, 'strikeWeightRatio'>;
@@ -15,13 +16,13 @@ export const StrikeWeightRatioChart = <T,>(
   props: StrikeWeightRatioChartProps<T>,
 ) => {
   const { keyboard } = props;
-
+  const { t } = useTranslation();
   const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
   const measuredSerie = useMemo(
     () =>
       generateSerie(
         (key) => key.payload.strikeWeightRatio,
-        'Strike Weight Ratio',
+        t('Strike Weight Ratio'),
         TouchDesignSerieVariant.Measured,
         {
           sharpItemStyle: {
@@ -29,7 +30,7 @@ export const StrikeWeightRatioChart = <T,>(
           },
         },
       ),
-    [generateSerie],
+    [generateSerie, t],
   );
   const isEmpty = useMemo(
     () => isSerieEmpty(measuredSerie),
@@ -38,9 +39,9 @@ export const StrikeWeightRatioChart = <T,>(
 
   return (
     <TouchDesignChart
-      title="Strike Weight Ratio"
+      title={t('Strike Weight Ratio')}
       series={!isEmpty ? [measuredSerie] : []}
-      yAxisName="Strike Weight Ratio"
+      yAxisName={t('Strike Weight Ratio')}
     />
   );
 };
