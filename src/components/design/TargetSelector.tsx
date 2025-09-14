@@ -32,6 +32,7 @@ export interface TargetSelectorProps<
   modes: TargetSelectorMode<Mode, Target>[];
   selectedMode: Mode | null;
   selectedTarget: Target | null;
+  shouldDisplayModeSelector?: boolean;
   onModeChange: (mode: Mode) => void;
   onTargetChange: (target: Target) => void;
 }
@@ -42,10 +43,11 @@ export const TargetSelector = <Mode extends string, Target extends string>(
   const {
     title,
     modes,
-    selectedMode: selectedModeValue,
-    selectedTarget: selectedTargetValue,
     onModeChange,
     onTargetChange,
+    selectedMode: selectedModeValue,
+    selectedTarget: selectedTargetValue,
+    shouldDisplayModeSelector = true,
   } = props;
 
   const selectedMode = selectedModeValue
@@ -65,22 +67,24 @@ export const TargetSelector = <Mode extends string, Target extends string>(
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div>
-          <RadioGroup
-            value={selectedMode?.value}
-            className="grid gap-3 md:grid-cols-2"
-          >
-            {modes.map((mode, index) => (
-              <RadioItem
-                key={index}
-                label={mode.label}
-                description={mode.description || ''}
-                value={mode.value}
-                onClick={onModeChange}
-              />
-            ))}
-          </RadioGroup>
-        </div>
+        {shouldDisplayModeSelector && (
+          <div>
+            <RadioGroup
+              value={selectedMode?.value}
+              className="grid gap-3 md:grid-cols-2"
+            >
+              {modes.map((mode, index) => (
+                <RadioItem
+                  key={index}
+                  label={mode.label}
+                  description={mode.description || ''}
+                  value={mode.value}
+                  onClick={onModeChange}
+                />
+              ))}
+            </RadioGroup>
+          </div>
+        )}
         {selectedMode && (
           <div className="mt-4">
             <Select
