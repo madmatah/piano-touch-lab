@@ -4,6 +4,7 @@ import { Settings2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsTrigger } from '../app-ui/tabs';
 import { TabsList } from '../app-ui/tabs';
 import { useTranslation } from '@/hooks/use-translation';
+import { FrontWeightDesign } from '../design/front-weight/FrontWeightDesign';
 
 export const DesignPage = () => {
   const requiredDataPercentage = 0.8;
@@ -11,10 +12,20 @@ export const DesignPage = () => {
 
   return (
     <MainLayout pageTitle={t('Design')} pageIcon={<Settings2 />}>
-      <Tabs defaultValue="strike-weight">
+      <Tabs defaultValue="front-weight">
         <TabsList className="mb-5">
+          <TabsTrigger value="front-weight">{t('Front Weight')}</TabsTrigger>
           <TabsTrigger value="strike-weight">{t('Strike Weight')}</TabsTrigger>
         </TabsList>
+        <TabsContent value="front-weight">
+          <FrontWeightDesign
+            requiredDataPercentage={requiredDataPercentage}
+            notEnoughDataErrorTitle={t('Not enough data')}
+            notEnoughDataErrorDescription={t(
+              'Not enough data to generate a front weight design.',
+            )}
+          />
+        </TabsContent>
         <TabsContent value="strike-weight">
           <StrikeWeightDesign
             requiredDataPercentage={requiredDataPercentage}

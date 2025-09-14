@@ -64,8 +64,8 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
 
   const hasEnoughData =
     analyzedKeyboard
-      .mapToArray((key) => key.payload.strikeWeightRatio)
-      .filter((v) => v !== undefined).length >=
+      .mapToArray((key) => key.payload.strikeWeight)
+      .filter((v) => v !== undefined && v !== null).length >=
     Math.round(analyzedKeyboard.size * requiredDataPercentage);
 
   if (!hasEnoughData) {

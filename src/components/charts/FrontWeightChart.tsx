@@ -14,6 +14,7 @@ type KeyWithFrontWeight<T> = T & Pick<MeasuredKeyRequirements, 'frontWeight'>;
 export interface FrontWeightChartProps<T> {
   keyboard: KeyboardLike<KeyWith<KeyWithFrontWeight<T>>>;
   defaultFrontWeightLevelsToInclude?: FrontWeightLevel[];
+  targetSerie?: TouchDesignSerie;
 }
 
 export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
@@ -56,10 +57,15 @@ export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
     defaultSeriesToInclude,
   );
 
-  const series: TouchDesignSerie[] = [
-    ...defaultSeries,
-    ...(!isEmpty ? [measuredSerie] : []),
-  ].filter((serie) => serie !== undefined);
+  const series: TouchDesignSerie[] = useMemo(
+    () =>
+      [
+        ...defaultSeries,
+        ...(props.targetSerie ? [props.targetSerie] : []),
+        ...(!isEmpty ? [measuredSerie] : []),
+      ].filter((serie) => serie !== undefined),
+    [defaultSeries, props.targetSerie, isEmpty, measuredSerie],
+  );
 
   return (
     <TouchDesignChart

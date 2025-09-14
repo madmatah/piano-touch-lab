@@ -5,8 +5,10 @@ import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
 } from '@/components/design/strike-weight/StrikeWeightDesign.types';
+import { type FrontWeightDesignTarget } from '@/components/design/front-weight/FrontWeightDesign.types';
 
 export interface DesignStoreState {
+  frontWeightDesignTarget: FrontWeightDesignTarget | null;
   strikeWeightDesignMode: StrikeWeightDesignMode | null;
   strikeWeightDesignTarget: StrikeWeightDesignTarget | null;
   strikeWeightDesignLatestSmoothTarget: StrikeWeightDesignTarget | null;
@@ -18,6 +20,7 @@ interface VersionedDesignStoreState extends DesignStoreState {
 }
 
 interface DesignStoreActions {
+  updateFrontWeightDesign: (target: FrontWeightDesignTarget | null) => void;
   updateStrikeWeightDesign: (
     mode: StrikeWeightDesignMode | null,
     target: StrikeWeightDesignTarget | null,
@@ -30,10 +33,15 @@ const createDesignStore = (measureProfileName: string) =>
   create<DesignStore>()(
     persist(
       (set) => ({
+        frontWeightDesignTarget: null,
         strikeWeightDesignLatestSmoothTarget: null,
         strikeWeightDesignLatestStandarTarget: null,
         strikeWeightDesignMode: null,
         strikeWeightDesignTarget: null,
+        updateFrontWeightDesign: (target: FrontWeightDesignTarget | null) =>
+          set(() => ({
+            frontWeightDesignTarget: target,
+          })),
         updateStrikeWeightDesign: (
           mode: StrikeWeightDesignMode | null,
           target: StrikeWeightDesignTarget | null,
@@ -59,6 +67,7 @@ const createDesignStore = (measureProfileName: string) =>
       {
         name: `piano-touch.design.${measureProfileName}`,
         partialize: (state: DesignStore): VersionedDesignStoreState => ({
+          frontWeightDesignTarget: state.frontWeightDesignTarget,
           strikeWeightDesignLatestSmoothTarget:
             state.strikeWeightDesignLatestSmoothTarget,
           strikeWeightDesignLatestStandarTarget:
@@ -86,6 +95,14 @@ export const useDesignStore = (
   return store;
 };
 
+export const useFrontWeightDesign = (measureProfileName?: string) => {
+  return useDesignStore(measureProfileName)(
+    useShallow((state: DesignStore) => ({
+      frontWeightDesignTarget: state.frontWeightDesignTarget,
+    })),
+  );
+};
+
 export const useStrikeWeightDesign = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
@@ -102,6 +119,7 @@ export const useStrikeWeightDesign = (measureProfileName?: string) => {
 export const useDesignActions = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
+      updateFrontWeightDesign: state.updateFrontWeightDesign,
       updateStrikeWeightDesign: state.updateStrikeWeightDesign,
     })),
   );
