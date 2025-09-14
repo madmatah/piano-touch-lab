@@ -127,7 +127,12 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
   return (
     <ReactECharts
       option={option}
-      style={{ aspectRatio: 1.5, height: 'auto' }}
+      className="3xl:max-h-[85vh]"
+      style={{
+        aspectRatio: 1.5,
+        height: 'auto',
+        maxWidth: '100%',
+      }}
       lazyUpdate={true}
     />
   );

@@ -109,7 +109,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     ],
     title: {
       left: 'center',
-      text: t('Touch Weight'),
+      text: t('Static weight and Friction'),
     },
     tooltip: {
       axisPointer: {
@@ -142,7 +142,12 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
     <div>
       <ReactECharts
         option={option}
-        style={{ aspectRatio: 1.5, height: 'auto' }}
+        className="3xl:max-h-[85vh]"
+        style={{
+          aspectRatio: 1.5,
+          height: 'auto',
+          maxWidth: '100%',
+        }}
         lazyUpdate={true}
       />
     </div>
