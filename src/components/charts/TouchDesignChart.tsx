@@ -19,13 +19,38 @@ export interface TouchDesignChartProps {
 }
 
 const getEchartSeriePropertiesByVariant = (
-  variant: TouchDesignSerieVariant,
-  color?: string,
+  serie: TouchDesignSerie,
 ): Partial<EChartsOption['series']> => {
+  const { variant, color, name } = serie;
   switch (variant) {
     case TouchDesignSerieVariant.DefaultBold:
       return {
         itemStyle: { color: color ?? 'rgba(255, 0, 0, 0.25)' },
+        markLine: {
+          data: [
+            {
+              xAxis: 'min',
+              yAxis:
+                serie.data[0]?.payload === undefined
+                  ? 'max'
+                  : serie.data[0].payload,
+            },
+          ],
+          label: {
+            color: color ?? 'rgba(255, 0, 0, 0.8)',
+            fontSize: 11,
+            formatter: name,
+            offset: [0, 0],
+            position: 'start',
+            show: true,
+          },
+          lineStyle: {
+            color: 'transparent',
+            width: 0,
+          },
+          silent: true,
+          symbol: 'none',
+        },
       };
     case TouchDesignSerieVariant.Default:
       return {
@@ -72,16 +97,13 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     showSymbol: false,
     smooth: 0.3,
     type: 'line',
-    ...getEchartSeriePropertiesByVariant(
-      serie.variant ?? TouchDesignSerieVariant.Default,
-      serie.color,
-    ),
+    ...getEchartSeriePropertiesByVariant(serie),
   }));
 
   const option = {
     animation: false,
     grid: {
-      left: 'left',
+      left: 40,
     },
     legend: {
       data: props.series.map((serie) => serie.name),
