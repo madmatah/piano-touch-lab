@@ -5,6 +5,7 @@ import { useCallback, useState, useRef, useEffect } from 'react';
 export interface NumericSelectorProps {
   value: number;
   onChange: (value: number) => void;
+  labelFormatter?: (value: number) => string;
   minValue?: number;
   maxValue?: number;
   step?: number;
@@ -30,10 +31,18 @@ export const NumericSelector = ({
   minValue,
   maxValue,
   step = 1,
+  labelFormatter,
 }: NumericSelectorProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value.toString());
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const formatLabel = useCallback(
+    (value: number) => {
+      return labelFormatter ? labelFormatter(value) : value.toString();
+    },
+    [labelFormatter],
+  );
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -150,7 +159,9 @@ export const NumericSelector = ({
             className="h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded transition-colors px-5 py-1"
             onClick={handleValueClick}
           >
-            <strong className="font-bold">{value}</strong>
+            <strong className="font-bold user-select-none">
+              {formatLabel(value)}
+            </strong>
           </div>
         )}
       </div>

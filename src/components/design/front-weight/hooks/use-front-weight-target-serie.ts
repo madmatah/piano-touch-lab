@@ -4,9 +4,8 @@ import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useMemo } from 'react';
 import { TouchDesignSerieVariant } from '@/components/charts/TouchDesignChart';
 import type { FrontWeightDesignTarget } from '../FrontWeightDesign.types';
-import { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
-import { frontWeightData } from '@/lib/piano/touch-design/data/front-weights';
 import { useTranslation } from 'react-i18next';
+import { getFrontWeightCurve } from '@/lib/piano/touch-design/generate-custom-front-weight-curve';
 
 export const useFrontWeightTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
@@ -27,12 +26,11 @@ export const useFrontWeightTargetSerie = (
       return nullTargetSerie;
     }
 
-    if (
-      Object.values<FrontWeightDesignTarget>(FrontWeightLevel).includes(target)
-    ) {
-      const frontWeightLevel = target;
+    const targetNumber = Number(target);
+    if (!isNaN(targetNumber)) {
+      const frontWeightCurve = getFrontWeightCurve(targetNumber);
       return generateSerie(
-        (key) => frontWeightData[frontWeightLevel]?.[key.number - 1] ?? null,
+        (key) => frontWeightCurve[key.number - 1] ?? null,
         name,
         variant,
       );

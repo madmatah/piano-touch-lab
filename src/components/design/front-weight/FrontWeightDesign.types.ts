@@ -1,6 +1,4 @@
-import type { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
-
-export type FrontWeightDesignTarget = FrontWeightLevel;
+export type FrontWeightDesignTarget = number;
 
 export interface FrontWeightDesignProps {
   requiredDataPercentage: number;
