@@ -6,6 +6,10 @@ import {
   type StrikeWeightDesignTarget,
 } from '@/components/design/strike-weight/StrikeWeightDesign.types';
 import { type FrontWeightDesignTarget } from '@/components/design/front-weight/FrontWeightDesign.types';
+import {
+  StrikeWeightRatioDesignMode,
+  type StrikeWeightRatioDesignTarget,
+} from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign.types';
 
 export interface DesignStoreState {
   frontWeightDesignTarget: FrontWeightDesignTarget | null;
@@ -13,6 +17,9 @@ export interface DesignStoreState {
   strikeWeightDesignTarget: StrikeWeightDesignTarget | null;
   strikeWeightDesignLatestSmoothTarget: StrikeWeightDesignTarget | null;
   strikeWeightDesignLatestStandarTarget: StrikeWeightDesignTarget | null;
+  strikeWeightRatioDesignMode: StrikeWeightRatioDesignMode | null;
+  strikeWeightRatioDesignLatestFixedTarget: StrikeWeightRatioDesignTarget | null;
+  strikeWeightRatioDesignTarget: StrikeWeightRatioDesignTarget | null;
 }
 
 interface VersionedDesignStoreState extends DesignStoreState {
@@ -24,6 +31,10 @@ interface DesignStoreActions {
   updateStrikeWeightDesign: (
     mode: StrikeWeightDesignMode | null,
     target: StrikeWeightDesignTarget | null,
+  ) => void;
+  updateStrikeWeightRatioDesign: (
+    mode: StrikeWeightRatioDesignMode | null,
+    target: StrikeWeightRatioDesignTarget | null,
   ) => void;
 }
 
@@ -38,6 +49,9 @@ const createDesignStore = (measureProfileName: string) =>
         strikeWeightDesignLatestStandarTarget: null,
         strikeWeightDesignMode: null,
         strikeWeightDesignTarget: null,
+        strikeWeightRatioDesignLatestFixedTarget: null,
+        strikeWeightRatioDesignMode: null,
+        strikeWeightRatioDesignTarget: null,
         updateFrontWeightDesign: (target: FrontWeightDesignTarget | null) =>
           set(() => ({
             frontWeightDesignTarget: target,
@@ -62,6 +76,23 @@ const createDesignStore = (measureProfileName: string) =>
             }
             return newState;
           }),
+        updateStrikeWeightRatioDesign: (
+          mode: StrikeWeightRatioDesignMode | null,
+          target: StrikeWeightRatioDesignTarget | null,
+        ) =>
+          set(() => {
+            const newState: Partial<DesignStore> = {
+              strikeWeightRatioDesignMode: mode,
+              strikeWeightRatioDesignTarget: target,
+            };
+            if (
+              mode === StrikeWeightRatioDesignMode.FixedValue &&
+              target !== null
+            ) {
+              newState.strikeWeightRatioDesignLatestFixedTarget = target;
+            }
+            return newState;
+          }),
         version: 1,
       }),
       {
@@ -74,6 +105,10 @@ const createDesignStore = (measureProfileName: string) =>
             state.strikeWeightDesignLatestStandarTarget,
           strikeWeightDesignMode: state.strikeWeightDesignMode,
           strikeWeightDesignTarget: state.strikeWeightDesignTarget,
+          strikeWeightRatioDesignLatestFixedTarget:
+            state.strikeWeightRatioDesignLatestFixedTarget,
+          strikeWeightRatioDesignMode: state.strikeWeightRatioDesignMode,
+          strikeWeightRatioDesignTarget: state.strikeWeightRatioDesignTarget,
           version: state.version,
         }),
       },
@@ -116,11 +151,23 @@ export const useStrikeWeightDesign = (measureProfileName?: string) => {
   );
 };
 
+export const useStrikeWeightRatioDesign = (measureProfileName?: string) => {
+  return useDesignStore(measureProfileName)(
+    useShallow((state: DesignStore) => ({
+      strikeWeightRatioDesignLatestFixedTarget:
+        state.strikeWeightRatioDesignLatestFixedTarget,
+      strikeWeightRatioDesignMode: state.strikeWeightRatioDesignMode,
+      strikeWeightRatioDesignTarget: state.strikeWeightRatioDesignTarget,
+    })),
+  );
+};
+
 export const useDesignActions = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
       updateFrontWeightDesign: state.updateFrontWeightDesign,
       updateStrikeWeightDesign: state.updateStrikeWeightDesign,
+      updateStrikeWeightRatioDesign: state.updateStrikeWeightRatioDesign,
     })),
   );
 };
