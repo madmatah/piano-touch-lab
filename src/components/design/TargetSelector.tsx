@@ -9,13 +9,14 @@ import {
 } from '../ui/select';
 import { RadioItem } from '../app-ui/RadioGroupItem';
 import { ValueSelector } from '../app-ui/value-selector/ValueSelector';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { NumericSelector } from '../app-ui/numeric-selector/NumericSelector';
 
 export enum TargetSelectorUi {
   ValueSelector = 'value-selector',
   HtmlSelect = 'html-select',
   NumericSelector = 'numeric-selector',
+  UniqueTargetSelector = 'unique-target-selector',
 }
 
 export interface TargetSelectorTarget<Target> {
@@ -24,7 +25,7 @@ export interface TargetSelectorTarget<Target> {
 }
 
 export interface TargetSelectorModeBaseOptions {
-  placeholder: string;
+  placeholder?: string;
   selectorUi: TargetSelectorUi;
 }
 
@@ -43,9 +44,15 @@ export interface NumericTargetSelectorOptions
   labelFormatter?: (value: number) => string;
 }
 
+export interface UniqueTargetSelectorOptions<Target>
+  extends TargetSelectorModeBaseOptions {
+  selectorUi: TargetSelectorUi.UniqueTargetSelector;
+  target: Target;
+}
+
 export type TargetSelectorMode<
   Mode extends string,
-  Target extends string | number,
+  Target extends string | number | null,
 > =
   | {
       label: string;
@@ -58,11 +65,17 @@ export type TargetSelectorMode<
       description?: string;
       value: Mode;
       options: NumericTargetSelectorOptions;
+    }
+  | {
+      label: string;
+      description?: string;
+      value: Mode;
+      options: UniqueTargetSelectorOptions<Target>;
     };
 
 export interface TargetSelectorProps<
   Mode extends string,
-  Target extends string | number,
+  Target extends string | number | null,
 > {
   title: string;
   modes: TargetSelectorMode<Mode, Target>[];
@@ -75,7 +88,7 @@ export interface TargetSelectorProps<
 
 export const TargetSelector = <
   Mode extends string,
-  Target extends string | number,
+  Target extends string | number | null,
 >(
   props: TargetSelectorProps<Mode, Target>,
 ) => {
@@ -111,6 +124,24 @@ export const TargetSelector = <
     return undefined;
   }, [selectedTargetValue, selectedMode]);
 
+  useEffect(() => {
+    if (
+      selectedMode &&
+      selectedMode.options.selectorUi ===
+        TargetSelectorUi.UniqueTargetSelector &&
+      selectedTargetValue !== selectedMode.options.target
+    ) {
+      onTargetChange(selectedMode.options.target);
+    }
+  }, [onTargetChange, selectedMode, selectedTargetValue]);
+
+  const onModeChangeHandler = useCallback(
+    (mode: Mode) => {
+      onModeChange(mode);
+    },
+    [onModeChange],
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -129,7 +160,7 @@ export const TargetSelector = <
                   label={mode.label}
                   description={mode.description || ''}
                   value={mode.value}
-                  onClick={onModeChange}
+                  onClick={onModeChangeHandler}
                 />
               ))}
             </RadioGroup>
