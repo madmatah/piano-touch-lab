@@ -10,6 +10,7 @@ describe('The NumericSelector component', () => {
     minValue?: number;
     maxValue?: number;
     step?: number;
+    labelFormatter?: (value: number) => string;
   };
   let plusButton: HTMLButtonElement;
   let minusButton: HTMLButtonElement;
@@ -58,12 +59,49 @@ describe('The NumericSelector component', () => {
         expect(screen.getByText('10')).toBeDefined();
       });
     });
+
+    describe('When rendering with labelFormatter', () => {
+      beforeEach(() => {
+        renderComponent({
+          labelFormatter: (value) => `Value: ${value}`,
+        });
+      });
+
+      it('should display the formatted value', () => {
+        expect(screen.getByText('Value: 10')).toBeDefined();
+      });
+    });
+
+    describe('When rendering without labelFormatter', () => {
+      beforeEach(() => {
+        renderComponent();
+      });
+
+      it('should display the raw value', () => {
+        expect(screen.getByText('10')).toBeDefined();
+      });
+    });
   });
 
   describe('The increment() method', () => {
     describe('When plus button is clicked', () => {
       beforeEach(() => {
         renderComponent();
+        const buttons = screen.getAllByRole('button');
+        plusButton = buttons[1]! as HTMLButtonElement;
+        fireEvent.click(plusButton);
+      });
+
+      it('should call onChange with incremented value', () => {
+        expect(onChange).toHaveBeenCalledWith(11);
+      });
+    });
+
+    describe('When plus button is clicked with labelFormatter', () => {
+      beforeEach(() => {
+        renderComponent({
+          labelFormatter: (value) => `$${value}`,
+        });
         const buttons = screen.getAllByRole('button');
         plusButton = buttons[1]! as HTMLButtonElement;
         fireEvent.click(plusButton);
@@ -127,6 +165,21 @@ describe('The NumericSelector component', () => {
       });
     });
 
+    describe('When minus button is clicked with labelFormatter', () => {
+      beforeEach(() => {
+        renderComponent({
+          labelFormatter: (value) => `${value}%`,
+        });
+        const buttons = screen.getAllByRole('button');
+        minusButton = buttons[0]! as HTMLButtonElement;
+        fireEvent.click(minusButton);
+      });
+
+      it('should call onChange with decremented value', () => {
+        expect(onChange).toHaveBeenCalledWith(9);
+      });
+    });
+
     describe('When minus button is clicked with custom step', () => {
       beforeEach(() => {
         renderComponent({ step: 0.5 });
@@ -179,6 +232,22 @@ describe('The NumericSelector component', () => {
         expect(input).toBeDefined();
       });
     });
+
+    describe('When value display is clicked with labelFormatter', () => {
+      beforeEach(() => {
+        renderComponent({
+          labelFormatter: (value) => `Value: ${value}`,
+        });
+        valueDisplay = screen.getByText('Value: 10');
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+      });
+
+      it('should show input field with raw value', () => {
+        expect(input).toBeDefined();
+        expect((input as HTMLInputElement).value).toBe('10');
+      });
+    });
   });
 
   describe('The handleInputChange() method', () => {
@@ -216,6 +285,23 @@ describe('The NumericSelector component', () => {
       beforeEach(() => {
         renderComponent();
         valueDisplay = screen.getByText('10');
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+        fireEvent.change(input, { target: { value: '12' } });
+        fireEvent.blur(input);
+      });
+
+      it('should call onChange with new value', () => {
+        expect(onChange).toHaveBeenCalledWith(12);
+      });
+    });
+
+    describe('When input loses focus with valid value and labelFormatter', () => {
+      beforeEach(() => {
+        renderComponent({
+          labelFormatter: (value) => `$${value}`,
+        });
+        valueDisplay = screen.getByText('$10');
         fireEvent.click(valueDisplay);
         input = screen.getByDisplayValue('10');
         fireEvent.change(input, { target: { value: '12' } });

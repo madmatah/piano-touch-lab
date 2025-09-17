@@ -1,5 +1,6 @@
 import {
   TargetSelector,
+  TargetSelectorUi,
   type TargetSelectorMode,
   type TargetSelectorTarget,
 } from '../TargetSelector';
@@ -87,7 +88,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
       label: t('Use standard curves'),
       options: {
         placeholder: t('Select your target curve'),
-        selectorUi: 'value-selector',
+        selectorUi: TargetSelectorUi.ValueSelector,
         targets: standardCurveTargets,
       },
       value: StrikeWeightDesignMode.STANDARD_CURVES,
@@ -99,7 +100,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
       label: t('Generate a smoothed curve'),
       options: {
         placeholder: t('Select your smoothing algorithm'),
-        selectorUi: 'html-select',
+        selectorUi: TargetSelectorUi.HtmlSelect,
         targets: smoothCurveTargets,
       },
       value: StrikeWeightDesignMode.SMOOTHED,
