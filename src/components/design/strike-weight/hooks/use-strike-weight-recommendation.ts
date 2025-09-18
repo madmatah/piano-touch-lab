@@ -22,8 +22,8 @@ export const useStrikeWeightRecommendation = (
         strikeWeightDesignTarget === null
       ) {
         setStrikeWeightDesign(
-          StrikeWeightDesignMode.SMOOTHED,
-          SmoothStrategy.LEAST_SQUARES_REGRESSION,
+          StrikeWeightDesignMode.Smoothed,
+          SmoothStrategy.LeastSquaresRegression,
         );
       }
       setIsFirstRender(false);

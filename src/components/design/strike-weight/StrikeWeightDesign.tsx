@@ -55,11 +55,11 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   const smoothCurveTargets: TargetSelectorTarget<SmoothStrategy>[] = [
     {
       label: t('Smoothed with Least Squares Regression'),
-      value: SmoothStrategy.LEAST_SQUARES_REGRESSION,
+      value: SmoothStrategy.LeastSquaresRegression,
     },
     {
       label: t('Smoothed with LOESS'),
-      value: SmoothStrategy.LOESS,
+      value: SmoothStrategy.Loess,
     },
   ];
 
@@ -91,7 +91,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
         selectorUi: TargetSelectorUi.ValueSelector,
         targets: standardCurveTargets,
       },
-      value: StrikeWeightDesignMode.STANDARD_CURVES,
+      value: StrikeWeightDesignMode.StandardCurves,
     },
     {
       description: t(
@@ -103,7 +103,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
         selectorUi: TargetSelectorUi.HtmlSelect,
         targets: smoothCurveTargets,
       },
-      value: StrikeWeightDesignMode.SMOOTHED,
+      value: StrikeWeightDesignMode.Smoothed,
     },
   ];
 

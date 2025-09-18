@@ -15,7 +15,7 @@ export const useSmoothedSerieLoess = (
 ) => {
   const loessSmoother = useNamedInjection<
     CurveSmootherRequirements<CurveSmootherLoessOptions>
-  >(curveSmootherRequirementsSymbol, SmoothStrategy.LOESS);
+  >(curveSmootherRequirementsSymbol, SmoothStrategy.Loess);
 
   const smoothLoess = useCallback(
     (inputSerie: TouchDesignSerie) => {

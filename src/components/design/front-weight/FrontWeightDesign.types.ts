@@ -7,5 +7,5 @@ export interface FrontWeightDesignProps {
 }
 
 export enum FrontWeightDesignMode {
-  STANDARD_CURVES = 'STANDARD_CURVES',
+  StandardCurves = 'standard-curves',
 }

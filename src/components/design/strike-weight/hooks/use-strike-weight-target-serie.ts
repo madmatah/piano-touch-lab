@@ -39,7 +39,7 @@ export const useStrikeWeightTargetSerie = (
     }
 
     if (
-      mode === StrikeWeightDesignMode.STANDARD_CURVES &&
+      mode === StrikeWeightDesignMode.StandardCurves &&
       Object.values<StrikeWeightDesignTarget>(StrikeWeightLevel).includes(
         target,
       )
@@ -58,11 +58,11 @@ export const useStrikeWeightTargetSerie = (
       variant,
     );
 
-    if (target === SmoothStrategy.LEAST_SQUARES_REGRESSION) {
+    if (target === SmoothStrategy.LeastSquaresRegression) {
       return smoothLsr(baseSerie);
     }
 
-    if (target === SmoothStrategy.LOESS) {
+    if (target === SmoothStrategy.Loess) {
       return smoothLoess(baseSerie);
     }
 

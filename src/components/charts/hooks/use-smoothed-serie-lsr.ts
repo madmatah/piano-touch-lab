@@ -13,7 +13,7 @@ export const useSmoothedSerieLsr = (
 ) => {
   const lsrSmoother = useNamedInjection<
     CurveSmootherRequirements<CurveSmootherLeastSquaresRegressionOptions>
-  >(curveSmootherRequirementsSymbol, SmoothStrategy.LEAST_SQUARES_REGRESSION);
+  >(curveSmootherRequirementsSymbol, SmoothStrategy.LeastSquaresRegression);
 
   const smoothLsr = useCallback(
     (inputSerie: TouchDesignSerie) => {
