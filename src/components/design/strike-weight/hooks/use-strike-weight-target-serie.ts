@@ -34,6 +34,10 @@ export const useStrikeWeightTargetSerie = (
   }, [generateSerie, name, variant]);
 
   const targetSerie = useMemo(() => {
+    if (mode === StrikeWeightDesignMode.AsMeasured) {
+      return generateSerie((key) => key.payload.strikeWeight, name, variant);
+    }
+
     if (target === null) {
       return nullTargetSerie;
     }

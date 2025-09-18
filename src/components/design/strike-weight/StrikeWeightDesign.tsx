@@ -84,6 +84,15 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     StrikeWeightDesignTarget
   >[] = [
     {
+      description: t('Use strike weight measured values'),
+      label: t('Keep the strike weight as is.'),
+      options: {
+        selectorUi: TargetSelectorUi.UniqueTargetSelector,
+        target: null,
+      },
+      value: StrikeWeightDesignMode.AsMeasured,
+    },
+    {
       description: t('Choose a target from the standard strike weight curves.'),
       label: t('Use standard curves'),
       options: {

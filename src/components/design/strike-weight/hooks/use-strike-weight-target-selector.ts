@@ -28,8 +28,10 @@ export const useStrikeWeightTargetSelector = () => {
     (mode: StrikeWeightDesignMode) => {
       if (mode === StrikeWeightDesignMode.StandardCurves) {
         updateStrikeWeightDesign(mode, strikeWeightDesignStandarTarget);
-      } else {
+      } else if (mode === StrikeWeightDesignMode.Smoothed) {
         updateStrikeWeightDesign(mode, strikeWeightDesignSmoothTarget);
+      } else {
+        updateStrikeWeightDesign(mode, null);
       }
     },
     [
