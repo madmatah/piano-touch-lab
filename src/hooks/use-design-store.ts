@@ -66,12 +66,12 @@ const createDesignStore = (measureProfileName: string) =>
               strikeWeightDesignTarget: target,
             };
             if (
-              mode === StrikeWeightDesignMode.STANDARD_CURVES &&
+              mode === StrikeWeightDesignMode.StandardCurves &&
               target !== null
             ) {
               newState.strikeWeightDesignLatestStandarTarget = target;
             }
-            if (mode === StrikeWeightDesignMode.SMOOTHED && target !== null) {
+            if (mode === StrikeWeightDesignMode.Smoothed && target !== null) {
               newState.strikeWeightDesignLatestSmoothTarget = target;
             }
             return newState;

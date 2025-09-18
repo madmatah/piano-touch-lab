@@ -26,7 +26,7 @@ export const useStrikeWeightTargetSelector = () => {
 
   const onModeChange = useCallback(
     (mode: StrikeWeightDesignMode) => {
-      if (mode === StrikeWeightDesignMode.STANDARD_CURVES) {
+      if (mode === StrikeWeightDesignMode.StandardCurves) {
         updateStrikeWeightDesign(mode, strikeWeightDesignStandarTarget);
       } else {
         updateStrikeWeightDesign(mode, strikeWeightDesignSmoothTarget);

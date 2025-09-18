@@ -36,11 +36,11 @@ container
     CurveSmootherRequirements<CurveSmootherLoessOptions>
   >(curveSmootherRequirementsSymbol)
   .to(CurveSmootherLoess)
-  .whenNamed(SmoothStrategy.LOESS);
+  .whenNamed(SmoothStrategy.Loess);
 
 container
   .bind<
     CurveSmootherRequirements<CurveSmootherLeastSquaresRegressionOptions>
   >(curveSmootherRequirementsSymbol)
   .to(CurveSmootherLeastSquaresRegression)
-  .whenNamed(SmoothStrategy.LEAST_SQUARES_REGRESSION);
+  .whenNamed(SmoothStrategy.LeastSquaresRegression);

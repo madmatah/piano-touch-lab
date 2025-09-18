@@ -77,7 +77,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
           selectorUi: TargetSelectorUi.NumericSelector,
           step: 1,
         },
-        value: FrontWeightDesignMode.STANDARD_CURVES,
+        value: FrontWeightDesignMode.StandardCurves,
       },
     ],
     [t, frontWeightCurveLabelFormatter],
@@ -96,7 +96,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
           <TargetSelector
             title={t('Choose a target from the standard front weight curves.')}
             modes={targetSelectorModes}
-            selectedMode={FrontWeightDesignMode.STANDARD_CURVES}
+            selectedMode={FrontWeightDesignMode.StandardCurves}
             selectedTarget={frontWeightDesignTarget}
             onModeChange={onModeChange}
             onTargetChange={onTargetChange}

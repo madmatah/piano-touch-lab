@@ -2,8 +2,8 @@ import type { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strate
 import type { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 
 export enum StrikeWeightDesignMode {
-  STANDARD_CURVES = 'standard_curves',
-  SMOOTHED = 'smoothed',
+  StandardCurves = 'standard-curves',
+  Smoothed = 'smoothed',
 }
 
 export type StrikeWeightDesignTarget = StrikeWeightLevel | SmoothStrategy;
