@@ -41,7 +41,6 @@ export const StrikeWeightRatioDesign: React.FC<
   } = useStrikeWeightRatioTargetSelector();
 
   useStrikeWeightRatioRecommendation(
-    analyzedKeyboard,
     strikeWeightRatioDesignMode,
     strikeWeightRatioDesignTarget,
     updateStrikeWeightRatioDesign,
