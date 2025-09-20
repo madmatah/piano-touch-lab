@@ -8,7 +8,7 @@
     "dev": "bun --hot src/index.tsx",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "i18nparse": "i18next --config config/i18next-parser.config.cjs",
+    "i18n": "i18next --config config/i18next-parser.config.cjs",
     "lint": "bunx eslint && bun format:check",
     "start": "NODE_ENV=production bun src/index.tsx",
     "test:watch": "bun test --watch",
