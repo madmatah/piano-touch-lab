@@ -2,9 +2,11 @@ import {
   TargetSelector,
   TargetSelectorUi,
   type TargetSelectorMode,
+  type TargetSelectorTarget,
 } from '../TargetSelector';
 import {
   StrikeWeightRatioDesignMode,
+  type StrikeWeightRatioDesignSmoothTarget,
   type StrikeWeightRatioDesignProps,
   type StrikeWeightRatioDesignTarget,
 } from './StrikeWeightRatioDesign.types';
@@ -19,6 +21,7 @@ import { useStrikeWeightRatioTargetSelector } from './hooks/use-strike-weight-ra
 import { useStrikeWeightRatioTargetSerie } from './hooks/strike-weight-ratio-target-serie';
 import { useMemo } from 'react';
 import { StrikeWeightRatioChart } from '@/components/charts/StrikeWeightRatioChart';
+import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 
 export const StrikeWeightRatioDesign: React.FC<
   StrikeWeightRatioDesignProps
@@ -59,6 +62,18 @@ export const StrikeWeightRatioDesign: React.FC<
     );
   }, [analyzedKeyboard, requiredDataPercentage]);
 
+  const smoothCurveTargets: TargetSelectorTarget<StrikeWeightRatioDesignSmoothTarget>[] =
+    [
+      {
+        label: t('Compute the mean of your measurements'),
+        value: SmoothStrategy.Mean,
+      },
+      {
+        label: t('Compute the median of your measurements'),
+        value: SmoothStrategy.Median,
+      },
+    ];
+
   const targetSelectorModes: TargetSelectorMode<
     StrikeWeightRatioDesignMode,
     StrikeWeightRatioDesignTarget
@@ -71,6 +86,15 @@ export const StrikeWeightRatioDesign: React.FC<
         target: null,
       },
       value: StrikeWeightRatioDesignMode.AsMeasured,
+    },
+    {
+      description: t('Compute the median or mean of your measurements'),
+      label: t('Compute a value from your measurements'),
+      options: {
+        selectorUi: TargetSelectorUi.HtmlSelect,
+        targets: smoothCurveTargets,
+      },
+      value: StrikeWeightRatioDesignMode.Smoothed,
     },
     {
       description: t('Use a constant strike weight ratio for all keys.'),

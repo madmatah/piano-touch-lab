@@ -7,12 +7,14 @@ import {
   useDesignActions,
   useStrikeWeightRatioDesign,
 } from '@/hooks/use-design-store';
+import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 
 export const useStrikeWeightRatioTargetSelector = () => {
   const {
     strikeWeightRatioDesignMode,
     strikeWeightRatioDesignTarget,
     strikeWeightRatioDesignLatestFixedTarget,
+    strikeWeightRatioDesignLatestSmoothTarget,
   } = useStrikeWeightRatioDesign();
   const { updateStrikeWeightRatioDesign } = useDesignActions();
 
@@ -25,7 +27,12 @@ export const useStrikeWeightRatioTargetSelector = () => {
 
   const onModeChange = useCallback(
     (mode: StrikeWeightRatioDesignMode) => {
-      if (mode === StrikeWeightRatioDesignMode.FixedValue) {
+      if (mode === StrikeWeightRatioDesignMode.Smoothed) {
+        updateStrikeWeightRatioDesign(
+          mode,
+          strikeWeightRatioDesignLatestSmoothTarget ?? SmoothStrategy.Median,
+        );
+      } else if (mode === StrikeWeightRatioDesignMode.FixedValue) {
         updateStrikeWeightRatioDesign(
           mode,
           strikeWeightRatioDesignLatestFixedTarget,
@@ -34,7 +41,11 @@ export const useStrikeWeightRatioTargetSelector = () => {
         updateStrikeWeightRatioDesign(mode, null);
       }
     },
-    [updateStrikeWeightRatioDesign, strikeWeightRatioDesignLatestFixedTarget],
+    [
+      updateStrikeWeightRatioDesign,
+      strikeWeightRatioDesignLatestFixedTarget,
+      strikeWeightRatioDesignLatestSmoothTarget,
+    ],
   );
 
   return {

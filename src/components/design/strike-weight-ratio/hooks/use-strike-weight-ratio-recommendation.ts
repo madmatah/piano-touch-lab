@@ -53,5 +53,6 @@ export const useStrikeWeightRatioRecommendation = (
     isFirstRender,
     setStrikeWeightRatioDesign,
     averageStrikeWeightRatio,
+    strikeWeightRatioDesignMode,
   ]);
 };

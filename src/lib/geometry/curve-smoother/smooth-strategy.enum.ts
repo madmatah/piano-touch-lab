@@ -1,4 +1,6 @@
 export enum SmoothStrategy {
-  Loess = 'loess',
   LeastSquaresRegression = 'lsr',
+  Loess = 'loess',
+  Mean = 'mean',
+  Median = 'median',
 }
