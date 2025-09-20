@@ -7,9 +7,13 @@ export enum StrikeWeightDesignMode {
   Smoothed = 'smoothed',
 }
 
+export type StrikeWeightDesignSmoothTarget =
+  | SmoothStrategy.Loess
+  | SmoothStrategy.LeastSquaresRegression;
+
 export type StrikeWeightDesignTarget =
   | StrikeWeightLevel
-  | SmoothStrategy
+  | StrikeWeightDesignSmoothTarget
   | null;
 
 export interface StrikeWeightDesignProps {

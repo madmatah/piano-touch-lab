@@ -8,6 +8,8 @@ import {
   type StrikeWeightRatioDesignTarget,
 } from '../StrikeWeightRatioDesign.types';
 import { useTranslation } from 'react-i18next';
+import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
+import { useSmoothedSerieAverage } from '@/components/charts/hooks/use-smoothed-serie-average';
 
 export const useStrikeWeightRatioTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
@@ -16,6 +18,7 @@ export const useStrikeWeightRatioTargetSerie = (
 ): { targetSerie: TouchDesignSerie | null } => {
   const { t } = useTranslation();
   const { generateSerie } = useGenerateSerie(keyboard);
+  const { smoothMean, smoothMedian } = useSmoothedSerieAverage();
 
   const name = t('Target');
   const variant = TouchDesignSerieVariant.Target;
@@ -33,12 +36,45 @@ export const useStrikeWeightRatioTargetSerie = (
       );
     }
 
-    if (mode === StrikeWeightRatioDesignMode.FixedValue && target !== null) {
-      return generateSerie(() => target, name, variant);
+    if (
+      mode === StrikeWeightRatioDesignMode.FixedValue &&
+      target !== null &&
+      !isNaN(target as number)
+    ) {
+      return generateSerie(() => target as number, name, variant);
+    }
+
+    const baseSerie = generateSerie(
+      (key) => key.payload.strikeWeightRatio,
+      name,
+      variant,
+    );
+
+    if (
+      mode === StrikeWeightRatioDesignMode.Smoothed &&
+      target === SmoothStrategy.Mean
+    ) {
+      return smoothMean(baseSerie);
+    }
+
+    if (
+      mode === StrikeWeightRatioDesignMode.Smoothed &&
+      target === SmoothStrategy.Median
+    ) {
+      return smoothMedian(baseSerie);
     }
 
     return nullTargetSerie;
-  }, [mode, nullTargetSerie, target, generateSerie, name, variant]);
+  }, [
+    mode,
+    nullTargetSerie,
+    target,
+    generateSerie,
+    name,
+    variant,
+    smoothMean,
+    smoothMedian,
+  ]);
 
   return { targetSerie };
 };

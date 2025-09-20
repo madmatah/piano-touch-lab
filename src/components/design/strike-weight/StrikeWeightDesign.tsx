@@ -10,6 +10,7 @@ import { StrikeWeightChart } from '../../charts/StrikeWeightChart';
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignProps,
+  type StrikeWeightDesignSmoothTarget,
   type StrikeWeightDesignTarget,
 } from './StrikeWeightDesign.types';
 
@@ -52,16 +53,17 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     strikeWeightDesignMode,
     strikeWeightDesignTarget,
   );
-  const smoothCurveTargets: TargetSelectorTarget<SmoothStrategy>[] = [
-    {
-      label: t('Smoothed with Least Squares Regression'),
-      value: SmoothStrategy.LeastSquaresRegression,
-    },
-    {
-      label: t('Smoothed with LOESS'),
-      value: SmoothStrategy.Loess,
-    },
-  ];
+  const smoothCurveTargets: TargetSelectorTarget<StrikeWeightDesignSmoothTarget>[] =
+    [
+      {
+        label: t('Smoothed with Least Squares Regression'),
+        value: SmoothStrategy.LeastSquaresRegression,
+      },
+      {
+        label: t('Smoothed with LOESS'),
+        value: SmoothStrategy.Loess,
+      },
+    ];
 
   const hasEnoughData =
     analyzedKeyboard

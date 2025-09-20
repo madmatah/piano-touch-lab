@@ -19,6 +19,7 @@ export interface DesignStoreState {
   strikeWeightDesignLatestStandarTarget: StrikeWeightDesignTarget | null;
   strikeWeightRatioDesignMode: StrikeWeightRatioDesignMode | null;
   strikeWeightRatioDesignLatestFixedTarget: StrikeWeightRatioDesignTarget | null;
+  strikeWeightRatioDesignLatestSmoothTarget: StrikeWeightRatioDesignTarget | null;
   strikeWeightRatioDesignTarget: StrikeWeightRatioDesignTarget | null;
 }
 
@@ -50,6 +51,7 @@ const createDesignStore = (measureProfileName: string) =>
         strikeWeightDesignMode: null,
         strikeWeightDesignTarget: null,
         strikeWeightRatioDesignLatestFixedTarget: null,
+        strikeWeightRatioDesignLatestSmoothTarget: null,
         strikeWeightRatioDesignMode: null,
         strikeWeightRatioDesignTarget: null,
         updateFrontWeightDesign: (target: FrontWeightDesignTarget | null) =>
@@ -86,6 +88,12 @@ const createDesignStore = (measureProfileName: string) =>
               strikeWeightRatioDesignTarget: target,
             };
             if (
+              mode === StrikeWeightRatioDesignMode.Smoothed &&
+              target !== null
+            ) {
+              newState.strikeWeightRatioDesignLatestSmoothTarget = target;
+            }
+            if (
               mode === StrikeWeightRatioDesignMode.FixedValue &&
               target !== null
             ) {
@@ -107,6 +115,8 @@ const createDesignStore = (measureProfileName: string) =>
           strikeWeightDesignTarget: state.strikeWeightDesignTarget,
           strikeWeightRatioDesignLatestFixedTarget:
             state.strikeWeightRatioDesignLatestFixedTarget,
+          strikeWeightRatioDesignLatestSmoothTarget:
+            state.strikeWeightRatioDesignLatestSmoothTarget,
           strikeWeightRatioDesignMode: state.strikeWeightRatioDesignMode,
           strikeWeightRatioDesignTarget: state.strikeWeightRatioDesignTarget,
           version: state.version,
@@ -156,6 +166,8 @@ export const useStrikeWeightRatioDesign = (measureProfileName?: string) => {
     useShallow((state: DesignStore) => ({
       strikeWeightRatioDesignLatestFixedTarget:
         state.strikeWeightRatioDesignLatestFixedTarget,
+      strikeWeightRatioDesignLatestSmoothTarget:
+        state.strikeWeightRatioDesignLatestSmoothTarget,
       strikeWeightRatioDesignMode: state.strikeWeightRatioDesignMode,
       strikeWeightRatioDesignTarget: state.strikeWeightRatioDesignTarget,
     })),
