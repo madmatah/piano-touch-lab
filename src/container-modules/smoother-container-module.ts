@@ -17,6 +17,7 @@ import {
 import { SmoothStrategy } from '../lib/geometry/curve-smoother/smooth-strategy.enum';
 import { CurveSmootherMedian } from '../lib/geometry/curve-smoother/curve-smoother-median';
 import { CurveSmootherMean } from '../lib/geometry/curve-smoother/curve-smoother-mean';
+import { CurveSmootherCubicSpline } from '@/lib/geometry/curve-smoother/curve-smoother-cubic-spline';
 
 export const smootherContainerModule = new ContainerModule(
   (options: ContainerModuleLoadOptions) => {
@@ -44,5 +45,9 @@ export const smootherContainerModule = new ContainerModule(
     bind<CurveSmootherRequirements<undefined>>(curveSmootherRequirementsSymbol)
       .to(CurveSmootherMean)
       .whenNamed(SmoothStrategy.Mean);
+
+    bind<CurveSmootherRequirements<undefined>>(curveSmootherRequirementsSymbol)
+      .to(CurveSmootherCubicSpline)
+      .whenNamed(SmoothStrategy.CubicSpline);
   },
 );
