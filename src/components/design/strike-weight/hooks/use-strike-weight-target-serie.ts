@@ -3,7 +3,6 @@ import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
 } from '../StrikeWeightDesign.types';
-import { strikeWeightData } from '@/lib/piano/touch-design/data/strike-weight';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
@@ -12,15 +11,17 @@ import { TouchDesignSerieVariant } from '@/components/charts/TouchDesignChart';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { useSmoothedSerieLsr } from '@/components/charts/hooks/use-smoothed-serie-lsr';
 import { useSmoothedSerieLoess } from '@/components/charts/hooks/use-smoothed-serie-loess';
+import { useStrikeWeightCurve } from '@/hooks/standard-curves/use-strike-weight-curve';
 
 export const useStrikeWeightTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
   mode: StrikeWeightDesignMode | null,
   target: StrikeWeightDesignTarget | null,
 ): { targetSerie: TouchDesignSerie | null } => {
+  const { getStrikeWeightCurve } = useStrikeWeightCurve(keyboard);
   const { generateSerie } = useGenerateSerie(keyboard);
   const { smoothLsr } = useSmoothedSerieLsr({
-    referenceCurve: strikeWeightData[StrikeWeightLevel.Level5],
+    referenceCurve: getStrikeWeightCurve(StrikeWeightLevel.Level5),
   });
   const { smoothLoess } = useSmoothedSerieLoess({
     bandwidthFraction: 1,
@@ -49,8 +50,9 @@ export const useStrikeWeightTargetSerie = (
       )
     ) {
       const strikeWeightLevel = target as StrikeWeightLevel;
+      const curve = getStrikeWeightCurve(strikeWeightLevel);
       return generateSerie(
-        (key) => strikeWeightData[strikeWeightLevel]?.[key.number - 1] ?? null,
+        (key) => curve?.[key.number - 1] ?? null,
         name,
         variant,
       );
@@ -72,12 +74,12 @@ export const useStrikeWeightTargetSerie = (
 
     return nullTargetSerie;
   }, [
+    mode,
     target,
     generateSerie,
-    name,
     variant,
-    mode,
     nullTargetSerie,
+    getStrikeWeightCurve,
     smoothLsr,
     smoothLoess,
   ]);
