@@ -1,13 +1,25 @@
-import { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
-import { frontWeightData } from '@/lib/piano/touch-design/data/front-weights';
+import {
+  FrontWeightLevel,
+  frontWeightLevelToNumber,
+} from '@/lib/piano/touch-design/front-weight-level';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import { useMemo } from 'react';
 import { useDefaultSerie } from './use-default-serie';
+import { useFrontWeightCurve } from '@/hooks/standard-curves/use-front-weight-curve';
 
 export const useFrontWeightStandardSeries = <T>(
   keyboard: KeyboardLike<KeyWith<T>>,
   levels: FrontWeightLevel[],
 ) => {
+  const { getFrontWeightCurve } = useFrontWeightCurve(keyboard);
+
+  const frontWeightLevelSmoothedSeries = useMemo(() => {
+    const entries = levels.map((level) => {
+      return [level, getFrontWeightCurve(frontWeightLevelToNumber(level))];
+    });
+    return Object.fromEntries(entries) as Record<FrontWeightLevel, number[]>;
+  }, [levels, getFrontWeightCurve]);
+
   const seriesWithBoldVariant = useMemo(
     () => [
       FrontWeightLevel.Level5,
@@ -16,13 +28,12 @@ export const useFrontWeightStandardSeries = <T>(
     ],
     [],
   );
-  const frontWeightSeriesMap = useMemo(() => frontWeightData, []);
 
   const defaultSeries = useDefaultSerie(
     keyboard,
     levels,
     seriesWithBoldVariant,
-    frontWeightSeriesMap,
+    frontWeightLevelSmoothedSeries,
   );
 
   return defaultSeries;
