@@ -7,11 +7,17 @@ import { useTranslation } from '@/hooks/use-translation';
 import type { TouchDesignSerie } from './interfaces';
 
 type KeyWithStrikeWeightRatio<T> = T &
-  Pick<TouchWeightKeyAnalysis, 'strikeWeightRatio'>;
+  Pick<
+    TouchWeightKeyAnalysis,
+    | 'strikeWeightRatio'
+    | 'computedStrikeWeightRatio'
+    | 'measuredStrikeWeightRatio'
+  >;
 
 export interface StrikeWeightRatioChartProps<T> {
   keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeightRatio<T>>>;
   targetSerie?: TouchDesignSerie;
+  displayBothManualAndComputed: boolean;
 }
 
 export const StrikeWeightRatioChart = <T,>(
@@ -20,32 +26,89 @@ export const StrikeWeightRatioChart = <T,>(
   const { keyboard } = props;
   const { t } = useTranslation();
   const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
-  const measuredSerie = useMemo(
+
+  const defaultSerieOptions = useMemo(() => {
+    return {
+      sharpItemStyle: {
+        color: '#333',
+      },
+    };
+  }, []);
+
+  const analyzedSerie = useMemo(
     () =>
       generateSerie(
         (key) => key.payload.strikeWeightRatio,
         t('Strike Weight Ratio'),
         TouchDesignSerieVariant.Measured,
+        defaultSerieOptions,
+      ),
+    [generateSerie, t, defaultSerieOptions],
+  );
+
+  const manualMeasuredSerie = useMemo(
+    () =>
+      generateSerie(
+        (key) => key.payload.measuredStrikeWeightRatio,
+        t('Measured Strike Weight Ratio'),
+        TouchDesignSerieVariant.Measured,
+        defaultSerieOptions,
+      ),
+    [generateSerie, t, defaultSerieOptions],
+  );
+
+  const computedSerie = useMemo(
+    () =>
+      generateSerie(
+        (key) => key.payload.computedStrikeWeightRatio,
+        t('Computed Strike Weight Ratio'),
+        TouchDesignSerieVariant.Computed,
         {
           sharpItemStyle: {
-            color: '#333',
+            color: '#666',
           },
         },
       ),
     [generateSerie, t],
   );
+
   const isEmpty = useMemo(
-    () => isSerieEmpty(measuredSerie),
-    [isSerieEmpty, measuredSerie],
+    () => isSerieEmpty(analyzedSerie),
+    [isSerieEmpty, analyzedSerie],
   );
 
-  const series: TouchDesignSerie[] = useMemo(
-    () => [
-      ...(props.targetSerie ? [props.targetSerie] : []),
-      ...(!isEmpty ? [measuredSerie] : []),
-    ],
-    [props.targetSerie, isEmpty, measuredSerie],
+  const isManualEmpty = useMemo(
+    () => isSerieEmpty(manualMeasuredSerie),
+    [isSerieEmpty, manualMeasuredSerie],
   );
+
+  const isComputedEmpty = useMemo(
+    () => isSerieEmpty(computedSerie),
+    [isSerieEmpty, computedSerie],
+  );
+
+  const series: TouchDesignSerie[] = useMemo(() => {
+    const baseSeries = [...(props.targetSerie ? [props.targetSerie] : [])];
+
+    if (props.displayBothManualAndComputed) {
+      return [
+        ...baseSeries,
+        ...(!isManualEmpty ? [manualMeasuredSerie] : []),
+        ...(!isComputedEmpty ? [computedSerie] : []),
+      ];
+    } else {
+      return [...baseSeries, ...(!isEmpty ? [analyzedSerie] : [])];
+    }
+  }, [
+    analyzedSerie,
+    computedSerie,
+    isComputedEmpty,
+    isEmpty,
+    isManualEmpty,
+    manualMeasuredSerie,
+    props.displayBothManualAndComputed,
+    props.targetSerie,
+  ]);
 
   return (
     <TouchDesignChart

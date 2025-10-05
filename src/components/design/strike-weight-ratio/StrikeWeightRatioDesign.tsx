@@ -131,6 +131,7 @@ export const StrikeWeightRatioDesign: React.FC<
           <StrikeWeightRatioChart
             keyboard={analyzedKeyboard}
             targetSerie={targetSerie ?? undefined}
+            displayBothManualAndComputed={false}
           />
         </div>
       </div>
