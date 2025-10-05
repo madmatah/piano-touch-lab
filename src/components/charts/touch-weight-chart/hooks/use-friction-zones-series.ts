@@ -1,4 +1,4 @@
-import { useKeyboard } from '@/hooks/use-keyboard';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import type { XYCoordinates } from '@/lib/geometry/coordinates';
 import { computePolygonCentroid } from '@/lib/geometry/polygon/compute-polygon-centroid';
 import type { Polygon } from '@/lib/geometry/polygon/polygon';

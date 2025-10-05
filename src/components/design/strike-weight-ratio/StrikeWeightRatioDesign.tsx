@@ -13,7 +13,7 @@ import {
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
-import { useAnalyzedKeyboard } from '@/hooks/use-analyzed-keyboard';
+import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import {} from '@/hooks/store/use-design-store';
 import { useStrikeWeightRatioRecommendation } from './hooks/use-strike-weight-ratio-recommendation';
 import { useTranslation } from '@/hooks/use-translation';

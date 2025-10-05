@@ -1,4 +1,4 @@
-import { useKeyboard } from './use-keyboard';
+import { useKeyboard } from './keyboard/use-keyboard';
 
 export const useKeyTabIndex = <KeyProperty>(
   keyIndex: number,

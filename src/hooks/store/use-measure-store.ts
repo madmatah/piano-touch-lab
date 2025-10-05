@@ -5,7 +5,7 @@ import type {
   MeasuredKeyRequirements,
   OptionalNumber,
 } from '@/lib/piano/touch-design/measured-key.requirements';
-import { useKeyboard } from '../use-keyboard';
+import { useKeyboard } from '../keyboard/use-keyboard';
 import type { KeyboardRequirements } from '@/lib/piano/keyboard';
 
 export interface MeasuresStoreState {
@@ -108,7 +108,7 @@ export const useMeasuresStore = (
   return store;
 };
 
-export const useMeasuredKey = (
+export const useMeasuredKeyFromStore = (
   keyIndex: number,
   measureProfileName?: string,
 ) => {
