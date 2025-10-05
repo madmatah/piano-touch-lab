@@ -6,7 +6,7 @@ import {
 import {
   useDesignActions,
   useStrikeWeightDesign,
-} from '@/hooks/use-design-store';
+} from '@/hooks/store/use-design-store';
 
 export const useStrikeWeightTargetSelector = () => {
   const {

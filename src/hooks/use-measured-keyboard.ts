@@ -7,7 +7,8 @@ import {
   useMeasuresStore,
   type MeasuresStore,
   type MeasuresStoreState,
-} from './use-measure-store';
+} from './store/use-measure-store';
+import { useMeasureOptions } from './store/use-measure-options-store';
 
 export const useMeasuredKeyboard = (
   measureProfileName?: string,
@@ -19,6 +20,7 @@ export const useMeasuredKeyboard = (
       wippenRadiusWeight: state.wippenRadiusWeight,
     })),
   );
+  const { useManualSWRMeasurements } = useMeasureOptions();
 
   const { keyboard } = useKeyboard();
   const measuredKeyboard = useMemo(
@@ -39,10 +41,13 @@ export const useMeasuredKeyboard = (
         return {
           ...measuredKey,
           keyWeightRatio,
+          measuredStrikeWeightRatio: useManualSWRMeasurements
+            ? measuredKey.measuredStrikeWeightRatio
+            : null,
           wippenRadiusWeight,
         };
       }),
-    [keyboard, pianoMeasureState],
+    [keyboard, pianoMeasureState, useManualSWRMeasurements],
   );
 
   return measuredKeyboard;

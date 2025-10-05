@@ -6,7 +6,7 @@ import {
 import {
   useDesignActions,
   useStrikeWeightRatioDesign,
-} from '@/hooks/use-design-store';
+} from '@/hooks/store/use-design-store';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 
 export const useStrikeWeightRatioTargetSelector = () => {

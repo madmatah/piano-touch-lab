@@ -12,7 +12,7 @@ import {
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 import { useAnalyzedKeyboard } from '@/hooks/use-analyzed-keyboard';
-import {} from '@/hooks/use-design-store';
+import {} from '@/hooks/store/use-design-store';
 import { useFrontWeightTargetSerie } from './hooks/use-front-weight-target-serie';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
 import { useFrontWeightRecommendation } from './hooks/use-front-weight-recommendation';

@@ -3,7 +3,7 @@ import { type FrontWeightDesignTarget } from '../FrontWeightDesign.types';
 import {
   useDesignActions,
   useFrontWeightDesign,
-} from '@/hooks/use-design-store';
+} from '@/hooks/store/use-design-store';
 
 export const useFrontWeightTargetSelector = () => {
   const { frontWeightDesignTarget } = useFrontWeightDesign();
