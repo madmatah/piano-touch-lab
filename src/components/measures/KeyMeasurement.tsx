@@ -4,7 +4,10 @@ import type {
 } from '@/lib/piano/touch-design/measured-key.requirements';
 import { useCallback } from 'react';
 import { MeasureInputField } from './MeasureInputField';
-import { useMeasuredKey, useMeasureActions } from '@/hooks/use-measure-store';
+import {
+  useMeasuredKey,
+  useMeasureActions,
+} from '@/hooks/store/use-measure-store';
 import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
 import {
   ArrowDownFromLine,
@@ -13,6 +16,7 @@ import {
   Hammer,
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
+import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 
 export interface KeyMeasurementProps {
   keyNumber: number;
@@ -24,6 +28,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   const keyIndex = keyNumber - 1;
   const keySpec = useMeasuredKey(keyIndex, 'default');
   const { updateKeyMeasure } = useMeasureActions('default');
+  const { useManualSWRMeasurements } = useMeasureOptions();
   const { t } = useTranslation();
 
   const onUpdateKeyProperty = useCallback(
@@ -35,15 +40,25 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
 
   type MeasuredProperties = keyof Pick<
     MeasuredKeyRequirements,
-    'downWeight' | 'frontWeight' | 'strikeWeight' | 'upWeight'
+    | 'downWeight'
+    | 'frontWeight'
+    | 'strikeWeight'
+    | 'upWeight'
+    | 'measuredStrikeWeightRatio'
   >;
 
+  const baseTabGroups: Array<Array<MeasuredProperties>> = [
+    ['downWeight', 'upWeight'],
+    ['frontWeight'],
+    ['strikeWeight'],
+  ];
+
+  const tabGroups: Array<Array<MeasuredProperties>> = useManualSWRMeasurements
+    ? [...baseTabGroups, ['measuredStrikeWeightRatio']]
+    : baseTabGroups;
+
   const { getTabIndexFor, orderedProperties } =
-    useKeyTabIndex<MeasuredProperties>(keyIndex, [
-      ['downWeight', 'upWeight'],
-      ['frontWeight'],
-      ['strikeWeight'],
-    ]);
+    useKeyTabIndex<MeasuredProperties>(keyIndex, tabGroups);
 
   const measureSpecs: {
     [key in MeasuredProperties]: {
@@ -66,6 +81,15 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
         <div className="flex items-center gap-2">
           <ArrowDownFromLine className="w-3 h-3 stroke-3" />
           {t('Front Weight (g)')}
+        </div>
+      ),
+    },
+    measuredStrikeWeightRatio: {
+      placeholder: 'SWR',
+      tooltip: (
+        <div className="flex items-center gap-2">
+          <Hammer className="w-3 h-3 stroke-3" />
+          {t('Strike Weight Ratio')}
         </div>
       ),
     },
@@ -96,16 +120,23 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
           <div className="w-10  shrink text-sm font-medium text-gray-700 self-center">
             #{keyNumber}
           </div>
-          {orderedProperties.map((property) => (
-            <MeasureInputField
-              key={property}
-              defaultValue={keySpec[property]}
-              onUpdate={onUpdateKeyProperty(property)}
-              placeholder={measureSpecs[property].placeholder}
-              tooltip={measureSpecs[property].tooltip}
-              tabIndex={getTabIndexFor(property)}
-            />
-          ))}
+          {orderedProperties
+            .filter((property) => {
+              if (property === 'measuredStrikeWeightRatio') {
+                return useManualSWRMeasurements;
+              }
+              return true;
+            })
+            .map((property) => (
+              <MeasureInputField
+                key={property}
+                defaultValue={keySpec[property]}
+                onUpdate={onUpdateKeyProperty(property)}
+                placeholder={measureSpecs[property].placeholder}
+                tooltip={measureSpecs[property].tooltip}
+                tabIndex={getTabIndexFor(property)}
+              />
+            ))}
         </div>
       </div>
     )

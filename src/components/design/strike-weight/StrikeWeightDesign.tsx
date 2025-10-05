@@ -17,7 +17,7 @@ import {
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 import { useAnalyzedKeyboard } from '@/hooks/use-analyzed-keyboard';
-import {} from '@/hooks/use-design-store';
+import {} from '@/hooks/store/use-design-store';
 import { useStrikeWeightTargetSelector } from './hooks/use-strike-weight-target-selector';
 import { useStrikeWeightTargetSerie } from './hooks/use-strike-weight-target-serie';
 import { useStrikeWeightRecommendation } from './hooks/use-strike-weight-recommendation';

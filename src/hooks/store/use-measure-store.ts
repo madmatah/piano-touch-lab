@@ -5,7 +5,7 @@ import type {
   MeasuredKeyRequirements,
   OptionalNumber,
 } from '@/lib/piano/touch-design/measured-key.requirements';
-import { useKeyboard } from './use-keyboard';
+import { useKeyboard } from '../use-keyboard';
 import type { KeyboardRequirements } from '@/lib/piano/keyboard';
 
 export interface MeasuresStoreState {
@@ -54,6 +54,7 @@ const createMeasuresStore = (
           downWeight: null,
           frontWeight: null,
           keyWeightRatio: null,
+          measuredStrikeWeightRatio: null,
           strikeWeight: null,
           upWeight: null,
           wippenRadiusWeight: null,

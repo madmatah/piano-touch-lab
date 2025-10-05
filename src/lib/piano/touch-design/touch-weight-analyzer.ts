@@ -26,7 +26,7 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
     );
     const balanceWeight = this.computeBalanceWeight(keyMeasurements);
     const frictionWeight = this.computeFrictionWeight(keyMeasurements);
-    const strikeWeightRatio = this.computeStrikeWeightRatio(
+    const computedStrikeWeightRatio = this.computeStrikeWeightRatio(
       keyMeasurements,
       balanceWeight,
       wippenBalanceWeight,
@@ -35,8 +35,10 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
     return {
       ...keyMeasurements,
       balanceWeight,
+      computedStrikeWeightRatio,
       frictionWeight,
-      strikeWeightRatio,
+      strikeWeightRatio:
+        keyMeasurements.measuredStrikeWeightRatio ?? computedStrikeWeightRatio,
       wippenBalanceWeight,
     };
   }

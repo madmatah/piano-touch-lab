@@ -8,6 +8,7 @@ export interface TouchWeightKeyAnalysis extends MeasuredKeyRequirements {
   balanceWeight: OptionalNumber;
   frictionWeight: OptionalNumber;
   strikeWeightRatio: OptionalNumber;
+  computedStrikeWeightRatio: OptionalNumber;
   wippenBalanceWeight: number;
 }
 
