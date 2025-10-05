@@ -17,6 +17,7 @@ export const KeyMeasureSchema = z
     downWeight: OptionalNumberSchema.optional(),
     frontWeight: OptionalNumberSchema.optional(),
     keyWeightRatio: OptionalNumberSchema.optional(),
+    measuredStrikeWeightRatio: OptionalNumberSchema.optional(),
     strikeWeight: OptionalNumberSchema.optional(),
     upWeight: OptionalNumberSchema.optional(),
     wippenRadiusWeight: OptionalNumberSchema.optional(),

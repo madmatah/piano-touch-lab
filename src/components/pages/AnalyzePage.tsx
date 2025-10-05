@@ -7,9 +7,11 @@ import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
 import { useAnalyzedKeyboard } from '../../hooks/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
+import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 
 export const AnalyzePage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
+  const { useManualSWRMeasurements } = useMeasureOptions();
   const { t } = useTranslation();
 
   return (
@@ -35,7 +37,10 @@ export const AnalyzePage = () => {
           <StrikeWeightChart keyboard={analyzedKeyboard} />
         </TabsContent>
         <TabsContent value="strike-weight-ratio">
-          <StrikeWeightRatioChart keyboard={analyzedKeyboard} />
+          <StrikeWeightRatioChart
+            keyboard={analyzedKeyboard}
+            displayBothManualAndComputed={useManualSWRMeasurements}
+          />
         </TabsContent>
       </Tabs>
     </MainLayout>

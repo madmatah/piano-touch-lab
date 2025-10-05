@@ -37,6 +37,7 @@ export const useImportMeasures = () => {
             downWeight: k.downWeight ?? null,
             frontWeight: k.frontWeight ?? null,
             keyWeightRatio: k.keyWeightRatio ?? null,
+            measuredStrikeWeightRatio: k.measuredStrikeWeightRatio ?? null,
             strikeWeight: k.strikeWeight ?? null,
             upWeight: k.upWeight ?? null,
             wippenRadiusWeight: k.wippenRadiusWeight ?? null,

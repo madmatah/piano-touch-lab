@@ -3,6 +3,8 @@ import type { TouchDesignSerieVariant } from './TouchDesignChart';
 
 export interface EchartsDataItemStyle {
   color?: string;
+  borderColor?: string;
+  borderWidth?: number;
 }
 
 export type TouchDesignDataPointOld = number | undefined | [number, undefined];
