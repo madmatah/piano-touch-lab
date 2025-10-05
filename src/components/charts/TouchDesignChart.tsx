@@ -1,4 +1,4 @@
-import { useKeyboard } from '@/hooks/use-keyboard';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';

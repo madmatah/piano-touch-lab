@@ -5,7 +5,7 @@ import { ChartLine } from 'lucide-react';
 import { Tabs, TabsContent, TabsTrigger, TabsList } from '../app-ui/tabs';
 import { StrikeWeightChart } from '../charts/StrikeWeightChart';
 import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
-import { useAnalyzedKeyboard } from '../../hooks/use-analyzed-keyboard';
+import { useAnalyzedKeyboard } from '../../hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 
