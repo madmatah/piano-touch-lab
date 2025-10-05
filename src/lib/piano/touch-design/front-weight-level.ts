@@ -5,3 +5,7 @@ export enum FrontWeightLevel {
   Level8 = 'FW#8',
   Level9 = 'FW#9',
 }
+
+export const frontWeightLevelToNumber = (level: FrontWeightLevel) => {
+  return Number(level.replace('FW#', ''));
+};

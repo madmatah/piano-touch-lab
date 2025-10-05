@@ -1,6 +1,6 @@
 import { StrikeWeightLevel } from '../hammer-weight-level';
 
-// Original values as listed in Stanwood's documentation
+// Strike weight curves as listed in David Stanwood's articles
 export const strikeWeightData: { [k in StrikeWeightLevel]: number[] } = {
   [StrikeWeightLevel.Level1]: [
     8.0, 8.0, 8.0, 7.9, 7.9, 7.9, 7.9, 7.8, 7.8, 7.8, 7.8, 7.7, 7.7, 7.7, 7.6,
