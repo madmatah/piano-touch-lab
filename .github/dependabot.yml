@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'friday'
+      time: '15:00'
+      timezone: 'UTC'
+    open-pull-requests-limit: 10
+    groups:
+      radix-ui:
+        patterns:
+          - '@radix-ui/*'
+      testing:
+        patterns:
+          - '@testing-library/*'
+          - '@happy-dom/*'
+      types:
+        patterns:
+          - '@types/*'
+      eslint:
+        patterns:
+          - 'eslint*'
+          - 'typescript-eslint'
+    ignore:
+      - dependency-name: '@types/bun'
+        update-types: ['version-update:semver-major']
