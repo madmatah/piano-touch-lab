@@ -1,6 +1,5 @@
 import { useFrontWeightTargetSerie } from '@/components/design/front-weight/hooks/use-front-weight-target-serie';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
-import { useAnalyzedKeyboard } from './use-analyzed-keyboard';
 import {
   useFrontWeightDesign,
   useStrikeWeightDesign,
@@ -15,8 +14,9 @@ import {
 } from '@/lib/piano/touch-design/touch-weight-previewer.requirements';
 import { useInjection } from 'inversify-react';
 
-export const useDesignedKeyboard = (): TouchWeightAnalyzedKeyboard => {
-  const analyzedKeyboard = useAnalyzedKeyboard();
+export const useDesignedKeyboard = (
+  analyzedKeyboard: TouchWeightAnalyzedKeyboard,
+): TouchWeightAnalyzedKeyboard => {
   const touchWeightPreviewer = useInjection<TouchWeightPreviewerRequirements>(
     touchWeightPreviewerRequirementsSymbol,
   );

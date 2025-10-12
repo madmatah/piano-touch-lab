@@ -1,36 +1,13 @@
-import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { TouchWeightChart } from '../charts/touch-weight-chart/TouchWeightChart';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
+import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
 export interface TouchWeightPreviewProps {
-  requiredDataPercentage: number;
-  notEnoughDataErrorTitle: string;
-  notEnoughDataErrorDescription: string;
+  designedKeyboard: TouchWeightAnalyzedKeyboard;
 }
 
 export const TouchWeightPreview: React.FC<TouchWeightPreviewProps> = ({
-  requiredDataPercentage,
-  notEnoughDataErrorTitle,
-  notEnoughDataErrorDescription,
+  designedKeyboard,
 }) => {
-  const designedKeyboard = useDesignedKeyboard();
-  const hasEnoughData =
-    designedKeyboard
-      .mapToArray((key) => key.payload.downWeight)
-      .filter((v) => v !== undefined && v !== null).length >=
-    Math.round(designedKeyboard.size * requiredDataPercentage);
-
-  if (!hasEnoughData) {
-    return (
-      <Alert variant="default" className="w-full mx-auto my-10">
-        <AlertCircleIcon />
-        <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
-        <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
-      </Alert>
-    );
-  }
-
   return (
     <div>
       <TouchWeightChart analyzedKeyboard={designedKeyboard} />

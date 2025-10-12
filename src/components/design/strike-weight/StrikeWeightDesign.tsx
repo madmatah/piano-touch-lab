@@ -16,7 +16,6 @@ import {
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
-import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import {} from '@/hooks/store/use-design-store';
 import { useStrikeWeightTargetSelector } from './hooks/use-strike-weight-target-selector';
 import { useStrikeWeightTargetSerie } from './hooks/use-strike-weight-target-serie';
@@ -30,12 +29,12 @@ const standardCurveTargets: TargetSelectorTarget<StrikeWeightLevel>[] =
   }));
 
 export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
+  analyzedKeyboard,
   requiredDataPercentage,
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
   const { t } = useTranslation();
-  const analyzedKeyboard = useAnalyzedKeyboard();
   const {
     strikeWeightDesignMode,
     strikeWeightDesignTarget,

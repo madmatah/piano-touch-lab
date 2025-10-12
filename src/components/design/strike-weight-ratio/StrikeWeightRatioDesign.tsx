@@ -13,7 +13,6 @@ import {
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
-import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import {} from '@/hooks/store/use-design-store';
 import { useStrikeWeightRatioRecommendation } from './hooks/use-strike-weight-ratio-recommendation';
 import { useTranslation } from '@/hooks/use-translation';
@@ -26,12 +25,12 @@ import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.en
 export const StrikeWeightRatioDesign: React.FC<
   StrikeWeightRatioDesignProps
 > = ({
+  analyzedKeyboard,
   requiredDataPercentage,
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
   const { t } = useTranslation();
-  const analyzedKeyboard = useAnalyzedKeyboard();
   const {
     onModeChange,
     onTargetChange,

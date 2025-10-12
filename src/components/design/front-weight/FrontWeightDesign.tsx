@@ -11,7 +11,6 @@ import {
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
-import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import {} from '@/hooks/store/use-design-store';
 import { useFrontWeightTargetSerie } from './hooks/use-front-weight-target-serie';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
@@ -21,12 +20,12 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
 
 export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
+  analyzedKeyboard,
   requiredDataPercentage,
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
   const { t } = useTranslation();
-  const analyzedKeyboard = useAnalyzedKeyboard();
   const { frontWeightDesignTarget, onTargetChange, updateFrontWeightDesign } =
     useFrontWeightTargetSelector();
 

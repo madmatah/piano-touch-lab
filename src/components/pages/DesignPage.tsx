@@ -7,10 +7,25 @@ import { useTranslation } from '@/hooks/use-translation';
 import { FrontWeightDesign } from '../design/front-weight/FrontWeightDesign';
 import { StrikeWeightRatioDesign } from '../design/strike-weight-ratio/StrikeWeightRatioDesign';
 import { TouchWeightPreview } from '../design/TouchWeightPreview';
+import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
+import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
+import { useMemo } from 'react';
 
 export const DesignPage = () => {
   const requiredDataPercentage = 0.8;
   const { t } = useTranslation();
+
+  const analyzedKeyboard = useAnalyzedKeyboard();
+  const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+
+  const isDesignCompleted = useMemo(() => {
+    return (
+      designedKeyboard
+        .mapToArray((key) => key.payload.downWeight)
+        .filter((v) => v !== undefined && v !== null).length >=
+      Math.round(designedKeyboard.size * requiredDataPercentage)
+    );
+  }, [designedKeyboard, requiredDataPercentage]);
 
   return (
     <MainLayout pageTitle={t('Design')} pageIcon={<Settings2 />}>
@@ -21,10 +36,13 @@ export const DesignPage = () => {
           <TabsTrigger value="strike-weight-ratio">
             {t('Strike Weight Ratio')}
           </TabsTrigger>
-          <TabsTrigger value="preview">{t('Touch Weight preview')}</TabsTrigger>
+          <TabsTrigger value="preview" disabled={!isDesignCompleted}>
+            {t('Touch Weight preview')}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="front-weight">
           <FrontWeightDesign
+            analyzedKeyboard={analyzedKeyboard}
             requiredDataPercentage={requiredDataPercentage}
             notEnoughDataErrorTitle={t('Not enough data')}
             notEnoughDataErrorDescription={t(
@@ -34,30 +52,26 @@ export const DesignPage = () => {
         </TabsContent>
         <TabsContent value="strike-weight">
           <StrikeWeightDesign
-            requiredDataPercentage={requiredDataPercentage}
+            analyzedKeyboard={analyzedKeyboard}
             notEnoughDataErrorTitle={t('Not enough data')}
             notEnoughDataErrorDescription={t(
               'Not enough data to generate a strike weight design.',
             )}
+            requiredDataPercentage={requiredDataPercentage}
           />
         </TabsContent>
         <TabsContent value="strike-weight-ratio">
           <StrikeWeightRatioDesign
-            requiredDataPercentage={requiredDataPercentage}
+            analyzedKeyboard={analyzedKeyboard}
             notEnoughDataErrorTitle={t('Not enough data')}
             notEnoughDataErrorDescription={t(
               'Not enough data to generate a strike weight ratio design.',
             )}
+            requiredDataPercentage={requiredDataPercentage}
           />
         </TabsContent>
         <TabsContent value="preview">
-          <TouchWeightPreview
-            requiredDataPercentage={requiredDataPercentage}
-            notEnoughDataErrorTitle={t('Not enough data')}
-            notEnoughDataErrorDescription={t(
-              'You need to configure all design options to display the touch weight preview.',
-            )}
-          />
+          <TouchWeightPreview designedKeyboard={designedKeyboard} />
         </TabsContent>
       </Tabs>
     </MainLayout>
