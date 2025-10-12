@@ -6,6 +6,7 @@ import { TabsList } from '../app-ui/tabs';
 import { useTranslation } from '@/hooks/use-translation';
 import { FrontWeightDesign } from '../design/front-weight/FrontWeightDesign';
 import { StrikeWeightRatioDesign } from '../design/strike-weight-ratio/StrikeWeightRatioDesign';
+import { TouchWeightPreview } from '../design/TouchWeightPreview';
 
 export const DesignPage = () => {
   const requiredDataPercentage = 0.8;
@@ -20,6 +21,7 @@ export const DesignPage = () => {
           <TabsTrigger value="strike-weight-ratio">
             {t('Strike Weight Ratio')}
           </TabsTrigger>
+          <TabsTrigger value="preview">{t('Touch Weight preview')}</TabsTrigger>
         </TabsList>
         <TabsContent value="front-weight">
           <FrontWeightDesign
@@ -45,6 +47,15 @@ export const DesignPage = () => {
             notEnoughDataErrorTitle={t('Not enough data')}
             notEnoughDataErrorDescription={t(
               'Not enough data to generate a strike weight ratio design.',
+            )}
+          />
+        </TabsContent>
+        <TabsContent value="preview">
+          <TouchWeightPreview
+            requiredDataPercentage={requiredDataPercentage}
+            notEnoughDataErrorTitle={t('Not enough data')}
+            notEnoughDataErrorDescription={t(
+              'You need to configure all design options to display the touch weight preview.',
             )}
           />
         </TabsContent>
