@@ -1,4 +1,5 @@
 import type { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
+import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
 export type StrikeWeightRatioDesignSmoothTarget =
   | SmoothStrategy.Mean
@@ -10,9 +11,10 @@ export type StrikeWeightRatioDesignTarget =
   | null;
 
 export interface StrikeWeightRatioDesignProps {
-  requiredDataPercentage: number;
-  notEnoughDataErrorTitle: string;
+  analyzedKeyboard: TouchWeightAnalyzedKeyboard;
   notEnoughDataErrorDescription: string;
+  notEnoughDataErrorTitle: string;
+  requiredDataPercentage: number;
 }
 
 export enum StrikeWeightRatioDesignMode {
