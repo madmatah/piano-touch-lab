@@ -50,6 +50,7 @@
   "Target selection": "Target selection",
   "The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.": "The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.",
   "Touch Weight Metrology cheat sheet": "Touch Weight Metrology cheat sheet",
+  "Touch Weight preview": "Touch Weight preview",
   "Up Weight": "Up Weight",
   "Up Weight (g)": "Up Weight (g)",
   "Use a constant strike weight ratio for all keys.": "Use a constant strike weight ratio for all keys.",
@@ -59,5 +60,6 @@
   "Weight in Grams": "Weight in Grams",
   "Weight Range": "Weight Range",
   "Wippen radius weight": "Wippen radius weight",
+  "You need to configure all design options to display the touch weight preview.": "You need to configure all design options to display the touch weight preview.",
   "Zone": "Zone"
 }

@@ -50,6 +50,7 @@
   "Target selection": "Sélection de l'objectif",
   "The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.": "Le rapport de poids d'attaque mesuré n'est pas cohérent avec le rapport de poids d'attaque calculé ({{computedStrikeWeightRatio}}). La différence est supérieure à {{difference}}.\nVous devriez vérifier vos mesures pour trouver la source de l'incohérence.\nVérifiez le graphique du rapport de poids d'attaque sur la page d'analyse pour plus de détails.",
   "Touch Weight Metrology cheat sheet": "Aide mémoire de la métrologie du piano",
+  "Touch Weight preview": "Aperçu du toucher",
   "Up Weight": "Poids de remontée",
   "Up Weight (g)": "Poids de remontée (g)",
   "Use a constant strike weight ratio for all keys.": "Définir une valeur fixe pour l'ensemble des touches",
@@ -59,5 +60,6 @@
   "Weight in Grams": "Poids en grammes",
   "Weight Range": "Poids",
   "Wippen radius weight": "Poids radial du chevalet",
+  "You need to configure all design options to display the touch weight preview.": "Vous devez configurer toutes les options de conception pour afficher l'aperçu du toucher.",
   "Zone": "Zone"
 }
