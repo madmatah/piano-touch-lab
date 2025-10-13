@@ -15,7 +15,7 @@ import { useCallback } from 'react';
 
 export const MeasureOptionsTab = () => {
   const { t } = useTranslation();
-  const { useManualSWRMeasurements, useSpringSupportMeasurements } =
+  const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
   const { updateOption } = useMeasureOptionsActions();
 
@@ -28,7 +28,7 @@ export const MeasureOptionsTab = () => {
 
   const onUpdateUseSpringSupportMeasurements = useCallback(
     (value: boolean) => {
-      updateOption('useSpringSupportMeasurements', value);
+      updateOption('useSupportSpringMeasurements', value);
     },
     [updateOption],
   );
@@ -70,8 +70,8 @@ export const MeasureOptionsTab = () => {
             </FieldContent>
             <Switch
               className="hover:cursor-pointer"
-              id="useSpringSupportMeasurements"
-              checked={useSpringSupportMeasurements}
+              id="useSupportSpringMeasurements"
+              checked={useSupportSpringMeasurements}
               onCheckedChange={onUpdateUseSpringSupportMeasurements}
             />
           </Field>

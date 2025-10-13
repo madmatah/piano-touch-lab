@@ -19,27 +19,38 @@ describe('The TouchWeightAnalyzer class', () => {
     octave: 3,
   };
 
+  const nullPayload: MeasuredKeyRequirements = {
+    downWeightWithSpringSupport: null,
+    downWeightWithoutSpringSupport: null,
+    frontWeight: null,
+    keyWeightRatio: null,
+    measuredStrikeWeightRatio: null,
+    strikeWeight: null,
+    upWeight: null,
+    wippenRadiusWeight: null,
+  };
+
+  const basePayload: MeasuredKeyRequirements = {
+    downWeightWithSpringSupport: 35,
+    downWeightWithoutSpringSupport: 40,
+    frontWeight: 52,
+    keyWeightRatio: 0.45,
+    measuredStrikeWeightRatio: null,
+    strikeWeight: 18,
+    upWeight: 10,
+    wippenRadiusWeight: 17,
+  };
+
   beforeEach(() => {
     analyzer = new TouchWeightAnalyzer();
   });
 
   describe('The analyzeKey() method', () => {
+    let result: ReturnType<TouchWeightAnalyzer['analyzeKey']>;
+
     describe('When all measurements are provided', () => {
-      let result: ReturnType<TouchWeightAnalyzer['analyzeKey']>;
-
       beforeEach(() => {
-        const payload: MeasuredKeyRequirements = {
-          downWeightWithSpringSupport: null,
-          downWeightWithoutSpringSupport: 40,
-          frontWeight: 52,
-          keyWeightRatio: 0.45,
-          measuredStrikeWeightRatio: null,
-          strikeWeight: 18,
-          upWeight: 10,
-          wippenRadiusWeight: 17,
-        };
-
-        key = { ...baseKey, payload };
+        key = { ...baseKey, payload: basePayload };
         result = analyzer.analyzeKey(key);
       });
 
@@ -64,21 +75,18 @@ describe('The TouchWeightAnalyzer class', () => {
       it('should set strikeWeightRatio to computed value when measured is null', () => {
         expect(result.strikeWeightRatio).toBe(result.computedStrikeWeightRatio);
       });
+
+      it('should compute supportSpringBalanceWeight', () => {
+        expect(result.supportSpringBalanceWeight).toBeCloseTo(5);
+      });
     });
 
     describe('When some measurements are missing', () => {
-      let result: ReturnType<TouchWeightAnalyzer['analyzeKey']>;
-
       beforeEach(() => {
         const payload: MeasuredKeyRequirements = {
-          downWeightWithSpringSupport: null,
-          downWeightWithoutSpringSupport: null,
+          ...nullPayload,
           frontWeight: 50,
-          keyWeightRatio: null,
-          measuredStrikeWeightRatio: null,
           strikeWeight: 20,
-          upWeight: null,
-          wippenRadiusWeight: null,
         };
 
         key = { ...baseKey, payload };
@@ -109,8 +117,6 @@ describe('The TouchWeightAnalyzer class', () => {
     });
 
     describe('When measuredStrikeWeightRatio is provided', () => {
-      let result: ReturnType<TouchWeightAnalyzer['analyzeKey']>;
-
       beforeEach(() => {
         const payload: MeasuredKeyRequirements = {
           downWeightWithSpringSupport: null,
@@ -144,24 +150,14 @@ describe('The TouchWeightAnalyzer class', () => {
 
       beforeEach(() => {
         const payloadA: MeasuredKeyRequirements = {
-          downWeightWithSpringSupport: null,
+          ...basePayload,
           downWeightWithoutSpringSupport: 40,
-          frontWeight: 52,
-          keyWeightRatio: 0.5,
-          measuredStrikeWeightRatio: null,
-          strikeWeight: 20,
           upWeight: null,
-          wippenRadiusWeight: 18,
         };
         const payloadB: MeasuredKeyRequirements = {
-          downWeightWithSpringSupport: null,
+          ...basePayload,
           downWeightWithoutSpringSupport: null,
-          frontWeight: 52,
-          keyWeightRatio: 0.5,
-          measuredStrikeWeightRatio: null,
-          strikeWeight: 20,
           upWeight: 10,
-          wippenRadiusWeight: 18,
         };
 
         resultA = analyzer.analyzeKey({ ...baseKey, payload: payloadA });
@@ -232,6 +228,52 @@ describe('The TouchWeightAnalyzer class', () => {
 
       it('should compute computedStrikeWeightRatio as null when balanceWeight is missing', () => {
         expect(resultBalanceMissing.computedStrikeWeightRatio).toBeNull();
+      });
+    });
+
+    describe('When downWeightWithSpringSupport is not provided', () => {
+      let payload: MeasuredKeyRequirements;
+
+      beforeEach(() => {
+        payload = { ...basePayload, downWeightWithSpringSupport: null };
+      });
+
+      describe('When downWeightWithoutSpringSupport is provided', () => {
+        const expectedDownWeight = 40;
+
+        beforeEach(() => {
+          payload = {
+            ...payload,
+            downWeightWithoutSpringSupport: expectedDownWeight,
+          };
+          result = analyzer.analyzeKey({ ...baseKey, payload });
+        });
+
+        it('should set downWeightWithSpringSupport to downWeightWithoutSpringSupport', () => {
+          expect(result.downWeightWithSpringSupport).toBe(expectedDownWeight);
+        });
+
+        it('should set supportSpringBalanceWeight to null', () => {
+          expect(result.supportSpringBalanceWeight).toBeNull();
+        });
+      });
+
+      describe('When downWeightWithoutSpringSupport is not provided', () => {
+        beforeEach(() => {
+          payload = {
+            ...payload,
+            downWeightWithoutSpringSupport: null,
+          };
+          result = analyzer.analyzeKey({ ...baseKey, payload });
+        });
+
+        it('should set downWeightWithSpringSupport to null', () => {
+          expect(result.downWeightWithSpringSupport).toBeNull();
+        });
+
+        it('should set supportSpringBalanceWeight to null', () => {
+          expect(result.supportSpringBalanceWeight).toBeNull();
+        });
       });
     });
   });

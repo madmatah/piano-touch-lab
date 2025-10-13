@@ -10,6 +10,7 @@ export interface TouchWeightKeyAnalysis extends MeasuredKeyRequirements {
   strikeWeightRatio: OptionalNumber;
   computedStrikeWeightRatio: OptionalNumber;
   wippenBalanceWeight: number;
+  supportSpringBalanceWeight: OptionalNumber;
 }
 
 export type TouchWeightAnalyzedKey = KeyWith<TouchWeightKeyAnalysis>;

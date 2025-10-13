@@ -25,6 +25,7 @@ describe('The TouchWeightPreviewer class', () => {
       measuredStrikeWeightRatio: null,
       strikeWeight: 10.5,
       strikeWeightRatio: 5.3,
+      supportSpringBalanceWeight: null,
       upWeight: null,
       wippenBalanceWeight: 9,
       wippenRadiusWeight: 18,

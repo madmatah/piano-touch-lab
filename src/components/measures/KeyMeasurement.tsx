@@ -32,7 +32,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   const keyIndex = keyNumber - 1;
   const keySpec = useMeasuredKeyFromStore(keyIndex, 'default');
   const { updateKeyMeasure } = useMeasureActions('default');
-  const { useManualSWRMeasurements, useSpringSupportMeasurements } =
+  const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
   const { t } = useTranslation();
 
@@ -60,7 +60,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   >;
 
   const tabGroups: Array<Array<MeasuredProperties>> = [
-    useSpringSupportMeasurements ? ['downWeightWithSpringSupport'] : [],
+    useSupportSpringMeasurements ? ['downWeightWithSpringSupport'] : [],
     ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],

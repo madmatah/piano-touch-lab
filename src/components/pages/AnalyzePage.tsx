@@ -8,11 +8,13 @@ import { StrikeWeightRatioChart } from '../charts/StrikeWeightRatioChart';
 import { useAnalyzedKeyboard } from '../../hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
+import { SupportSpringBalanceWeightChart } from '../charts/SupportSpringBalanceWeightChart';
 
 export const AnalyzePage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { useManualSWRMeasurements } = useMeasureOptions();
   const { t } = useTranslation();
+  const { useSupportSpringMeasurements } = useMeasureOptions();
 
   return (
     <MainLayout pageTitle={t('Analyze')} pageIcon={<ChartLine />}>
@@ -26,6 +28,11 @@ export const AnalyzePage = () => {
           <TabsTrigger value="strike-weight-ratio">
             {t('Strike Weight Ratio')}
           </TabsTrigger>
+          {useSupportSpringMeasurements && (
+            <TabsTrigger value="support-spring-balance-weight">
+              {t('Support Spring Balance Weight')}
+            </TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="touch-weight">
           <TouchWeightChart analyzedKeyboard={analyzedKeyboard} />
@@ -42,6 +49,11 @@ export const AnalyzePage = () => {
             displayBothManualAndComputed={useManualSWRMeasurements}
           />
         </TabsContent>
+        {useSupportSpringMeasurements && (
+          <TabsContent value="support-spring-balance-weight">
+            <SupportSpringBalanceWeightChart keyboard={analyzedKeyboard} />
+          </TabsContent>
+        )}
       </Tabs>
     </MainLayout>
   );
