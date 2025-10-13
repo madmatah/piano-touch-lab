@@ -22,7 +22,7 @@ export const DesignPage = () => {
   const isDesignCompleted = useMemo(() => {
     return (
       designedKeyboard
-        .mapToArray((key) => key.payload.downWeight)
+        .mapToArray((key) => key.payload.downWeightWithoutSpringSupport)
         .filter((v) => v !== undefined && v !== null).length >=
       Math.round(designedKeyboard.size * requiredDataPercentage)
     );

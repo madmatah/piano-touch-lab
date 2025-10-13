@@ -5,10 +5,14 @@ import { KeyboardProvider } from '@/contexts/keyboard-context';
 import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
 
 describe('The useKeyTabIndex hook', () => {
-  type KeyProperty = 'downWeight' | 'upWeight' | 'frontWeight' | 'strikeWeight';
+  type KeyProperty =
+    | 'downWeightWithoutSpringSupport'
+    | 'upWeight'
+    | 'frontWeight'
+    | 'strikeWeight';
 
   const fakeTabGroups: Array<Array<KeyProperty>> = [
-    ['downWeight', 'upWeight'],
+    ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
   ];
@@ -31,7 +35,7 @@ describe('The useKeyTabIndex hook', () => {
 
     it('should return the expected orderedProperties', () => {
       expect(orderedProperties).toEqual([
-        'downWeight',
+        'downWeightWithoutSpringSupport',
         'upWeight',
         'frontWeight',
         'strikeWeight',
@@ -48,7 +52,7 @@ describe('The useKeyTabIndex hook', () => {
       describe.each([
         {
           expectedValues: {
-            downWeight: 1,
+            downWeightWithoutSpringSupport: 1,
             frontWeight: 90,
             strikeWeight: 178,
             upWeight: 2,
@@ -57,7 +61,7 @@ describe('The useKeyTabIndex hook', () => {
         },
         {
           expectedValues: {
-            downWeight: 2,
+            downWeightWithoutSpringSupport: 2,
             frontWeight: 91,
             strikeWeight: 179,
             upWeight: 3,
@@ -66,7 +70,7 @@ describe('The useKeyTabIndex hook', () => {
         },
         {
           expectedValues: {
-            downWeight: 3,
+            downWeightWithoutSpringSupport: 3,
             frontWeight: 92,
             strikeWeight: 180,
             upWeight: 4,
@@ -75,7 +79,7 @@ describe('The useKeyTabIndex hook', () => {
         },
         {
           expectedValues: {
-            downWeight: 87,
+            downWeightWithoutSpringSupport: 87,
             frontWeight: 176,
             strikeWeight: 264,
             upWeight: 88,
@@ -84,7 +88,7 @@ describe('The useKeyTabIndex hook', () => {
         },
         {
           expectedValues: {
-            downWeight: 88,
+            downWeightWithoutSpringSupport: 88,
             frontWeight: 177,
             strikeWeight: 265,
             upWeight: 89,
@@ -101,7 +105,9 @@ describe('The useKeyTabIndex hook', () => {
         });
 
         it('should compute tabIndex for provided groups', () => {
-          expect(getTabIndexFor('downWeight')).toBe(expectedValues.downWeight);
+          expect(getTabIndexFor('downWeightWithoutSpringSupport')).toBe(
+            expectedValues.downWeightWithoutSpringSupport,
+          );
           expect(getTabIndexFor('upWeight')).toBe(expectedValues.upWeight);
           expect(getTabIndexFor('frontWeight')).toBe(
             expectedValues.frontWeight,

@@ -50,7 +50,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
 
   type MeasuredProperties = keyof Pick<
     MeasuredKeyRequirements,
-    | 'downWeight'
+    | 'downWeightWithoutSpringSupport'
     | 'frontWeight'
     | 'strikeWeight'
     | 'upWeight'
@@ -58,7 +58,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   >;
 
   const baseTabGroups: Array<Array<MeasuredProperties>> = [
-    ['downWeight', 'upWeight'],
+    ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
   ];
@@ -76,12 +76,12 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       tooltip: string | React.ReactNode;
     };
   } = {
-    downWeight: {
+    downWeightWithoutSpringSupport: {
       placeholder: 'D',
       tooltip: (
         <div className="flex items-center gap-2">
           <ArrowDownToLine className="w-3 h-3 stroke-3" />
-          {t('Down Weight (g)')}
+          {t('Down Weight without spring support (g)')}
         </div>
       ),
     },

@@ -17,7 +17,8 @@ describe('The TouchWeightPreviewer class', () => {
     payload: {
       balanceWeight: null,
       computedStrikeWeightRatio: null,
-      downWeight: null,
+      downWeightWithSpringSupport: null,
+      downWeightWithoutSpringSupport: null,
       frictionWeight: 12,
       frontWeight: 27,
       keyWeightRatio: 0.5,
@@ -50,7 +51,9 @@ describe('The TouchWeightPreviewer class', () => {
         expect(result).toEqual({
           ...fakeKeyWithAllValues.payload,
           balanceWeight: expect.closeTo(expectedBalanceWeight) as number,
-          downWeight: expect.closeTo(expectedDownWeight) as number,
+          downWeightWithoutSpringSupport: expect.closeTo(
+            expectedDownWeight,
+          ) as number,
           upWeight: expect.closeTo(expectedUpWeight) as number,
         });
       });
@@ -69,7 +72,7 @@ describe('The TouchWeightPreviewer class', () => {
       });
 
       it('should return null values for computed weights', () => {
-        expect(result.downWeight).toBeNull();
+        expect(result.downWeightWithoutSpringSupport).toBeNull();
         expect(result.upWeight).toBeNull();
       });
 
@@ -93,7 +96,7 @@ describe('The TouchWeightPreviewer class', () => {
       });
 
       it('should return null values for computed weights', () => {
-        expect(result.downWeight).toBeNull();
+        expect(result.downWeightWithoutSpringSupport).toBeNull();
         expect(result.upWeight).toBeNull();
       });
     });
@@ -111,7 +114,7 @@ describe('The TouchWeightPreviewer class', () => {
       });
 
       it('should return null values for computed weights', () => {
-        expect(result.downWeight).toBeNull();
+        expect(result.downWeightWithoutSpringSupport).toBeNull();
         expect(result.upWeight).toBeNull();
       });
     });
@@ -129,7 +132,7 @@ describe('The TouchWeightPreviewer class', () => {
       });
 
       it('should return null values for computed weights', () => {
-        expect(result.downWeight).toBeNull();
+        expect(result.downWeightWithoutSpringSupport).toBeNull();
         expect(result.upWeight).toBeNull();
       });
     });

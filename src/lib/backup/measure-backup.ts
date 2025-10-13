@@ -15,6 +15,8 @@ export interface MeasureBackupRequirements {
 export const KeyMeasureSchema = z
   .object({
     downWeight: OptionalNumberSchema.optional(),
+    downWeightWithSpringSupport: OptionalNumberSchema.optional(),
+    downWeightWithoutSpringSupport: OptionalNumberSchema.optional(),
     frontWeight: OptionalNumberSchema.optional(),
     keyWeightRatio: OptionalNumberSchema.optional(),
     measuredStrikeWeightRatio: OptionalNumberSchema.optional(),
