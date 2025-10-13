@@ -10,6 +10,7 @@ import { TouchWeightPreview } from '../design/TouchWeightPreview';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { useMemo } from 'react';
+import { AdjustmentSheet } from '../design/adjustment-sheet/AdjustmentSheet';
 
 export const DesignPage = () => {
   const requiredDataPercentage = 0.8;
@@ -38,6 +39,9 @@ export const DesignPage = () => {
           </TabsTrigger>
           <TabsTrigger value="preview" disabled={!isDesignCompleted}>
             {t('Touch Weight preview')}
+          </TabsTrigger>
+          <TabsTrigger value="adjustment-sheet" disabled={!isDesignCompleted}>
+            {t('Adjustment Sheet')}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="front-weight">
@@ -72,6 +76,12 @@ export const DesignPage = () => {
         </TabsContent>
         <TabsContent value="preview">
           <TouchWeightPreview designedKeyboard={designedKeyboard} />
+        </TabsContent>
+        <TabsContent value="adjustment-sheet">
+          <AdjustmentSheet
+            analyzedKeyboard={analyzedKeyboard}
+            designedKeyboard={designedKeyboard}
+          />
         </TabsContent>
       </Tabs>
     </MainLayout>
