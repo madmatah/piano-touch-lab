@@ -23,7 +23,11 @@ export class TouchWeightPreviewer implements TouchWeightPreviewerRequirements {
       !frictionWeight ||
       !wippenBalanceWeight
     ) {
-      return { ...key.payload, downWeight: null, upWeight: null };
+      return {
+        ...key.payload,
+        downWeightWithoutSpringSupport: null,
+        upWeight: null,
+      };
     }
 
     const balanceWeight =
@@ -35,7 +39,7 @@ export class TouchWeightPreviewer implements TouchWeightPreviewerRequirements {
     return {
       ...key.payload,
       balanceWeight: balanceWeightRounded,
-      downWeight,
+      downWeightWithoutSpringSupport: downWeight,
       upWeight,
     };
   }

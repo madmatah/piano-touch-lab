@@ -34,7 +34,9 @@ export const useImportMeasures = () => {
 
         const nextKeys: MeasureBackupRequirements['keys'] =
           parsed.data.keys.map((k) => ({
-            downWeight: k.downWeight ?? null,
+            downWeightWithSpringSupport: k.downWeightWithSpringSupport ?? null,
+            downWeightWithoutSpringSupport:
+              k.downWeightWithoutSpringSupport ?? k.downWeight ?? null,
             frontWeight: k.frontWeight ?? null,
             keyWeightRatio: k.keyWeightRatio ?? null,
             measuredStrikeWeightRatio: k.measuredStrikeWeightRatio ?? null,

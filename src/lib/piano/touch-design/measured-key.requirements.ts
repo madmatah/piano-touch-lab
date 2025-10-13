@@ -1,7 +1,8 @@
 export type OptionalNumber = number | null;
 
 export interface MeasuredKeyRequirements {
-  downWeight: OptionalNumber;
+  downWeightWithoutSpringSupport: OptionalNumber;
+  downWeightWithSpringSupport: OptionalNumber;
   frontWeight: OptionalNumber;
   keyWeightRatio: OptionalNumber;
   measuredStrikeWeightRatio: OptionalNumber;

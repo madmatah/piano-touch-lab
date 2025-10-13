@@ -39,7 +39,8 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
       useManualSWRMeasurements: false,
     };
     keyMeasure = {
-      downWeight: 50,
+      downWeightWithSpringSupport: 43,
+      downWeightWithoutSpringSupport: 50,
       frontWeight: 30,
       keyWeightRatio: null,
       measuredStrikeWeightRatio: 0.8,
@@ -68,7 +69,12 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
     });
 
     it('should preserve non-null key measure values', () => {
-      expect(result.downWeight).toBe(keyMeasure.downWeight);
+      expect(result.downWeightWithoutSpringSupport).toBe(
+        keyMeasure.downWeightWithoutSpringSupport,
+      );
+      expect(result.downWeightWithSpringSupport).toBe(
+        keyMeasure.downWeightWithSpringSupport,
+      );
       expect(result.frontWeight).toBe(keyMeasure.frontWeight);
       expect(result.strikeWeight).toBe(keyMeasure.strikeWeight);
       expect(result.upWeight).toBe(keyMeasure.upWeight);

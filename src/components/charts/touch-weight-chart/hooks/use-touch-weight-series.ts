@@ -15,7 +15,7 @@ export const useTouchWeightSeries = (
 ): TouchWeightSeries => {
   return useMemo(() => {
     const downWeight = analyzedKeyboard.mapToArray<[number, OptionalNumber]>(
-      (key) => [key.number, key.payload.downWeight],
+      (key) => [key.number, key.payload.downWeightWithoutSpringSupport],
     );
 
     const balanceWeight = analyzedKeyboard.mapToArray<[number, OptionalNumber]>(
@@ -35,7 +35,7 @@ export const useTouchWeightSeries = (
     }>((key) => ({
       coords: [
         [key.number, key.payload.upWeight],
-        [key.number, key.payload.downWeight],
+        [key.number, key.payload.downWeightWithoutSpringSupport],
       ],
     }));
 

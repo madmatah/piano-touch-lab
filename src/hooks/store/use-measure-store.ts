@@ -51,7 +51,8 @@ const createMeasuresStore = (
       (set) => ({
         keyWeightRatio: null,
         keys: Array.from({ length: keyboard.size }, () => ({
-          downWeight: null,
+          downWeightWithSpringSupport: null,
+          downWeightWithoutSpringSupport: null,
           frontWeight: null,
           keyWeightRatio: null,
           measuredStrikeWeightRatio: null,

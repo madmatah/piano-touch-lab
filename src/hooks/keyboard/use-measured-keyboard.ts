@@ -28,7 +28,8 @@ export const useMeasuredKeyboard = (
         const keyMeasure: MeasuredKeyRequirements = pianoMeasureState.keys[
           storeIndex
         ] ?? {
-          downWeight: null,
+          downWeightWithSpringSupport: null,
+          downWeightWithoutSpringSupport: null,
           frontWeight: null,
           keyWeightRatio: null,
           measuredStrikeWeightRatio: null,

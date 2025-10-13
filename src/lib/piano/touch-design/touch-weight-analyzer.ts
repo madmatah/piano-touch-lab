@@ -46,25 +46,25 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
   private computeBalanceWeight(
     keyMeasurements: MeasuredKeyRequirements,
   ): OptionalNumber {
-    const { upWeight, downWeight } = keyMeasurements;
+    const { upWeight, downWeightWithoutSpringSupport } = keyMeasurements;
 
-    if (upWeight === null || downWeight === null) {
+    if (upWeight === null || downWeightWithoutSpringSupport === null) {
       return null;
     }
 
-    return (downWeight + upWeight) / 2;
+    return (downWeightWithoutSpringSupport + upWeight) / 2;
   }
 
   private computeFrictionWeight(
     keyMeasurements: MeasuredKeyRequirements,
   ): OptionalNumber {
-    const { upWeight, downWeight } = keyMeasurements;
+    const { upWeight, downWeightWithoutSpringSupport } = keyMeasurements;
 
-    if (upWeight === null || downWeight === null) {
+    if (upWeight === null || downWeightWithoutSpringSupport === null) {
       return null;
     }
 
-    return (downWeight - upWeight) / 2;
+    return (downWeightWithoutSpringSupport - upWeight) / 2;
   }
 
   private computeStrikeWeightRatio(
