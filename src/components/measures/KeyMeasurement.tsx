@@ -32,7 +32,8 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   const keyIndex = keyNumber - 1;
   const keySpec = useMeasuredKeyFromStore(keyIndex, 'default');
   const { updateKeyMeasure } = useMeasureActions('default');
-  const { useManualSWRMeasurements } = useMeasureOptions();
+  const { useManualSWRMeasurements, useSpringSupportMeasurements } =
+    useMeasureOptions();
   const { t } = useTranslation();
 
   const {
@@ -50,6 +51,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
 
   type MeasuredProperties = keyof Pick<
     MeasuredKeyRequirements,
+    | 'downWeightWithSpringSupport'
     | 'downWeightWithoutSpringSupport'
     | 'frontWeight'
     | 'strikeWeight'
@@ -57,15 +59,13 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     | 'measuredStrikeWeightRatio'
   >;
 
-  const baseTabGroups: Array<Array<MeasuredProperties>> = [
+  const tabGroups: Array<Array<MeasuredProperties>> = [
+    useSpringSupportMeasurements ? ['downWeightWithSpringSupport'] : [],
     ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
-  ];
-
-  const tabGroups: Array<Array<MeasuredProperties>> = useManualSWRMeasurements
-    ? [...baseTabGroups, ['measuredStrikeWeightRatio']]
-    : baseTabGroups;
+    useManualSWRMeasurements ? ['measuredStrikeWeightRatio'] : [],
+  ].filter((group): group is Array<MeasuredProperties> => group.length > 0);
 
   const { getTabIndexFor, orderedProperties } =
     useKeyTabIndex<MeasuredProperties>(keyIndex, tabGroups);
@@ -76,12 +76,21 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       tooltip: string | React.ReactNode;
     };
   } = {
+    downWeightWithSpringSupport: {
+      placeholder: 'DWSS',
+      tooltip: (
+        <div className="flex items-center gap-2">
+          <ArrowDownToLine className="w-3 h-3 stroke-3" />
+          {t('Down Weight (g) with wippen support spring attached')}
+        </div>
+      ),
+    },
     downWeightWithoutSpringSupport: {
       placeholder: 'D',
       tooltip: (
         <div className="flex items-center gap-2">
           <ArrowDownToLine className="w-3 h-3 stroke-3" />
-          {t('Down Weight without spring support (g)')}
+          {t('Down Weight (g) without wippen support spring')}
         </div>
       ),
     },
