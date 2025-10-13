@@ -31,16 +31,39 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
       balanceWeight,
       wippenBalanceWeight,
     );
+    const downWeightWithSpringSupport =
+      keyMeasurements.downWeightWithSpringSupport ??
+      keyMeasurements.downWeightWithoutSpringSupport;
+
+    const supportSpringBalanceWeight = this.computeSupportSpringBalanceWeight(
+      keyMeasurements.downWeightWithoutSpringSupport,
+      keyMeasurements.downWeightWithSpringSupport,
+    );
 
     return {
       ...keyMeasurements,
       balanceWeight,
       computedStrikeWeightRatio,
+      downWeightWithSpringSupport,
       frictionWeight,
       strikeWeightRatio:
         keyMeasurements.measuredStrikeWeightRatio ?? computedStrikeWeightRatio,
+      supportSpringBalanceWeight,
       wippenBalanceWeight,
     };
+  }
+  private computeSupportSpringBalanceWeight(
+    downWeightWithoutSpringSupport: OptionalNumber,
+    downWeightWithSpringSupport: OptionalNumber,
+  ) {
+    if (
+      downWeightWithoutSpringSupport === null ||
+      downWeightWithSpringSupport === null
+    ) {
+      return null;
+    }
+
+    return downWeightWithoutSpringSupport - downWeightWithSpringSupport;
   }
 
   private computeBalanceWeight(

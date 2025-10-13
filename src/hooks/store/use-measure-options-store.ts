@@ -4,7 +4,7 @@ import { useShallow } from 'zustand/shallow';
 
 export interface MeasureOptionsStoreState {
   useManualSWRMeasurements: boolean;
-  useSpringSupportMeasurements: boolean;
+  useSupportSpringMeasurements: boolean;
 }
 
 interface MeasureOptionsStoreActions {
@@ -29,13 +29,13 @@ const createMeasureOptionsStore = () =>
         updateState: (newState: MeasureOptionsStoreState) =>
           set(() => newState),
         useManualSWRMeasurements: false,
-        useSpringSupportMeasurements: false,
+        useSupportSpringMeasurements: false,
       }),
       {
         name: `piano-touch.measure-options`,
         partialize: (state: MeasureOptionsStore): MeasureOptionsStoreState => ({
           useManualSWRMeasurements: state.useManualSWRMeasurements,
-          useSpringSupportMeasurements: state.useSpringSupportMeasurements,
+          useSupportSpringMeasurements: state.useSupportSpringMeasurements,
         }),
       },
     ),
@@ -56,7 +56,7 @@ export const useMeasureOptions = () => {
   return useMeasureOptionsStore()(
     useShallow((state: MeasureOptionsStore) => ({
       useManualSWRMeasurements: state.useManualSWRMeasurements,
-      useSpringSupportMeasurements: state.useSpringSupportMeasurements,
+      useSupportSpringMeasurements: state.useSupportSpringMeasurements,
     })),
   );
 };
