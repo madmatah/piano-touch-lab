@@ -1,5 +1,6 @@
 {
   "A toolkit for calculating grand piano action balancing": "A toolkit for calculating grand piano action balancing",
+  "Adjustment Sheet": "Adjustment Sheet",
   "Analyze": "Analyze",
   "Balance Weight": "Balance Weight",
   "By enabling this option, you will be able to manually measure the SWR for each key rather than using an automatically calculated value.\nIf the measured value is too far from the calculated value, a warning will be displayed to indicate that some measurements are incorrect or not accurate enough.": "By enabling this option, you will be able to manually measure the SWR for each key rather than using an automatically calculated value.\nIf the measured value is too far from the calculated value, a warning will be displayed to indicate that some measurements are incorrect or not accurate enough.",
@@ -60,6 +61,5 @@
   "Weight in Grams": "Weight in Grams",
   "Weight Range": "Weight Range",
   "Wippen radius weight": "Wippen radius weight",
-  "You need to configure all design options to display the touch weight preview.": "You need to configure all design options to display the touch weight preview.",
   "Zone": "Zone"
 }

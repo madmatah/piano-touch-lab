@@ -1,5 +1,6 @@
 {
   "A toolkit for calculating grand piano action balancing": "Un outil d'équilibrage des touches pour piano à queue",
+  "Adjustment Sheet": "Fiche de réglage",
   "Analyze": "Analysez",
   "Balance Weight": "Poids d'équilibre",
   "By enabling this option, you will be able to manually measure the SWR for each key rather than using an automatically calculated value.\nIf the measured value is too far from the calculated value, a warning will be displayed to indicate that some measurements are incorrect or not accurate enough.": "En activant cette option, vous pourrez mesurer manuellement le rapport de poids d'attaque pour chaque touche plutôt que d'utiliser une valeur calculée automatiquement.\nSi la valeur mesurée est trop éloignée de la valeur calculée, un avertissement sera affiché pour indiquer que les mesures sont incohérentes.",
@@ -60,6 +61,5 @@
   "Weight in Grams": "Poids en grammes",
   "Weight Range": "Poids",
   "Wippen radius weight": "Poids radial du chevalet",
-  "You need to configure all design options to display the touch weight preview.": "Vous devez configurer toutes les options de conception pour afficher l'aperçu du toucher.",
   "Zone": "Zone"
 }
