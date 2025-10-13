@@ -15,12 +15,20 @@ import { useCallback } from 'react';
 
 export const MeasureOptionsTab = () => {
   const { t } = useTranslation();
-  const { useManualSWRMeasurements } = useMeasureOptions();
+  const { useManualSWRMeasurements, useSpringSupportMeasurements } =
+    useMeasureOptions();
   const { updateOption } = useMeasureOptionsActions();
 
   const onUpdateUseManualSWRMeasurements = useCallback(
     (value: boolean) => {
       updateOption('useManualSWRMeasurements', value);
+    },
+    [updateOption],
+  );
+
+  const onUpdateUseSpringSupportMeasurements = useCallback(
+    (value: boolean) => {
+      updateOption('useSpringSupportMeasurements', value);
     },
     [updateOption],
   );
@@ -47,6 +55,24 @@ export const MeasureOptionsTab = () => {
               id="useManualSWRMeasurements"
               checked={useManualSWRMeasurements}
               onCheckedChange={onUpdateUseManualSWRMeasurements}
+            />
+          </Field>
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldLabel htmlFor="useSpringSupportMeasurements">
+                {t('Measure Wippen Support Spring tension')}
+              </FieldLabel>
+              <FieldDescription className="whitespace-pre-line">
+                {t(
+                  'By enabling this option, a new field will be added to measure Down Weight with wippen support spring attached. It will be used to calculate the Wippen Support spring (WSS) tension and display a dedicated chart in Analyze page.\nThis is optional, even if you want to enable WSS tension in your design.',
+                )}
+              </FieldDescription>
+            </FieldContent>
+            <Switch
+              className="hover:cursor-pointer"
+              id="useSpringSupportMeasurements"
+              checked={useSpringSupportMeasurements}
+              onCheckedChange={onUpdateUseSpringSupportMeasurements}
             />
           </Field>
         </FieldGroup>
