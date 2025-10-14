@@ -7,6 +7,7 @@ import type { SeriesOption } from 'echarts';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import { useTranslation } from '@/hooks/use-translation';
+import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 
 export interface TouchWeightChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
@@ -19,9 +20,10 @@ const getFrictionChartOptions = (
 export const TouchWeightChart = (props: TouchWeightChartProps) => {
   const { analyzedKeyboard } = props;
   const { t } = useTranslation();
+  const { useSupportSpringMeasurements } = useMeasureOptions();
   const frictionZonesSeries = useFrictionZonesSeries();
   const { downWeight, balanceWeight, upWeight, frictionWeight, verticalLines } =
-    useTouchWeightSeries(analyzedKeyboard);
+    useTouchWeightSeries(analyzedKeyboard, useSupportSpringMeasurements);
 
   const maxDownWeight: number = useMemo(
     () => Math.max(...downWeight.map(([, dw]) => dw ?? 0), 60),

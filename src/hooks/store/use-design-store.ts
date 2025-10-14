@@ -10,6 +10,10 @@ import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignTarget,
 } from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign.types';
+import {
+  WippenSupportSpringsDesignMode,
+  type WippenSupportSpringsDesignTarget,
+} from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign.types';
 
 export interface DesignStoreState {
   frontWeightDesignTarget: FrontWeightDesignTarget | null;
@@ -21,6 +25,8 @@ export interface DesignStoreState {
   strikeWeightRatioDesignLatestFixedTarget: StrikeWeightRatioDesignTarget | null;
   strikeWeightRatioDesignLatestSmoothTarget: StrikeWeightRatioDesignTarget | null;
   strikeWeightRatioDesignTarget: StrikeWeightRatioDesignTarget | null;
+  wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode | null;
+  wippenSupportSpringsDesignTarget: WippenSupportSpringsDesignTarget;
 }
 
 interface VersionedDesignStoreState extends DesignStoreState {
@@ -36,6 +42,10 @@ interface DesignStoreActions {
   updateStrikeWeightRatioDesign: (
     mode: StrikeWeightRatioDesignMode | null,
     target: StrikeWeightRatioDesignTarget | null,
+  ) => void;
+  updateWippenSupportSpringsDesign: (
+    mode: WippenSupportSpringsDesignMode | null,
+    target: WippenSupportSpringsDesignTarget,
   ) => void;
 }
 
@@ -101,7 +111,17 @@ const createDesignStore = (measureProfileName: string) =>
             }
             return newState;
           }),
+        updateWippenSupportSpringsDesign: (
+          mode: WippenSupportSpringsDesignMode | null,
+          target: WippenSupportSpringsDesignTarget,
+        ) =>
+          set(() => ({
+            wippenSupportSpringsDesignMode: mode,
+            wippenSupportSpringsDesignTarget: target,
+          })),
         version: 1,
+        wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode.None,
+        wippenSupportSpringsDesignTarget: null,
       }),
       {
         name: `piano-touch.design.${measureProfileName}`,
@@ -120,6 +140,9 @@ const createDesignStore = (measureProfileName: string) =>
           strikeWeightRatioDesignMode: state.strikeWeightRatioDesignMode,
           strikeWeightRatioDesignTarget: state.strikeWeightRatioDesignTarget,
           version: state.version,
+          wippenSupportSpringsDesignMode: state.wippenSupportSpringsDesignMode,
+          wippenSupportSpringsDesignTarget:
+            state.wippenSupportSpringsDesignTarget,
         }),
       },
     ),
@@ -180,6 +203,16 @@ export const useDesignActions = (measureProfileName?: string) => {
       updateFrontWeightDesign: state.updateFrontWeightDesign,
       updateStrikeWeightDesign: state.updateStrikeWeightDesign,
       updateStrikeWeightRatioDesign: state.updateStrikeWeightRatioDesign,
+      updateWippenSupportSpringsDesign: state.updateWippenSupportSpringsDesign,
+    })),
+  );
+};
+
+export const useWippenSupportSpringsDesign = (measureProfileName?: string) => {
+  return useDesignStore(measureProfileName)(
+    useShallow((state: DesignStore) => ({
+      wippenSupportSpringsDesignMode: state.wippenSupportSpringsDesignMode,
+      wippenSupportSpringsDesignTarget: state.wippenSupportSpringsDesignTarget,
     })),
   );
 };

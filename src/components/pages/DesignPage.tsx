@@ -11,6 +11,7 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { useMemo } from 'react';
 import { AdjustmentSheet } from '../design/adjustment-sheet/AdjustmentSheet';
+import { WippenSupportSpringsDesign } from '../design/wippen-support-springs/WippenSupportSpringsDesign';
 
 export const DesignPage = () => {
   const requiredDataPercentage = 0.8;
@@ -30,8 +31,11 @@ export const DesignPage = () => {
 
   return (
     <MainLayout pageTitle={t('Design')} pageIcon={<Settings2 />}>
-      <Tabs defaultValue="front-weight">
+      <Tabs defaultValue="wippen-support-springs">
         <TabsList className="mb-5">
+          <TabsTrigger value="wippen-support-springs">
+            {t('Wippen Support Springs')}
+          </TabsTrigger>
           <TabsTrigger value="front-weight">{t('Front Weight')}</TabsTrigger>
           <TabsTrigger value="strike-weight">{t('Strike Weight')}</TabsTrigger>
           <TabsTrigger value="strike-weight-ratio">
@@ -44,6 +48,9 @@ export const DesignPage = () => {
             {t('Adjustment Sheet')}
           </TabsTrigger>
         </TabsList>
+        <TabsContent value="wippen-support-springs">
+          <WippenSupportSpringsDesign analyzedKeyboard={analyzedKeyboard} />
+        </TabsContent>
         <TabsContent value="front-weight">
           <FrontWeightDesign
             analyzedKeyboard={analyzedKeyboard}

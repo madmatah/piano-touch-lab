@@ -14,6 +14,7 @@ export class TouchWeightPreviewer implements TouchWeightPreviewerRequirements {
       strikeWeightRatio,
       frictionWeight,
       wippenBalanceWeight,
+      supportSpringBalanceWeight,
     } = key.payload;
 
     if (
@@ -36,9 +37,14 @@ export class TouchWeightPreviewer implements TouchWeightPreviewerRequirements {
     const upWeight = balanceWeightRounded - frictionWeight;
     const downWeight = balanceWeightRounded + frictionWeight;
 
+    const downWeightWithSpringSupport = supportSpringBalanceWeight
+      ? downWeight - supportSpringBalanceWeight
+      : downWeight;
+
     return {
       ...key.payload,
       balanceWeight: balanceWeightRounded,
+      downWeightWithSpringSupport,
       downWeightWithoutSpringSupport: downWeight,
       upWeight,
     };
