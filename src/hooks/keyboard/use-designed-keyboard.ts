@@ -4,6 +4,7 @@ import {
   useFrontWeightDesign,
   useStrikeWeightDesign,
   useStrikeWeightRatioDesign,
+  useWippenSupportSpringsDesign,
 } from '../store/use-design-store';
 import { useStrikeWeightTargetSerie } from '@/components/design/strike-weight/hooks/use-strike-weight-target-serie';
 import { useStrikeWeightRatioTargetSerie } from '@/components/design/strike-weight-ratio/hooks/strike-weight-ratio-target-serie';
@@ -13,6 +14,7 @@ import {
   type TouchWeightPreviewerRequirements,
 } from '@/lib/piano/touch-design/touch-weight-previewer.requirements';
 import { useInjection } from 'inversify-react';
+import { useWippenSupportSpringsTargetSerie } from '@/components/design/wippen-support-springs/hooks/use-wippen-support-springs-target-serie';
 
 export const useDesignedKeyboard = (
   analyzedKeyboard: TouchWeightAnalyzedKeyboard,
@@ -40,6 +42,14 @@ export const useDesignedKeyboard = (
       strikeWeightRatioDesignMode,
       strikeWeightRatioDesignTarget,
     );
+  const { wippenSupportSpringsDesignMode, wippenSupportSpringsDesignTarget } =
+    useWippenSupportSpringsDesign();
+  const { targetSerie: supportSpringBalanceWeightTargetSerie } =
+    useWippenSupportSpringsTargetSerie(
+      analyzedKeyboard,
+      wippenSupportSpringsDesignMode,
+      wippenSupportSpringsDesignTarget,
+    );
 
   const designedKeyboard = useMemo(() => {
     return analyzedKeyboard
@@ -52,6 +62,9 @@ export const useDesignedKeyboard = (
             strikeWeightTargetSerie?.data[keyIndex]?.payload ?? null,
           strikeWeightRatio:
             strikeWeightRatioTargetSerie?.data[keyIndex]?.payload ?? null,
+          supportSpringBalanceWeight:
+            supportSpringBalanceWeightTargetSerie?.data[keyIndex]?.payload ??
+            null,
         };
       })
       .map((key) => touchWeightPreviewer.computeTouchWeight(key));

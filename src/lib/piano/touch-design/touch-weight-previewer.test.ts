@@ -52,6 +52,9 @@ describe('The TouchWeightPreviewer class', () => {
         expect(result).toEqual({
           ...fakeKeyWithAllValues.payload,
           balanceWeight: expect.closeTo(expectedBalanceWeight) as number,
+          downWeightWithSpringSupport: expect.closeTo(
+            expectedDownWeight,
+          ) as number,
           downWeightWithoutSpringSupport: expect.closeTo(
             expectedDownWeight,
           ) as number,
