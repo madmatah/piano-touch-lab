@@ -63,8 +63,20 @@ export const useTouchWeightSeries = (
       coords: [number, OptionalNumber][];
     }>((key) => ({
       coords: [
-        [key.number, key.payload.upWeight],
-        [key.number, key.payload.downWeightWithoutSpringSupport],
+        [
+          key.number,
+          computeWeightReducedWithSpringSupport(
+            key.payload.upWeight,
+            key.payload.supportSpringBalanceWeight,
+          ),
+        ],
+        [
+          key.number,
+          computeWeightReducedWithSpringSupport(
+            key.payload.downWeightWithoutSpringSupport,
+            key.payload.supportSpringBalanceWeight,
+          ),
+        ],
       ],
     }));
 
