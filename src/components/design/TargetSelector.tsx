@@ -17,6 +17,7 @@ export enum TargetSelectorUi {
   HtmlSelect = 'html-select',
   NumericSelector = 'numeric-selector',
   UniqueTargetSelector = 'unique-target-selector',
+  CustomComponentTargetSelector = 'custom-component-target-selector',
 }
 
 export interface TargetSelectorTarget<Target> {
@@ -50,10 +51,16 @@ export interface UniqueTargetSelectorOptions<Target>
   target: Target;
 }
 
-export type TargetSelectorMode<
-  Mode extends string,
-  Target extends string | number | null,
-> =
+export interface CustomComponentTargetSelectorOptions<Target>
+  extends TargetSelectorModeBaseOptions {
+  selectorUi: TargetSelectorUi.CustomComponentTargetSelector;
+  componentFactory: (
+    currentTarget: Target | null,
+    onTargetChange: (target: Target) => void,
+  ) => React.ReactNode;
+}
+
+export type TargetSelectorMode<Mode extends string, Target> =
   | {
       label: string;
       description?: string;
@@ -71,12 +78,15 @@ export type TargetSelectorMode<
       description?: string;
       value: Mode;
       options: UniqueTargetSelectorOptions<Target>;
+    }
+  | {
+      label: string;
+      description?: string;
+      value: Mode;
+      options: CustomComponentTargetSelectorOptions<Target>;
     };
 
-export interface TargetSelectorProps<
-  Mode extends string,
-  Target extends string | number | null,
-> {
+export interface TargetSelectorProps<Mode extends string, Target> {
   title: string;
   modes: TargetSelectorMode<Mode, Target>[];
   selectedMode: Mode | null;
@@ -86,10 +96,7 @@ export interface TargetSelectorProps<
   onTargetChange: (target: Target) => void;
 }
 
-export const TargetSelector = <
-  Mode extends string,
-  Target extends string | number | null,
->(
+export const TargetSelector = <Mode extends string, Target>(
   props: TargetSelectorProps<Mode, Target>,
 ) => {
   const {
@@ -217,6 +224,15 @@ export const TargetSelector = <
                 step={selectedMode.options.step}
                 labelFormatter={selectedMode.options.labelFormatter}
               />
+            )}
+            {selectedMode.options.selectorUi ===
+              TargetSelectorUi.CustomComponentTargetSelector && (
+              <div>
+                {selectedMode.options.componentFactory(
+                  selectedTargetValue,
+                  onTargetChange,
+                )}
+              </div>
             )}
           </div>
         )}

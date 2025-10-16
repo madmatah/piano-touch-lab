@@ -1,6 +1,6 @@
 import { Minus, Plus } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 
 export interface NumericSelectorProps {
   value: number;
@@ -9,6 +9,7 @@ export interface NumericSelectorProps {
   minValue?: number;
   maxValue?: number;
   step?: number;
+  maxCharacters?: number;
 }
 
 const getDecimalPlaces = (step: number): number => {
@@ -25,6 +26,12 @@ const roundToStepPrecision = (value: number, step: number): number => {
   );
 };
 
+const calculateMaxCharacters = (maxValue: number, step: number): number => {
+  const decimalPlaces = getDecimalPlaces(step);
+  const maxValueStr = maxValue.toFixed(decimalPlaces);
+  return maxValueStr.length;
+};
+
 export const NumericSelector = ({
   value,
   onChange,
@@ -32,14 +39,22 @@ export const NumericSelector = ({
   maxValue,
   step = 1,
   labelFormatter,
+  maxCharacters,
 }: NumericSelectorProps) => {
+  const valueString = useMemo(() => value?.toString() ?? '', [value]);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState(value.toString());
+  const [inputValue, setInputValue] = useState(valueString);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const effectiveMaxCharacters = useMemo(() => {
+    if (maxCharacters !== undefined) return maxCharacters;
+    if (maxValue !== undefined) return calculateMaxCharacters(maxValue, step);
+    return undefined;
+  }, [maxCharacters, maxValue, step]);
 
   const formatLabel = useCallback(
     (value: number) => {
-      return labelFormatter ? labelFormatter(value) : value.toString();
+      return labelFormatter ? labelFormatter(value) : (value?.toString() ?? '');
     },
     [labelFormatter],
   );
@@ -52,8 +67,8 @@ export const NumericSelector = ({
   }, [isEditing]);
 
   useEffect(() => {
-    setInputValue(value.toString());
-  }, [value]);
+    setInputValue(valueString);
+  }, [valueString]);
 
   const canIncrement = value + step <= (maxValue ?? Infinity);
 
@@ -77,7 +92,7 @@ export const NumericSelector = ({
       const numValue = parseFloat(inputVal);
 
       if (isNaN(numValue)) {
-        setInputValue(value.toString());
+        setInputValue(valueString);
         return;
       }
 
@@ -87,7 +102,7 @@ export const NumericSelector = ({
         roundedValue < (minValue ?? -Infinity) ||
         roundedValue > (maxValue ?? Infinity)
       ) {
-        setInputValue(value.toString());
+        setInputValue(valueString);
         return;
       }
 
@@ -97,7 +112,7 @@ export const NumericSelector = ({
 
       setInputValue(roundedValue.toString());
     },
-    [value, step, minValue, maxValue, onChange],
+    [valueString, value, step, minValue, maxValue, onChange],
   );
 
   const handleInputChange = useCallback(
@@ -115,11 +130,11 @@ export const NumericSelector = ({
         setIsEditing(false);
       } else if (e.key === 'Escape') {
         e.preventDefault();
-        setInputValue(value.toString());
+        setInputValue(valueString);
         setIsEditing(false);
       }
     },
-    [inputValue, value, validateAndApplyValue],
+    [inputValue, valueString, validateAndApplyValue],
   );
 
   const handleInputBlur = useCallback(() => {
@@ -153,11 +168,21 @@ export const NumericSelector = ({
             max={maxValue}
             step={step}
             size={inputValue.length || 1}
+            style={{
+              width: effectiveMaxCharacters
+                ? `calc(${effectiveMaxCharacters}ch + 2.5rem)`
+                : undefined,
+            }}
           />
         ) : (
           <div
             className="h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded transition-colors px-5 py-1"
             onClick={handleValueClick}
+            style={{
+              width: effectiveMaxCharacters
+                ? `calc(${effectiveMaxCharacters}ch + 2.5rem)`
+                : undefined,
+            }}
           >
             <strong className="font-bold user-select-none">
               {formatLabel(value)}

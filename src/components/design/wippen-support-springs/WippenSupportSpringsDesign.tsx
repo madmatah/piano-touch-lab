@@ -16,6 +16,7 @@ import {
 import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpringBalanceWeightChart';
 import { useWippenSupportSpringsTargetSelector } from './hooks/use-wippen-support-springs-target-selector';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
+import { WippenDesignSelector } from './wippen-design-selector/WippenDesignSelector';
 
 export const WippenSupportSpringsDesign: React.FC<
   WippenSupportSpringsDesignProps
@@ -28,7 +29,7 @@ export const WippenSupportSpringsDesign: React.FC<
     onModeChange,
     onTargetChange,
     updateWippenSupportSpringsDesign,
-  } = useWippenSupportSpringsTargetSelector();
+  } = useWippenSupportSpringsTargetSelector(analyzedKeyboard);
   useWippenSupportSpringsRecommendation(
     wippenSupportSpringsDesignMode,
     wippenSupportSpringsDesignTarget,
@@ -45,13 +46,55 @@ export const WippenSupportSpringsDesign: React.FC<
     WippenSupportSpringsDesignTarget
   >[] = [
     {
-      description: t('Do not use wippen support springs'),
+      description: t(
+        'Choose this option if your piano does not have wippen support springs.',
+      ),
       label: t('Do not use wippen support springs'),
       options: {
         selectorUi: TargetSelectorUi.UniqueTargetSelector as const,
         target: null,
       },
       value: WippenSupportSpringsDesignMode.None,
+    },
+    {
+      description: t(
+        'All your wippen support springs will have the same tension.',
+      ),
+      label: t('Use wippen support springs with constant tension'),
+      options: {
+        componentFactory: (
+          currentTarget: WippenSupportSpringsDesignTarget,
+          onTargetChange: (target: WippenSupportSpringsDesignTarget) => void,
+        ) => (
+          <WippenDesignSelector
+            currentTarget={currentTarget}
+            onTargetChange={onTargetChange}
+            shouldEnableTensionDropIndexSelector={false}
+          />
+        ),
+        selectorUi: TargetSelectorUi.CustomComponentTargetSelector as const,
+      },
+      value: WippenSupportSpringsDesignMode.Constant,
+    },
+    {
+      description: t(
+        'The general idea is to define a base weight that will decrease to zero starting from a specific key.',
+      ),
+      label: t('Use wippen support springs with smooth transition'),
+      options: {
+        componentFactory: (
+          currentTarget: WippenSupportSpringsDesignTarget,
+          onTargetChange: (target: WippenSupportSpringsDesignTarget) => void,
+        ) => (
+          <WippenDesignSelector
+            currentTarget={currentTarget}
+            onTargetChange={onTargetChange}
+            shouldEnableTensionDropIndexSelector={true}
+          />
+        ),
+        selectorUi: TargetSelectorUi.CustomComponentTargetSelector as const,
+      },
+      value: WippenSupportSpringsDesignMode.SmoothTransition,
     },
     useSupportSpringMeasurements
       ? {
