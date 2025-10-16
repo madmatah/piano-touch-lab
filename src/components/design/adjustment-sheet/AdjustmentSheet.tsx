@@ -18,6 +18,11 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
   designedKeyboard,
 }) => {
   const { t } = useTranslation();
+  const hasWippenAssistSpringDesign = useMemo(() => {
+    return designedKeyboard
+      .mapToArray((key) => !!key.payload.supportSpringBalanceWeight)
+      .some((v) => v);
+  }, [designedKeyboard]);
 
   const adjustedKeyboard = useMemo(() => {
     return analyzedKeyboard.map((analyzedKey): KeyAdjustmentPayload | null => {
@@ -26,6 +31,10 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
       const actualStrikeWeight = analyzedKey.payload.strikeWeight ?? null;
       const targetFrontWeight = designedKey?.payload.frontWeight ?? null;
       const targetStrikeWeight = designedKey?.payload.strikeWeight ?? null;
+      const supportSpringBalanceWeight =
+        analyzedKey.payload.supportSpringBalanceWeight ?? null;
+      const targetSupportSpringBalanceWeight =
+        designedKey?.payload.supportSpringBalanceWeight ?? null;
 
       if (
         actualFrontWeight === null ||
@@ -39,8 +48,10 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
       return {
         actualFrontWeight,
         actualStrikeWeight,
+        actualSupportSpringBalanceWeight: supportSpringBalanceWeight,
         targetFrontWeight,
         targetStrikeWeight,
+        targetSupportSpringBalanceWeight,
       };
     });
   }, [analyzedKeyboard, designedKeyboard]);
@@ -52,12 +63,21 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
           <TableRow>
             <TableHead className="w-[5em]">Note</TableHead>
             <TableHead className="w-[13em]">{t('Front Weight')}</TableHead>
-            <TableHead>{t('Strike Weight')}</TableHead>
+            <TableHead className="w-[13em]">{t('Strike Weight')}</TableHead>
+            {hasWippenAssistSpringDesign && (
+              <TableHead className="w-[13em]">
+                {t('Spring Balance Weight')}
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {adjustedKeyboard.mapToArray((key) => (
-            <AdjustmentSheetTableRow key={key.number} item={key} />
+            <AdjustmentSheetTableRow
+              key={key.number}
+              item={key}
+              hasWippenAssistSpringDesign={hasWippenAssistSpringDesign}
+            />
           ))}
         </TableBody>
       </Table>

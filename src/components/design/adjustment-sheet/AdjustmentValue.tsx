@@ -1,9 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 import { useValueFormatter } from './hooks/use-value-formatter';
+import { useMemo } from 'react';
 
 export interface AdjustmentValueProps {
-  actualValue: number;
-  targetValue: number;
+  actualValue: number | null;
+  targetValue: number | null;
   unit?: string;
 }
 
@@ -13,20 +14,27 @@ export const AdjustmentValue: React.FC<AdjustmentValueProps> = ({
   unit,
 }) => {
   const { formatWeight, formatDiff } = useValueFormatter();
-  const diff = targetValue - actualValue;
 
-  if (diff < 0.1) {
-    return <div>{formatWeight(actualValue)}</div>;
-  }
+  const isEmpty = actualValue === null || targetValue === null;
 
-  return (
+  const diff = useMemo(() => {
+    return targetValue !== null && actualValue !== null
+      ? targetValue - actualValue
+      : null;
+  }, [actualValue, targetValue]);
+
+  return !isEmpty ? (
     <>
-      <div>{formatWeight(actualValue)}</div>
-      <div>
-        <ArrowRight style={{ height: 12, width: 12 }} />
-      </div>
-      <div>{formatWeight(targetValue)}</div>
-      <div>({formatDiff(targetValue - actualValue, unit)})</div>
+      {actualValue ? <div>{formatWeight(actualValue)}</div> : null}
+      {targetValue && diff ? (
+        <>
+          <div>
+            <ArrowRight style={{ height: 12, width: 12 }} />
+          </div>
+          <div>{formatWeight(targetValue)}</div>
+          <div>({formatDiff(diff, unit)})</div>
+        </>
+      ) : null}
     </>
-  );
+  ) : null;
 };
