@@ -8,6 +8,8 @@ export interface AdjustmentSheetProps {
 export interface KeyAdjustmentPayload {
   actualFrontWeight: number;
   actualStrikeWeight: number;
+  actualSupportSpringBalanceWeight: number | null;
   targetFrontWeight: number;
   targetStrikeWeight: number;
+  targetSupportSpringBalanceWeight: number | null;
 }

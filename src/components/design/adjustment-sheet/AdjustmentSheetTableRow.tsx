@@ -5,11 +5,12 @@ import { AdjustmentSheetTableCell } from './AdjustmentSheetTableCell';
 
 export interface AdjustmentSheetTableRowProps {
   item: KeyWith<KeyAdjustmentPayload | null>;
+  hasWippenAssistSpringDesign: boolean;
 }
 
 export const AdjustmentSheetTableRow: React.FC<
   AdjustmentSheetTableRowProps
-> = ({ item }) => {
+> = ({ item, hasWippenAssistSpringDesign }) => {
   return (
     <TableRow key={item.number} className="even:bg-accent hover:bg-primary/10">
       <TableCell className="font-medium">#{item.number}</TableCell>
@@ -35,6 +36,19 @@ export const AdjustmentSheetTableRow: React.FC<
             : null
         }
       />
+      {hasWippenAssistSpringDesign && (
+        <AdjustmentSheetTableCell
+          values={
+            item.payload
+              ? {
+                  actualValue: item.payload.actualSupportSpringBalanceWeight,
+                  targetValue: item.payload.targetSupportSpringBalanceWeight,
+                  unit: 'g',
+                }
+              : null
+          }
+        />
+      )}
     </TableRow>
   );
 };

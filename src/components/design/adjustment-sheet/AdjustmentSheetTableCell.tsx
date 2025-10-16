@@ -3,8 +3,8 @@ import { AdjustmentValue } from './AdjustmentValue';
 
 export interface AdjustmentSheetTableCellProps {
   values: {
-    actualValue: number;
-    targetValue: number;
+    actualValue: number | null;
+    targetValue: number | null;
     unit?: string;
   } | null;
 }
