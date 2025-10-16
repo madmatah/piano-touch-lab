@@ -13,6 +13,7 @@ import {
 import {
   WippenSupportSpringsDesignMode,
   type WippenSupportSpringsDesignTarget,
+  type WippenTensionDesign,
 } from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign.types';
 
 export interface DesignStoreState {
@@ -25,6 +26,9 @@ export interface DesignStoreState {
   strikeWeightRatioDesignLatestFixedTarget: StrikeWeightRatioDesignTarget | null;
   strikeWeightRatioDesignLatestSmoothTarget: StrikeWeightRatioDesignTarget | null;
   strikeWeightRatioDesignTarget: StrikeWeightRatioDesignTarget | null;
+  wippenSupportSpringsDesignLatestSpringBalanceWeight: number | null;
+  wippenSupportSpringsDesignLatestNumberOfSprings: number | null;
+  wippenSupportSpringsDesignLatestTensionDropIndex: number | null;
   wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode | null;
   wippenSupportSpringsDesignTarget: WippenSupportSpringsDesignTarget;
 }
@@ -115,11 +119,47 @@ const createDesignStore = (measureProfileName: string) =>
           mode: WippenSupportSpringsDesignMode | null,
           target: WippenSupportSpringsDesignTarget,
         ) =>
-          set(() => ({
-            wippenSupportSpringsDesignMode: mode,
-            wippenSupportSpringsDesignTarget: target,
-          })),
+          set(() => {
+            const newState: Partial<DesignStore> = {
+              wippenSupportSpringsDesignMode: mode,
+              wippenSupportSpringsDesignTarget: target,
+            };
+            const isConstantOrSmoothTransitionMode = [
+              WippenSupportSpringsDesignMode.Constant,
+              WippenSupportSpringsDesignMode.SmoothTransition,
+            ].includes(mode!);
+            const tensionDesign = target as WippenTensionDesign;
+
+            if (
+              isConstantOrSmoothTransitionMode &&
+              tensionDesign?.numberOfSprings
+            ) {
+              newState.wippenSupportSpringsDesignLatestNumberOfSprings =
+                tensionDesign.numberOfSprings;
+            }
+
+            if (
+              isConstantOrSmoothTransitionMode &&
+              tensionDesign?.springBalanceWeight
+            ) {
+              newState.wippenSupportSpringsDesignLatestSpringBalanceWeight =
+                tensionDesign.springBalanceWeight;
+            }
+
+            if (
+              mode === WippenSupportSpringsDesignMode.SmoothTransition &&
+              tensionDesign?.tensionDropIndex
+            ) {
+              newState.wippenSupportSpringsDesignLatestTensionDropIndex =
+                tensionDesign.tensionDropIndex;
+            }
+
+            return newState;
+          }),
         version: 1,
+        wippenSupportSpringsDesignLatestNumberOfSprings: null,
+        wippenSupportSpringsDesignLatestSpringBalanceWeight: null,
+        wippenSupportSpringsDesignLatestTensionDropIndex: null,
         wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode.None,
         wippenSupportSpringsDesignTarget: null,
       }),
@@ -140,6 +180,12 @@ const createDesignStore = (measureProfileName: string) =>
           strikeWeightRatioDesignMode: state.strikeWeightRatioDesignMode,
           strikeWeightRatioDesignTarget: state.strikeWeightRatioDesignTarget,
           version: state.version,
+          wippenSupportSpringsDesignLatestNumberOfSprings:
+            state.wippenSupportSpringsDesignLatestNumberOfSprings,
+          wippenSupportSpringsDesignLatestSpringBalanceWeight:
+            state.wippenSupportSpringsDesignLatestSpringBalanceWeight,
+          wippenSupportSpringsDesignLatestTensionDropIndex:
+            state.wippenSupportSpringsDesignLatestTensionDropIndex,
           wippenSupportSpringsDesignMode: state.wippenSupportSpringsDesignMode,
           wippenSupportSpringsDesignTarget:
             state.wippenSupportSpringsDesignTarget,
@@ -211,6 +257,12 @@ export const useDesignActions = (measureProfileName?: string) => {
 export const useWippenSupportSpringsDesign = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
+      wippenSupportSpringsDesignLatestNumberOfSprings:
+        state.wippenSupportSpringsDesignLatestNumberOfSprings,
+      wippenSupportSpringsDesignLatestSpringBalanceWeight:
+        state.wippenSupportSpringsDesignLatestSpringBalanceWeight,
+      wippenSupportSpringsDesignLatestTensionDropIndex:
+        state.wippenSupportSpringsDesignLatestTensionDropIndex,
       wippenSupportSpringsDesignMode: state.wippenSupportSpringsDesignMode,
       wippenSupportSpringsDesignTarget: state.wippenSupportSpringsDesignTarget,
     })),

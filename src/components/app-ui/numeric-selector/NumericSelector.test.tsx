@@ -11,6 +11,7 @@ describe('The NumericSelector component', () => {
     maxValue?: number;
     step?: number;
     labelFormatter?: (value: number) => string;
+    maxCharacters?: number;
   };
   let plusButton: HTMLButtonElement;
   let minusButton: HTMLButtonElement;
@@ -449,6 +450,86 @@ describe('The NumericSelector component', () => {
 
       it('should round to step precision', () => {
         expect(onChange).toHaveBeenCalledWith(10.123);
+      });
+    });
+  });
+
+  describe('The maxCharacters prop', () => {
+    describe('When maxCharacters is explicitly provided', () => {
+      beforeEach(() => {
+        renderComponent({ maxCharacters: 5 });
+        valueDisplay = screen.getByText('10');
+      });
+
+      it('should apply width style to display div', () => {
+        const displayDiv = valueDisplay.parentElement;
+        expect(displayDiv?.getAttribute('style')).toContain(
+          'width: calc(5ch + 2.5rem)',
+        );
+      });
+
+      it('should apply width style to input when editing', () => {
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+        expect(input.getAttribute('style')).toContain(
+          'width: calc(5ch + 2.5rem)',
+        );
+      });
+    });
+
+    describe('When maxValue is provided without maxCharacters', () => {
+      beforeEach(() => {
+        renderComponent({ maxValue: 100, step: 0.5 });
+        valueDisplay = screen.getByText('10');
+      });
+
+      it('should calculate and apply width from maxValue', () => {
+        const displayDiv = valueDisplay.parentElement;
+        expect(displayDiv?.getAttribute('style')).toContain(
+          'width: calc(5ch + 2.5rem)',
+        );
+      });
+
+      it('should apply calculated width to input when editing', () => {
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+        expect(input.getAttribute('style')).toContain(
+          'width: calc(5ch + 2.5rem)',
+        );
+      });
+    });
+
+    describe('When neither maxCharacters nor maxValue is provided', () => {
+      beforeEach(() => {
+        renderComponent();
+        valueDisplay = screen.getByText('10');
+      });
+
+      it('should not apply width style to display div', () => {
+        const displayDiv = valueDisplay.parentElement;
+        const style = displayDiv?.getAttribute('style');
+        expect(style === null || !style?.includes('width')).toBe(true);
+      });
+
+      it('should not apply width style to input when editing', () => {
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+        const style = input.getAttribute('style');
+        expect(style === null || !style.includes('width')).toBe(true);
+      });
+    });
+
+    describe('When both maxCharacters and maxValue are provided', () => {
+      beforeEach(() => {
+        renderComponent({ maxCharacters: 6, maxValue: 100, step: 0.5 });
+        valueDisplay = screen.getByText('10');
+      });
+
+      it('should use maxCharacters over calculated value', () => {
+        const displayDiv = valueDisplay.parentElement;
+        expect(displayDiv?.getAttribute('style')).toContain(
+          'width: calc(6ch + 2.5rem)',
+        );
       });
     });
   });

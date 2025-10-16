@@ -70,9 +70,10 @@ export const useDesignedKeyboard = (
       .map((key) => touchWeightPreviewer.computeTouchWeight(key));
   }, [
     analyzedKeyboard,
-    frontWeightTargetSerie,
-    strikeWeightTargetSerie,
-    strikeWeightRatioTargetSerie,
+    frontWeightTargetSerie?.data,
+    strikeWeightTargetSerie?.data,
+    strikeWeightRatioTargetSerie?.data,
+    supportSpringBalanceWeightTargetSerie?.data,
     touchWeightPreviewer,
   ]);
 

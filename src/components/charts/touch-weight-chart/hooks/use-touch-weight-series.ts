@@ -75,5 +75,5 @@ export const useTouchWeightSeries = (
       upWeight,
       verticalLines,
     };
-  }, [analyzedKeyboard]);
+  }, [analyzedKeyboard, computeWeightReducedWithSpringSupport]);
 };
