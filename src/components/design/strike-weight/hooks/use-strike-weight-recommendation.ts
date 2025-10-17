@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
@@ -13,10 +13,10 @@ export const useStrikeWeightRecommendation = (
     target: StrikeWeightDesignTarget,
   ) => void,
 ) => {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRender = useRef<boolean>(true);
 
   useEffect(() => {
-    if (isFirstRender) {
+    if (isFirstRender.current) {
       if (
         strikeWeightDesignMode === null &&
         strikeWeightDesignTarget === null
@@ -26,7 +26,7 @@ export const useStrikeWeightRecommendation = (
           SmoothStrategy.LeastSquaresRegression,
         );
       }
-      setIsFirstRender(false);
+      isFirstRender.current = false;
     }
   }, [
     isFirstRender,

@@ -46,9 +46,7 @@ type MeasureOptionsBoundStore = ReturnType<typeof createMeasureOptionsStore>;
 let measureOptionsStore: MeasureOptionsBoundStore | undefined = undefined;
 
 export const useMeasureOptionsStore = (): MeasureOptionsBoundStore => {
-  if (!measureOptionsStore) {
-    measureOptionsStore = createMeasureOptionsStore();
-  }
+  measureOptionsStore ??= createMeasureOptionsStore();
   return measureOptionsStore;
 };
 

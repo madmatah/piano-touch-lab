@@ -43,7 +43,7 @@ describe('The generateCustomFrontWeightKeypoints() function', () => {
           const actualValue = result.get(keypointPosition);
 
           expect(actualValue).toBeDefined();
-          const actual: number = actualValue as number;
+          const actual: number = actualValue!;
           expect(actual).toBeCloseTo(expectedValue, 0);
         });
       });

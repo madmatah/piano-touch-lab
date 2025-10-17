@@ -59,23 +59,24 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     | 'measuredStrikeWeightRatio'
   >;
 
-  const tabGroups: Array<Array<MeasuredProperties>> = [
+  const tabGroups: MeasuredProperties[][] = [
     useSupportSpringMeasurements ? ['downWeightWithSpringSupport'] : [],
     ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
     useManualSWRMeasurements ? ['measuredStrikeWeightRatio'] : [],
-  ].filter((group): group is Array<MeasuredProperties> => group.length > 0);
+  ].filter((group): group is MeasuredProperties[] => group.length > 0);
 
   const { getTabIndexFor, orderedProperties } =
     useKeyTabIndex<MeasuredProperties>(keyIndex, tabGroups);
 
-  const measureSpecs: {
-    [key in MeasuredProperties]: {
+  const measureSpecs: Record<
+    MeasuredProperties,
+    {
       placeholder: string;
       tooltip: string | React.ReactNode;
-    };
-  } = {
+    }
+  > = {
     downWeightWithSpringSupport: {
       placeholder: 'DWSS',
       tooltip: (

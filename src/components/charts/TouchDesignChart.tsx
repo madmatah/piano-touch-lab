@@ -31,10 +31,7 @@ const getEchartSeriePropertiesByVariant = (
           data: [
             {
               xAxis: 'min',
-              yAxis:
-                serie.data[0]?.payload === undefined
-                  ? 'max'
-                  : serie.data[0].payload,
+              yAxis: serie.data[0]?.payload ?? 'max',
             },
           ],
           label: {

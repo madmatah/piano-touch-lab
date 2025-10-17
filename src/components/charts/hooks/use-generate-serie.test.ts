@@ -8,9 +8,11 @@ import type { KeyWith } from '@/lib/piano/keyboard';
 import type { EchartsDataItemStyle, TouchDesignSerie } from '../interfaces';
 
 describe('The useGenerateSerie hook', () => {
-  type TestPayload = { weight: number };
+  interface TestPayload {
+    weight: number;
+  }
 
-  const fakeKeys: Array<KeyWith<TestPayload>> = [
+  const fakeKeys: KeyWith<TestPayload>[] = [
     {
       color: KeyColor.White,
       name: 'C1',
@@ -232,7 +234,7 @@ describe('The useGenerateSerie hook', () => {
         fakeVariant,
       ).data;
 
-      const differentKeys: Array<KeyWith<TestPayload>> = [
+      const differentKeys: KeyWith<TestPayload>[] = [
         {
           color: KeyColor.White,
           name: 'E1',

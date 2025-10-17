@@ -11,9 +11,11 @@ import type { KeyWith } from '@/lib/piano/keyboard';
 import { smootherContainerModule } from '@/container-modules/smoother-container-module';
 
 describe('The useInterpolatedSerieCubicSpline hook', () => {
-  type TestPayload = { value: number };
+  interface TestPayload {
+    value: number;
+  }
 
-  const fakeKeys: Array<KeyWith<TestPayload>> = Array.from(
+  const fakeKeys: KeyWith<TestPayload>[] = Array.from(
     { length: 88 },
     (_, index) => ({
       color: index % 2 === 0 ? KeyColor.White : KeyColor.Black,

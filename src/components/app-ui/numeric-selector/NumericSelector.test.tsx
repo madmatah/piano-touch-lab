@@ -24,7 +24,9 @@ describe('The NumericSelector component', () => {
 
   beforeEach(() => {
     cleanup();
-    onChange = mock(() => {});
+    onChange = mock(() => {
+      // do nothing
+    });
     defaultProps = {
       onChange,
       value: 10,
@@ -515,7 +517,7 @@ describe('The NumericSelector component', () => {
         fireEvent.click(valueDisplay);
         input = screen.getByDisplayValue('10');
         const style = input.getAttribute('style');
-        expect(style === null || !style.includes('width')).toBe(true);
+        expect(!style?.includes('width')).toBe(true);
       });
     });
 

@@ -78,7 +78,7 @@ export function parseMeasuresBackupText(
 
 export function buildMeasuresExportPayload(
   measures: MeasureBackupRequirements,
-  profile: string = 'default',
+  profile = 'default',
 ) {
   return {
     createdAt: new Date().toISOString(),

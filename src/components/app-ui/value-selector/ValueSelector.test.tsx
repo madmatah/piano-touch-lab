@@ -3,7 +3,9 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { ValueSelector } from './ValueSelector';
 
 describe('The ValueSelector component', () => {
-  const onChange = mock(() => {});
+  const onChange = mock(() => {
+    // do nothing
+  });
   let previousButton: HTMLButtonElement;
   let nextButton: HTMLButtonElement;
   let valueDisplay: HTMLElement;
@@ -12,7 +14,7 @@ describe('The ValueSelector component', () => {
     props: Partial<{
       currentValue: string;
       onChange: () => void;
-      values: Array<{ value: string; label: string }>;
+      values: { value: string; label: string }[];
     }> = {},
   ) => {
     const mergedProps = {

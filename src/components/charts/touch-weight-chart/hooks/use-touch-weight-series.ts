@@ -12,7 +12,7 @@ export interface TouchWeightSeries {
 
 export const useTouchWeightSeries = (
   analyzedKeyboard: TouchWeightAnalyzedKeyboard,
-  useSupportSpringMeasurements: boolean = true,
+  useSupportSpringMeasurements = true,
 ): TouchWeightSeries => {
   const computeWeightReducedWithSpringSupport = useCallback(
     (weight: OptionalNumber, supportSpringBalanceWeight: OptionalNumber) => {

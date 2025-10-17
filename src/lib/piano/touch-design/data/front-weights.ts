@@ -1,7 +1,7 @@
 import { FrontWeightLevel } from '../front-weight-level';
 
 // Front weight curves as listed in David Stanwood's articles
-export const frontWeightOriginalData: { [k in FrontWeightLevel]: number[] } = {
+export const frontWeightOriginalData: Record<FrontWeightLevel, number[]> = {
   [FrontWeightLevel.Level5]: [
     34.4, 34.2, 33.9, 33.7, 33.5, 33.3, 33, 32.8, 32.6, 32.3, 32.1, 31.9, 31.6,
     31.4, 31.1, 30.9, 30.7, 30.4, 30.2, 29.9, 29.7, 29.4, 29.1, 28.9, 28.6,

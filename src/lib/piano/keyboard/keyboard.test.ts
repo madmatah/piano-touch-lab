@@ -170,7 +170,7 @@ describe('The Keyboard class', () => {
 
       beforeEach(() => {
         const snapshot = model.getKeys();
-        const first = model.getKeyByName('A0') as Key;
+        const first = model.getKeyByName('A0')!;
         act = () => (snapshot as Key[]).push(first);
       });
 
@@ -185,7 +185,7 @@ describe('The Keyboard class', () => {
       beforeEach(() => {
         const snapshot = model.getKeys();
         act = () => {
-          (snapshot[0] as Key).name = 'Z9';
+          snapshot[0]!.name = 'Z9';
         };
       });
 
