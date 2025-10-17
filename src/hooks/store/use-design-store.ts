@@ -199,7 +199,7 @@ type DesignBoundStore = ReturnType<typeof createDesignStore>;
 const designStoreRegistry: Record<string, DesignBoundStore> = {};
 
 export const useDesignStore = (
-  measureProfileName: string = 'default',
+  measureProfileName = 'default',
 ): DesignBoundStore => {
   let store = designStoreRegistry[measureProfileName];
   if (!store) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { FrontWeightDesignTarget } from '../FrontWeightDesign.types';
 
@@ -6,14 +6,14 @@ export const useFrontWeightRecommendation = (
   frontWeightDesignTarget: FrontWeightDesignTarget | null,
   setFrontWeightDesign: (target: FrontWeightDesignTarget) => void,
 ) => {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRender = useRef<boolean>(true);
 
   useEffect(() => {
-    if (isFirstRender) {
+    if (isFirstRender.current) {
       if (frontWeightDesignTarget === null) {
         setFrontWeightDesign(7);
       }
-      setIsFirstRender(false);
+      isFirstRender.current = false;
     }
   }, [frontWeightDesignTarget, isFirstRender, setFrontWeightDesign]);
 };

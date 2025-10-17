@@ -11,7 +11,7 @@ describe('The useKeyTabIndex hook', () => {
     | 'frontWeight'
     | 'strikeWeight';
 
-  const fakeTabGroups: Array<Array<KeyProperty>> = [
+  const fakeTabGroups: KeyProperty[][] = [
     ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
@@ -22,7 +22,7 @@ describe('The useKeyTabIndex hook', () => {
   );
 
   describe('The orderedProperties property', () => {
-    let orderedProperties: Array<keyof MeasuredKeyRequirements>;
+    let orderedProperties: (keyof MeasuredKeyRequirements)[];
     const fakeKeyIndex = 0;
 
     beforeEach(() => {

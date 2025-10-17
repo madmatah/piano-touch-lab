@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import * as sortKeysFix from 'eslint-plugin-sort-keys-fix';
 import reactHooks from 'eslint-plugin-react-hooks';
 import { defineConfig } from 'eslint/config';
 
-export default tseslint.config(
+export default defineConfig(
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  reactHooks.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  reactHooks.configs.flat.recommended,
   {
     languageOptions: {
       parserOptions: {

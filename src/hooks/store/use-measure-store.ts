@@ -96,17 +96,23 @@ type MeasuresBoundStore = ReturnType<typeof createMeasuresStore>;
 
 const measuresStoreRegistry: Record<string, MeasuresBoundStore> = {};
 
-export const useMeasuresStore = (
-  measureProfileName: string = 'default',
+export const getOrCreateMeasuresStore = (
+  measureProfileName: string,
+  keyboard: KeyboardRequirements,
 ): MeasuresBoundStore => {
-  const { keyboard } = useKeyboard();
-
   let store = measuresStoreRegistry[measureProfileName];
   if (!store) {
     store = createMeasuresStore(measureProfileName, keyboard);
     measuresStoreRegistry[measureProfileName] = store;
   }
   return store;
+};
+
+export const useMeasuresStore = (
+  measureProfileName = 'default',
+): MeasuresBoundStore => {
+  const { keyboard } = useKeyboard();
+  return getOrCreateMeasuresStore(measureProfileName, keyboard);
 };
 
 export const useMeasuredKeyFromStore = (

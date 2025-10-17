@@ -2,10 +2,10 @@ import { useKeyboard } from './keyboard/use-keyboard';
 
 export const useKeyTabIndex = <KeyProperty>(
   keyIndex: number,
-  tabGroups: Array<Array<KeyProperty>>,
+  tabGroups: KeyProperty[][],
 ) => {
   const { keyboard } = useKeyboard();
-  const orderedProperties: Array<KeyProperty> = tabGroups.flat();
+  const orderedProperties: KeyProperty[] = tabGroups.flat();
 
   const getTabIndexFor = (property: KeyProperty) => {
     for (let groupIndex = 0; groupIndex < tabGroups.length; groupIndex++) {

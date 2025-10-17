@@ -1,7 +1,7 @@
 import { StrikeWeightLevel } from '../hammer-weight-level';
 
 // Strike weight curves as listed in David Stanwood's articles
-export const strikeWeightData: { [k in StrikeWeightLevel]: number[] } = {
+export const strikeWeightData: Record<StrikeWeightLevel, number[]> = {
   [StrikeWeightLevel.Level1]: [
     8.0, 8.0, 8.0, 7.9, 7.9, 7.9, 7.9, 7.8, 7.8, 7.8, 7.8, 7.7, 7.7, 7.7, 7.6,
     7.6, 7.6, 7.6, 7.5, 7.5, 7.5, 7.4, 7.4, 7.4, 7.3, 7.3, 7.3, 7.2, 7.2, 7.1,
@@ -117,9 +117,10 @@ export const strikeWeightData: { [k in StrikeWeightLevel]: number[] } = {
 };
 
 // Keypoints to generate interpolated strike weight curve, with little adjustments for SW#11 and SW#3
-export const strikeWeightKeyPointsByLevel: {
-  [k in StrikeWeightLevel]: Map<number, number>;
-} = {
+export const strikeWeightKeyPointsByLevel: Record<
+  StrikeWeightLevel,
+  Map<number, number>
+> = {
   [StrikeWeightLevel.Level1]: new Map([
     [1, 8],
     [22, 7.4],

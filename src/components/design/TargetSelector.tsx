@@ -165,7 +165,7 @@ export const TargetSelector = <Mode extends string, Target>(
                 <RadioItem
                   key={index}
                   label={mode.label}
-                  description={mode.description || ''}
+                  description={mode.description ?? ''}
                   value={mode.value}
                   onClick={onModeChangeHandler}
                 />

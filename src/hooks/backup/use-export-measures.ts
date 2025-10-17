@@ -8,7 +8,7 @@ import { useDownloadBlob } from './use-download-blob';
 import { formatISO } from 'date-fns';
 import { useShallow } from 'zustand/shallow';
 
-export const useExportMeasures = (profile: string = 'default') => {
+export const useExportMeasures = (profile = 'default') => {
   const measureStoreState = useMeasuresStore(profile)(
     useShallow((state) => ({
       keyWeightRatio: state.keyWeightRatio,

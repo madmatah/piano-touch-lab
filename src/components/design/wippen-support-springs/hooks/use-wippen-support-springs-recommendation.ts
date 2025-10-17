@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   WippenSupportSpringsDesignMode,
   type WippenSupportSpringsDesignTarget,
@@ -12,10 +12,10 @@ export const useWippenSupportSpringsRecommendation = (
     target: WippenSupportSpringsDesignTarget,
   ) => void,
 ) => {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRender = useRef<boolean>(true);
 
   useEffect(() => {
-    if (isFirstRender) {
+    if (isFirstRender.current) {
       if (
         wippenSupportSpringsDesignMode === null &&
         wippenSupportSpringsDesignTarget === null
@@ -25,7 +25,7 @@ export const useWippenSupportSpringsRecommendation = (
           null,
         );
       }
-      setIsFirstRender(false);
+      isFirstRender.current = false;
     }
   }, [
     isFirstRender,

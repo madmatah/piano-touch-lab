@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import {
   StrikeWeightRatioDesignMode,
@@ -14,10 +14,10 @@ export const useStrikeWeightRatioRecommendation = (
     target: StrikeWeightRatioDesignTarget,
   ) => void,
 ) => {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRender = useRef<boolean>(true);
 
   useEffect(() => {
-    if (isFirstRender) {
+    if (isFirstRender.current) {
       if (
         strikeWeightRatioDesignMode === null &&
         strikeWeightRatioDesignTarget === null
@@ -27,7 +27,7 @@ export const useStrikeWeightRatioRecommendation = (
           SmoothStrategy.Median,
         );
       }
-      setIsFirstRender(false);
+      isFirstRender.current = false;
     }
   }, [
     isFirstRender,

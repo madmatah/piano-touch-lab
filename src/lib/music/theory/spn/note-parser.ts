@@ -9,13 +9,13 @@ export type ParseNoteResult =
   | { ok: false; error: string };
 
 export const parseNote = (raw: string): ParseNoteResult => {
-  const matched = raw.toUpperCase().trim().match(NOTE_REGEX);
+  const matched = NOTE_REGEX.exec(raw.toUpperCase().trim());
   if (!matched) {
     return { error: `Invalid note: ${raw}`, ok: false };
   }
 
   const letter = matched[1] as NoteLetter;
-  const octave = parseInt(matched[2] as string, 10);
+  const octave = parseInt(matched[2]!, 10);
 
   if (!Number.isFinite(octave)) {
     return { error: `Invalid octave for note: ${raw}`, ok: false };

@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 export interface ValueSelectorProps<T> {
   currentValue?: T;
   onChange: (value: T) => void;
-  values: Array<{ value: T; label: string }>;
+  values: { value: T; label: string }[];
 }
 
 export const ValueSelector = <T,>({
