@@ -26,20 +26,23 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   notEnoughDataErrorDescription,
 }) => {
   const { t } = useTranslation();
-  const { frontWeightDesignTarget, onTargetChange, updateFrontWeightDesign } =
-    useFrontWeightTargetSelector();
-
-  const onModeChange = useCallback(() => {
-    /* */
-  }, []);
+  const {
+    frontWeightDesignMode,
+    frontWeightDesignTarget,
+    onModeChange,
+    onTargetChange,
+    updateFrontWeightDesign,
+  } = useFrontWeightTargetSelector();
 
   useFrontWeightRecommendation(
+    frontWeightDesignMode,
     frontWeightDesignTarget,
     updateFrontWeightDesign,
   );
 
   const { targetSerie } = useFrontWeightTargetSerie(
     analyzedKeyboard,
+    frontWeightDesignMode,
     frontWeightDesignTarget,
   );
 
@@ -63,6 +66,15 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     FrontWeightDesignTarget
   >[] = useMemo(
     () => [
+      {
+        description: t('Use front weight measured values'),
+        label: t('Keep the front weight as is.'),
+        options: {
+          selectorUi: TargetSelectorUi.UniqueTargetSelector,
+          target: null,
+        },
+        value: FrontWeightDesignMode.AsMeasured,
+      },
       {
         description: t(
           'Choose a target from the standard front weight curves.',
@@ -95,11 +107,10 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
           <TargetSelector
             title={t('Choose a target from the standard front weight curves.')}
             modes={targetSelectorModes}
-            selectedMode={FrontWeightDesignMode.StandardCurves}
+            selectedMode={frontWeightDesignMode}
             selectedTarget={frontWeightDesignTarget}
             onModeChange={onModeChange}
             onTargetChange={onTargetChange}
-            shouldDisplayModeSelector={false}
           />
         </div>
         <div className="w-full 2xl:max-w-[--breakpoint-2xl] 3xl:max-w-[100rem]">

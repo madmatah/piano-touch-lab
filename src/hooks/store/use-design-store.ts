@@ -5,7 +5,10 @@ import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
 } from '@/components/design/strike-weight/StrikeWeightDesign.types';
-import { type FrontWeightDesignTarget } from '@/components/design/front-weight/FrontWeightDesign.types';
+import {
+  FrontWeightDesignMode,
+  type FrontWeightDesignTarget,
+} from '@/components/design/front-weight/FrontWeightDesign.types';
 import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignTarget,
@@ -17,6 +20,8 @@ import {
 } from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign.types';
 
 export interface DesignStoreState {
+  frontWeightDesignMode: FrontWeightDesignMode | null;
+  frontWeightDesignStandardTarget: FrontWeightDesignTarget | null;
   frontWeightDesignTarget: FrontWeightDesignTarget | null;
   strikeWeightDesignMode: StrikeWeightDesignMode | null;
   strikeWeightDesignTarget: StrikeWeightDesignTarget | null;
@@ -38,7 +43,10 @@ interface VersionedDesignStoreState extends DesignStoreState {
 }
 
 interface DesignStoreActions {
-  updateFrontWeightDesign: (target: FrontWeightDesignTarget | null) => void;
+  updateFrontWeightDesign: (
+    mode: FrontWeightDesignMode | null,
+    target: FrontWeightDesignTarget | null,
+  ) => void;
   updateStrikeWeightDesign: (
     mode: StrikeWeightDesignMode | null,
     target: StrikeWeightDesignTarget | null,
@@ -59,6 +67,8 @@ const createDesignStore = (measureProfileName: string) =>
   create<DesignStore>()(
     persist(
       (set) => ({
+        frontWeightDesignMode: null,
+        frontWeightDesignStandardTarget: null,
         frontWeightDesignTarget: null,
         strikeWeightDesignLatestSmoothTarget: null,
         strikeWeightDesignLatestStandarTarget: null,
@@ -68,10 +78,25 @@ const createDesignStore = (measureProfileName: string) =>
         strikeWeightRatioDesignLatestSmoothTarget: null,
         strikeWeightRatioDesignMode: null,
         strikeWeightRatioDesignTarget: null,
-        updateFrontWeightDesign: (target: FrontWeightDesignTarget | null) =>
-          set(() => ({
-            frontWeightDesignTarget: target,
-          })),
+        updateFrontWeightDesign: (
+          mode: FrontWeightDesignMode | null,
+          target: FrontWeightDesignTarget | null,
+        ) =>
+          set(() => {
+            const newState: Partial<DesignStore> = {
+              frontWeightDesignMode: mode,
+              frontWeightDesignTarget: target,
+            };
+
+            if (
+              mode === FrontWeightDesignMode.StandardCurves &&
+              target !== null
+            ) {
+              newState.frontWeightDesignStandardTarget = target;
+            }
+
+            return newState;
+          }),
         updateStrikeWeightDesign: (
           mode: StrikeWeightDesignMode | null,
           target: StrikeWeightDesignTarget | null,
@@ -166,6 +191,9 @@ const createDesignStore = (measureProfileName: string) =>
       {
         name: `piano-touch.design.${measureProfileName}`,
         partialize: (state: DesignStore): VersionedDesignStoreState => ({
+          frontWeightDesignMode: state.frontWeightDesignMode,
+          frontWeightDesignStandardTarget:
+            state.frontWeightDesignStandardTarget,
           frontWeightDesignTarget: state.frontWeightDesignTarget,
           strikeWeightDesignLatestSmoothTarget:
             state.strikeWeightDesignLatestSmoothTarget,
@@ -212,6 +240,8 @@ export const useDesignStore = (
 export const useFrontWeightDesign = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
+      frontWeightDesignMode: state.frontWeightDesignMode,
+      frontWeightDesignStandardTarget: state.frontWeightDesignStandardTarget,
       frontWeightDesignTarget: state.frontWeightDesignTarget,
     })),
   );

@@ -1,6 +1,6 @@
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
-export type FrontWeightDesignTarget = number;
+export type FrontWeightDesignTarget = number | null;
 
 export interface FrontWeightDesignProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
@@ -11,4 +11,5 @@ export interface FrontWeightDesignProps {
 
 export enum FrontWeightDesignMode {
   StandardCurves = 'standard-curves',
+  AsMeasured = 'as-measured',
 }

@@ -3,13 +3,17 @@ import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useMemo } from 'react';
 import { TouchDesignSerieVariant } from '@/components/charts/TouchDesignChart';
-import type { FrontWeightDesignTarget } from '../FrontWeightDesign.types';
+import {
+  FrontWeightDesignMode,
+  type FrontWeightDesignTarget,
+} from '../FrontWeightDesign.types';
 import { useTranslation } from 'react-i18next';
 import { useInterpolatedSerieCubicSpline } from '@/hooks/series/use-interpolated-serie-cubic-spline';
 import { generateCustomFrontWeightKeypoints } from '@/lib/piano/touch-design/generate-custom-front-weight-keypoints';
 
 export const useFrontWeightTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
+  mode: FrontWeightDesignMode | null,
   target: FrontWeightDesignTarget | null,
 ): { targetSerie: TouchDesignSerie | null } => {
   const { t } = useTranslation();
@@ -25,12 +29,16 @@ export const useFrontWeightTargetSerie = (
   }, [generateSerie, name, variant]);
 
   const targetSerie = useMemo(() => {
-    if (target === null) {
-      return nullTargetSerie;
+    if (mode === FrontWeightDesignMode.AsMeasured) {
+      return generateSerie((key) => key.payload.frontWeight, name, variant);
     }
 
     const targetNumber = Number(target);
-    if (!isNaN(targetNumber)) {
+    if (
+      mode === FrontWeightDesignMode.StandardCurves &&
+      target !== null &&
+      !isNaN(targetNumber)
+    ) {
       const frontWeightCurve = generateCubicInterpolatedKeyboardSerie(
         generateCustomFrontWeightKeypoints(targetNumber),
       );
@@ -45,6 +53,7 @@ export const useFrontWeightTargetSerie = (
   }, [
     generateCubicInterpolatedKeyboardSerie,
     generateSerie,
+    mode,
     name,
     nullTargetSerie,
     target,

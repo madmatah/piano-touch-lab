@@ -1,23 +1,43 @@
 import { useCallback } from 'react';
-import { type FrontWeightDesignTarget } from '../FrontWeightDesign.types';
+import {
+  FrontWeightDesignMode,
+  type FrontWeightDesignTarget,
+} from '../FrontWeightDesign.types';
 import {
   useDesignActions,
   useFrontWeightDesign,
 } from '@/hooks/store/use-design-store';
 
 export const useFrontWeightTargetSelector = () => {
-  const { frontWeightDesignTarget } = useFrontWeightDesign();
+  const {
+    frontWeightDesignMode,
+    frontWeightDesignStandardTarget,
+    frontWeightDesignTarget,
+  } = useFrontWeightDesign();
   const { updateFrontWeightDesign } = useDesignActions();
 
   const onTargetChange = useCallback(
     (target: FrontWeightDesignTarget) => {
-      updateFrontWeightDesign(target);
+      updateFrontWeightDesign(frontWeightDesignMode, target);
     },
-    [updateFrontWeightDesign],
+    [frontWeightDesignMode, updateFrontWeightDesign],
+  );
+
+  const onModeChange = useCallback(
+    (mode: FrontWeightDesignMode) => {
+      if (mode === FrontWeightDesignMode.StandardCurves) {
+        updateFrontWeightDesign(mode, frontWeightDesignStandardTarget);
+      } else {
+        updateFrontWeightDesign(mode, null);
+      }
+    },
+    [frontWeightDesignStandardTarget, updateFrontWeightDesign],
   );
 
   return {
+    frontWeightDesignMode,
     frontWeightDesignTarget,
+    onModeChange,
     onTargetChange,
     updateFrontWeightDesign,
   };

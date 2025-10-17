@@ -22,9 +22,11 @@ export const useDesignedKeyboard = (
   const touchWeightPreviewer = useInjection<TouchWeightPreviewerRequirements>(
     touchWeightPreviewerRequirementsSymbol,
   );
-  const { frontWeightDesignTarget } = useFrontWeightDesign();
+  const { frontWeightDesignMode, frontWeightDesignTarget } =
+    useFrontWeightDesign();
   const { targetSerie: frontWeightTargetSerie } = useFrontWeightTargetSerie(
     analyzedKeyboard,
+    frontWeightDesignMode,
     frontWeightDesignTarget,
   );
   const { strikeWeightDesignMode, strikeWeightDesignTarget } =
