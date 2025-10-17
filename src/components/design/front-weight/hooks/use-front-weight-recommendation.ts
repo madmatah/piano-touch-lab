@@ -1,17 +1,24 @@
 import { useEffect, useRef } from 'react';
 
-import type { FrontWeightDesignTarget } from '../FrontWeightDesign.types';
+import {
+  FrontWeightDesignMode,
+  type FrontWeightDesignTarget,
+} from '../FrontWeightDesign.types';
 
 export const useFrontWeightRecommendation = (
+  frontWeightDesignMode: FrontWeightDesignMode | null,
   frontWeightDesignTarget: FrontWeightDesignTarget | null,
-  setFrontWeightDesign: (target: FrontWeightDesignTarget) => void,
+  setFrontWeightDesign: (
+    mode: FrontWeightDesignMode,
+    target: FrontWeightDesignTarget,
+  ) => void,
 ) => {
   const isFirstRender = useRef<boolean>(true);
 
   useEffect(() => {
     if (isFirstRender.current) {
-      if (frontWeightDesignTarget === null) {
-        setFrontWeightDesign(7);
+      if (frontWeightDesignTarget === null && frontWeightDesignMode === null) {
+        setFrontWeightDesign(FrontWeightDesignMode.AsMeasured, null);
       }
       isFirstRender.current = false;
     }
