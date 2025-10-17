@@ -10,7 +10,10 @@ export const TouchWeightPreview: React.FC<TouchWeightPreviewProps> = ({
 }) => {
   return (
     <div>
-      <TouchWeightChart analyzedKeyboard={designedKeyboard} />
+      <TouchWeightChart
+        analyzedKeyboard={designedKeyboard}
+        useSupportSpringMeasurements={true}
+      />
     </div>
   );
 };
