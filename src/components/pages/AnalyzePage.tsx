@@ -35,7 +35,10 @@ export const AnalyzePage = () => {
           )}
         </TabsList>
         <TabsContent value="touch-weight">
-          <TouchWeightChart analyzedKeyboard={analyzedKeyboard} />
+          <TouchWeightChart
+            analyzedKeyboard={analyzedKeyboard}
+            useSupportSpringMeasurements={useSupportSpringMeasurements}
+          />
         </TabsContent>
         <TabsContent value="front-weight">
           <FrontWeightChart keyboard={analyzedKeyboard} />
