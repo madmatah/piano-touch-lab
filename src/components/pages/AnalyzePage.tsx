@@ -9,6 +9,7 @@ import { useAnalyzedKeyboard } from '../../hooks/keyboard/use-analyzed-keyboard'
 import { useTranslation } from '@/hooks/use-translation';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { SupportSpringBalanceWeightChart } from '../charts/SupportSpringBalanceWeightChart';
+import { AnalyzeDataSheet } from '../analyze/data-sheet/AnalyzeDataSheet';
 
 export const AnalyzePage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
@@ -33,6 +34,7 @@ export const AnalyzePage = () => {
               {t('Support Spring Balance Weight')}
             </TabsTrigger>
           )}
+          <TabsTrigger value="data-sheet">{t('Data sheet')}</TabsTrigger>
         </TabsList>
         <TabsContent value="touch-weight">
           <TouchWeightChart
@@ -57,6 +59,9 @@ export const AnalyzePage = () => {
             <SupportSpringBalanceWeightChart keyboard={analyzedKeyboard} />
           </TabsContent>
         )}
+        <TabsContent value="data-sheet">
+          <AnalyzeDataSheet analyzedKeyboard={analyzedKeyboard} />
+        </TabsContent>
       </Tabs>
     </MainLayout>
   );
