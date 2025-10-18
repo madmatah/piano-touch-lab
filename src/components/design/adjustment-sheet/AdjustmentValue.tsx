@@ -23,16 +23,22 @@ export const AdjustmentValue: React.FC<AdjustmentValueProps> = ({
       : null;
   }, [actualValue, targetValue]);
 
+  const shouldShowDiff = useMemo(() => {
+    if (targetValue && diff) {
+      return Math.abs(diff) >= 0.1;
+    }
+  }, [targetValue, diff]);
+
   return !isEmpty ? (
     <>
       {actualValue ? <div>{formatWeight(actualValue)}</div> : null}
-      {targetValue && diff ? (
+      {shouldShowDiff ? (
         <>
           <div>
             <ArrowRight style={{ height: 12, width: 12 }} />
           </div>
           <div>{formatWeight(targetValue)}</div>
-          <div>({formatDiff(diff, unit)})</div>
+          <div>({formatDiff(diff!, unit)})</div>
         </>
       ) : null}
     </>
