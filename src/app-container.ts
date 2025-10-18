@@ -2,14 +2,14 @@ import { Container } from 'inversify';
 import {
   type TouchWeightAnalyzerRequirements,
   touchWeightAnalyzerRequirementsSymbol,
-} from './lib/piano/touch-design/touch-weight-analyzer-requirements';
-import { TouchWeightAnalyzer } from './lib/piano/touch-design/touch-weight-analyzer';
+} from './lib/piano/touch-design/touch-weight-analyzer/touch-weight-analyzer-requirements';
+import { TouchWeightAnalyzer } from './lib/piano/touch-design/touch-weight-analyzer/touch-weight-analyzer';
 import { smootherContainerModule } from './container-modules/smoother-container-module';
 import {
   touchWeightPreviewerRequirementsSymbol,
   type TouchWeightPreviewerRequirements,
-} from './lib/piano/touch-design/touch-weight-previewer.requirements';
-import { TouchWeightPreviewer } from './lib/piano/touch-design/touch-weight-previewer';
+} from './lib/piano/touch-design/touch-weight-previewer/touch-weight-previewer.requirements';
+import { TouchWeightPreviewer } from './lib/piano/touch-design/touch-weight-previewer/touch-weight-previewer';
 import { FrontWeightCalculator } from './lib/piano/touch-design/front-weight-calculator/front-weight-calculator';
 import {
   frontWeightCalculatorRequirementsSymbol,

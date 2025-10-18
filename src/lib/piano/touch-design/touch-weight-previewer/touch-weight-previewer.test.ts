@@ -3,8 +3,8 @@ import { TouchWeightPreviewer } from './touch-weight-previewer';
 import type {
   TouchWeightAnalyzedKey,
   TouchWeightKeyAnalysis,
-} from './touch-weight-key-analysis';
-import { KeyColor } from '../keyboard/key-color.enum';
+} from '../touch-weight-key-analysis';
+import { KeyColor } from '../../keyboard/key-color.enum';
 
 describe('The TouchWeightPreviewer class', () => {
   let instance: TouchWeightPreviewer;

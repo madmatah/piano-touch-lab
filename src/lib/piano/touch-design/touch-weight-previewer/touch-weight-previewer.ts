@@ -1,7 +1,7 @@
 import type {
   TouchWeightAnalyzedKey,
   TouchWeightKeyAnalysis,
-} from './touch-weight-key-analysis';
+} from '../touch-weight-key-analysis';
 import type { TouchWeightPreviewerRequirements } from './touch-weight-previewer.requirements';
 
 export class TouchWeightPreviewer implements TouchWeightPreviewerRequirements {

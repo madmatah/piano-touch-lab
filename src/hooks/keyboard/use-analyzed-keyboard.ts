@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import {
   touchWeightAnalyzerRequirementsSymbol,
   type TouchWeightAnalyzerRequirements,
-} from '@/lib/piano/touch-design/touch-weight-analyzer-requirements';
+} from '@/lib/piano/touch-design/touch-weight-analyzer/touch-weight-analyzer-requirements';
 import { useMeasuredKeyboard } from './use-measured-keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 

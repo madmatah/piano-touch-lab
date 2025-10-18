@@ -1,14 +1,14 @@
-import type { KeyWith } from '../keyboard';
+import type { KeyWith } from '../../keyboard';
 import {
   DEFAULT_KEY_WEIGHT_RATIO,
   DEFAULT_WIPPEN_RADIUS_WEIGHT,
-} from './constants';
+} from '../constants';
 import type {
   MeasuredKeyRequirements,
   OptionalNumber,
-} from './measured-key.requirements';
+} from '../measured-key.requirements';
 import type { TouchWeightAnalyzerRequirements } from './touch-weight-analyzer-requirements';
-import type { TouchWeightKeyAnalysis } from './touch-weight-key-analysis';
+import type { TouchWeightKeyAnalysis } from '../touch-weight-key-analysis';
 
 export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
   public analyzeKey(
