@@ -38,7 +38,9 @@ export const useGenerateSerie = <T>(keyboard: KeyboardLike<KeyWith<T>>) => {
   );
 
   const isSerieEmpty = useCallback((serie: TouchDesignSerie) => {
-    return serie.data.every((d) => d.payload === undefined || isNaN(d.payload));
+    return serie.data.every(
+      (d) => d.payload === undefined || d.payload === null || isNaN(d.payload),
+    );
   }, []);
 
   return { generateSerie, isSerieEmpty };
