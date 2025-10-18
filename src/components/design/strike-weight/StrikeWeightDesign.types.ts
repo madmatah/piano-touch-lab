@@ -16,6 +16,7 @@ export type StrikeWeightDesignSmoothTarget =
 export type StrikeWeightDesignTarget =
   | StrikeWeightLevel
   | StrikeWeightDesignSmoothTarget
+  | number
   | null;
 
 export interface StrikeWeightDesignProps {

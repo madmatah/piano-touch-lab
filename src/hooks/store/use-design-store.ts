@@ -26,6 +26,7 @@ export interface DesignStoreState {
   frontWeightDesignTarget: FrontWeightDesignTarget | null;
   strikeWeightDesignMode: StrikeWeightDesignMode | null;
   strikeWeightDesignTarget: StrikeWeightDesignTarget | null;
+  strikeWeightDesignComputedBalanceWeightTarget: number | null;
   strikeWeightDesignLatestSmoothTarget: StrikeWeightDesignTarget | null;
   strikeWeightDesignLatestStandarTarget: StrikeWeightDesignTarget | null;
   strikeWeightRatioDesignMode: StrikeWeightRatioDesignMode | null;
@@ -72,6 +73,7 @@ const createDesignStore = (measureProfileName: string) =>
         frontWeightDesignMode: null,
         frontWeightDesignStandardTarget: null,
         frontWeightDesignTarget: null,
+        strikeWeightDesignComputedBalanceWeightTarget: null,
         strikeWeightDesignLatestSmoothTarget: null,
         strikeWeightDesignLatestStandarTarget: null,
         strikeWeightDesignMode: null,
@@ -120,6 +122,14 @@ const createDesignStore = (measureProfileName: string) =>
             }
             if (mode === StrikeWeightDesignMode.Smoothed && target !== null) {
               newState.strikeWeightDesignLatestSmoothTarget = target;
+            }
+            if (
+              mode === StrikeWeightDesignMode.Computed &&
+              target !== null &&
+              !isNaN(Number(target))
+            ) {
+              newState.strikeWeightDesignComputedBalanceWeightTarget =
+                Number(target);
             }
             return newState;
           }),
@@ -203,6 +213,8 @@ const createDesignStore = (measureProfileName: string) =>
           frontWeightDesignStandardTarget:
             state.frontWeightDesignStandardTarget,
           frontWeightDesignTarget: state.frontWeightDesignTarget,
+          strikeWeightDesignComputedBalanceWeightTarget:
+            state.strikeWeightDesignComputedBalanceWeightTarget,
           strikeWeightDesignLatestSmoothTarget:
             state.strikeWeightDesignLatestSmoothTarget,
           strikeWeightDesignLatestStandarTarget:
@@ -260,6 +272,8 @@ export const useFrontWeightDesign = (measureProfileName?: string) => {
 export const useStrikeWeightDesign = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
+      strikeWeightDesignComputedBalanceWeightTarget:
+        state.strikeWeightDesignComputedBalanceWeightTarget,
       strikeWeightDesignMode: state.strikeWeightDesignMode,
       strikeWeightDesignSmoothTarget:
         state.strikeWeightDesignLatestSmoothTarget,
