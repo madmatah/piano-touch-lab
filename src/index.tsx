@@ -14,4 +14,5 @@ const server = serve({
   },
 });
 
+// eslint-disable-next-line no-console
 console.log(`🚀 Server running at ${server.url}`);

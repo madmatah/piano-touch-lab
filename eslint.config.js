@@ -20,6 +20,7 @@ export default defineConfig(
     },
     rules: {
       'sort-keys-fix/sort-keys-fix': 'warn',
+      'no-console': 'error',
     },
   },
   {
