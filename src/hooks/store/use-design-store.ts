@@ -22,6 +22,7 @@ import {
 export interface DesignStoreState {
   frontWeightDesignMode: FrontWeightDesignMode | null;
   frontWeightDesignStandardTarget: FrontWeightDesignTarget | null;
+  frontWeightDesignComputedBalanceWeightTarget: number | null;
   frontWeightDesignTarget: FrontWeightDesignTarget | null;
   strikeWeightDesignMode: StrikeWeightDesignMode | null;
   strikeWeightDesignTarget: StrikeWeightDesignTarget | null;
@@ -67,6 +68,7 @@ const createDesignStore = (measureProfileName: string) =>
   create<DesignStore>()(
     persist(
       (set) => ({
+        frontWeightDesignComputedBalanceWeightTarget: null,
         frontWeightDesignMode: null,
         frontWeightDesignStandardTarget: null,
         frontWeightDesignTarget: null,
@@ -93,6 +95,10 @@ const createDesignStore = (measureProfileName: string) =>
               target !== null
             ) {
               newState.frontWeightDesignStandardTarget = target;
+            }
+
+            if (mode === FrontWeightDesignMode.Computed && target !== null) {
+              newState.frontWeightDesignComputedBalanceWeightTarget = target;
             }
 
             return newState;
@@ -191,6 +197,8 @@ const createDesignStore = (measureProfileName: string) =>
       {
         name: `piano-touch.design.${measureProfileName}`,
         partialize: (state: DesignStore): VersionedDesignStoreState => ({
+          frontWeightDesignComputedBalanceWeightTarget:
+            state.frontWeightDesignComputedBalanceWeightTarget,
           frontWeightDesignMode: state.frontWeightDesignMode,
           frontWeightDesignStandardTarget:
             state.frontWeightDesignStandardTarget,
@@ -240,6 +248,8 @@ export const useDesignStore = (
 export const useFrontWeightDesign = (measureProfileName?: string) => {
   return useDesignStore(measureProfileName)(
     useShallow((state: DesignStore) => ({
+      frontWeightDesignComputedBalanceWeightTarget:
+        state.frontWeightDesignComputedBalanceWeightTarget,
       frontWeightDesignMode: state.frontWeightDesignMode,
       frontWeightDesignStandardTarget: state.frontWeightDesignStandardTarget,
       frontWeightDesignTarget: state.frontWeightDesignTarget,

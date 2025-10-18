@@ -41,6 +41,7 @@ export interface NumericTargetSelectorOptions
   selectorUi: TargetSelectorUi.NumericSelector;
   minValue: number;
   maxValue: number;
+  maxCharacters?: number;
   step: number;
   labelFormatter?: (value: number) => string;
 }
@@ -60,31 +61,27 @@ export interface CustomComponentTargetSelectorOptions<Target>
   ) => React.ReactNode;
 }
 
+interface TargetSelectorModeBase<Mode extends string> {
+  label: string;
+  description?: string;
+  isDisabled?: boolean;
+  disabledReason?: string;
+  value: Mode;
+}
+
 export type TargetSelectorMode<Mode extends string, Target> =
-  | {
-      label: string;
-      description?: string;
-      value: Mode;
+  | (TargetSelectorModeBase<Mode> & {
       options: MultipleTargetSelectorOptions<Extract<Target, string>>;
-    }
-  | {
-      label: string;
-      description?: string;
-      value: Mode;
+    })
+  | (TargetSelectorModeBase<Mode> & {
       options: NumericTargetSelectorOptions;
-    }
-  | {
-      label: string;
-      description?: string;
-      value: Mode;
+    })
+  | (TargetSelectorModeBase<Mode> & {
       options: UniqueTargetSelectorOptions<Target>;
-    }
-  | {
-      label: string;
-      description?: string;
-      value: Mode;
+    })
+  | (TargetSelectorModeBase<Mode> & {
       options: CustomComponentTargetSelectorOptions<Target>;
-    };
+    });
 
 export interface TargetSelectorProps<Mode extends string, Target> {
   title: string;
@@ -163,6 +160,8 @@ export const TargetSelector = <Mode extends string, Target>(
             >
               {modes.map((mode, index) => (
                 <RadioItem
+                  isDisabled={mode.isDisabled}
+                  disabledReason={mode.disabledReason}
                   key={index}
                   label={mode.label}
                   description={mode.description ?? ''}
@@ -212,19 +211,31 @@ export const TargetSelector = <Mode extends string, Target>(
               />
             )}
             {selectedMode.options.selectorUi ===
-              TargetSelectorUi.NumericSelector && (
-              <NumericSelector
-                value={
-                  (selectedTargetValue as unknown as number) ??
-                  selectedMode.options.minValue
-                }
-                onChange={onTargetChange as unknown as (value: number) => void}
-                minValue={selectedMode.options.minValue}
-                maxValue={selectedMode.options.maxValue}
-                step={selectedMode.options.step}
-                labelFormatter={selectedMode.options.labelFormatter}
-              />
-            )}
+            TargetSelectorUi.NumericSelector ? (
+              <div className="flex flex-col gap-1">
+                {selectedMode.options.placeholder ? (
+                  <div className="text-center text-sm font-bold">
+                    {selectedMode.options.placeholder}
+                  </div>
+                ) : null}
+                <div>
+                  <NumericSelector
+                    value={
+                      (selectedTargetValue as unknown as number) ??
+                      selectedMode.options.minValue
+                    }
+                    onChange={
+                      onTargetChange as unknown as (value: number) => void
+                    }
+                    maxCharacters={selectedMode.options.maxCharacters}
+                    minValue={selectedMode.options.minValue}
+                    maxValue={selectedMode.options.maxValue}
+                    step={selectedMode.options.step}
+                    labelFormatter={selectedMode.options.labelFormatter}
+                  />
+                </div>
+              </div>
+            ) : null}
             {selectedMode.options.selectorUi ===
               TargetSelectorUi.CustomComponentTargetSelector && (
               <div>

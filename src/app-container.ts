@@ -10,6 +10,11 @@ import {
   type TouchWeightPreviewerRequirements,
 } from './lib/piano/touch-design/touch-weight-previewer.requirements';
 import { TouchWeightPreviewer } from './lib/piano/touch-design/touch-weight-previewer';
+import { FrontWeightCalculator } from './lib/piano/touch-design/front-weight-calculator/front-weight-calculator';
+import {
+  frontWeightCalculatorRequirementsSymbol,
+  type FrontWeightCalculatorRequirements,
+} from './lib/piano/touch-design/front-weight-calculator/front-weight-calculator.requirements';
 
 export const container = new Container();
 
@@ -22,5 +27,11 @@ container
     touchWeightPreviewerRequirementsSymbol,
   )
   .to(TouchWeightPreviewer);
+
+container
+  .bind<FrontWeightCalculatorRequirements>(
+    frontWeightCalculatorRequirementsSymbol,
+  )
+  .to(FrontWeightCalculator);
 
 await container.load(smootherContainerModule);

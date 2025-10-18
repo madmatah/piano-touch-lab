@@ -11,13 +11,14 @@ import {
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
-import {} from '@/hooks/store/use-design-store';
+import { useStrikeWeightDesign } from '@/hooks/store/use-design-store';
 import { useFrontWeightTargetSerie } from './hooks/use-front-weight-target-serie';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
 import { useFrontWeightRecommendation } from './hooks/use-front-weight-recommendation';
 import { useFrontWeightTargetSelector } from './hooks/use-frontweight-target-selector';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
+import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
 
 export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   analyzedKeyboard,
@@ -33,6 +34,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     onTargetChange,
     updateFrontWeightDesign,
   } = useFrontWeightTargetSelector();
+  const { strikeWeightDesignMode } = useStrikeWeightDesign();
 
   useFrontWeightRecommendation(
     frontWeightDesignMode,
@@ -61,6 +63,30 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     [t],
   );
 
+  const balanceWeightLabelFormatter = useCallback(
+    (value: number) => {
+      return t('{{value}}g', {
+        value,
+      });
+    },
+    [t],
+  );
+
+  const { shouldDisableComputedMode, computedModeDisabledReason } =
+    useMemo(() => {
+      const shouldDisableComputedMode =
+        strikeWeightDesignMode === StrikeWeightDesignMode.Computed;
+      const reason = shouldDisableComputedMode
+        ? t(
+            'The automatic computation is already active on the strike weight design.',
+          )
+        : undefined;
+      return {
+        computedModeDisabledReason: reason,
+        shouldDisableComputedMode,
+      };
+    }, [strikeWeightDesignMode, t]);
+
   const targetSelectorModes: TargetSelectorMode<
     FrontWeightDesignMode,
     FrontWeightDesignTarget
@@ -77,21 +103,45 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
       },
       {
         description: t(
+          'The front weight will be computed automatically in order to achieve the specified balance weight.',
+        ),
+        disabledReason: computedModeDisabledReason,
+        isDisabled: shouldDisableComputedMode,
+        label: t('Compute automatically'),
+        options: {
+          labelFormatter: balanceWeightLabelFormatter,
+          maxValue: 60,
+          minValue: 30,
+          placeholder: t('Target Balance Weight'),
+          selectorUi: TargetSelectorUi.NumericSelector,
+          step: 1,
+        },
+        value: FrontWeightDesignMode.Computed,
+      },
+      {
+        description: t(
           'Choose a target from the standard front weight curves.',
         ),
         label: t('Use standard curves'),
         options: {
           labelFormatter: frontWeightCurveLabelFormatter,
+          maxCharacters: 8,
           maxValue: 12,
           minValue: 1,
-          placeholder: t('Select your target curve'),
+          placeholder: t('Target curve'),
           selectorUi: TargetSelectorUi.NumericSelector,
           step: 1,
         },
         value: FrontWeightDesignMode.StandardCurves,
       },
     ],
-    [t, frontWeightCurveLabelFormatter],
+    [
+      t,
+      shouldDisableComputedMode,
+      computedModeDisabledReason,
+      balanceWeightLabelFormatter,
+      frontWeightCurveLabelFormatter,
+    ],
   );
 
   return !hasEnoughData ? (

@@ -12,6 +12,7 @@ export const useFrontWeightTargetSelector = () => {
   const {
     frontWeightDesignMode,
     frontWeightDesignStandardTarget,
+    frontWeightDesignComputedBalanceWeightTarget,
     frontWeightDesignTarget,
   } = useFrontWeightDesign();
   const { updateFrontWeightDesign } = useDesignActions();
@@ -27,11 +28,20 @@ export const useFrontWeightTargetSelector = () => {
     (mode: FrontWeightDesignMode) => {
       if (mode === FrontWeightDesignMode.StandardCurves) {
         updateFrontWeightDesign(mode, frontWeightDesignStandardTarget);
+      } else if (mode === FrontWeightDesignMode.Computed) {
+        updateFrontWeightDesign(
+          mode,
+          frontWeightDesignComputedBalanceWeightTarget,
+        );
       } else {
         updateFrontWeightDesign(mode, null);
       }
     },
-    [frontWeightDesignStandardTarget, updateFrontWeightDesign],
+    [
+      frontWeightDesignComputedBalanceWeightTarget,
+      frontWeightDesignStandardTarget,
+      updateFrontWeightDesign,
+    ],
   );
 
   return {

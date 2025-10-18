@@ -15,6 +15,7 @@ import {
 } from '@/lib/piano/touch-design/touch-weight-previewer.requirements';
 import { useInjection } from 'inversify-react';
 import { useWippenSupportSpringsTargetSerie } from '@/components/design/wippen-support-springs/hooks/use-wippen-support-springs-target-serie';
+import { useGenerateDesignedKeyboardFromSeries } from './use-generate-designed-keyboard-from-series';
 
 export const useDesignedKeyboard = (
   analyzedKeyboard: TouchWeightAnalyzedKeyboard,
@@ -22,6 +23,8 @@ export const useDesignedKeyboard = (
   const touchWeightPreviewer = useInjection<TouchWeightPreviewerRequirements>(
     touchWeightPreviewerRequirementsSymbol,
   );
+  const { generateDesignedKeyboardFromSeries } =
+    useGenerateDesignedKeyboardFromSeries(analyzedKeyboard);
   const { frontWeightDesignMode, frontWeightDesignTarget } =
     useFrontWeightDesign();
   const { targetSerie: frontWeightTargetSerie } = useFrontWeightTargetSerie(
@@ -54,28 +57,18 @@ export const useDesignedKeyboard = (
     );
 
   const designedKeyboard = useMemo(() => {
-    return analyzedKeyboard
-      .map((key) => {
-        const keyIndex = key.number - 1;
-        return {
-          ...key.payload,
-          frontWeight: frontWeightTargetSerie?.data[keyIndex]?.payload ?? null,
-          strikeWeight:
-            strikeWeightTargetSerie?.data[keyIndex]?.payload ?? null,
-          strikeWeightRatio:
-            strikeWeightRatioTargetSerie?.data[keyIndex]?.payload ?? null,
-          supportSpringBalanceWeight:
-            supportSpringBalanceWeightTargetSerie?.data[keyIndex]?.payload ??
-            null,
-        };
-      })
-      .map((key) => touchWeightPreviewer.computeTouchWeight(key));
+    return generateDesignedKeyboardFromSeries({
+      frontWeightTargetSerie,
+      strikeWeightRatioTargetSerie,
+      strikeWeightTargetSerie,
+      supportSpringBalanceWeightTargetSerie,
+    }).map((key) => touchWeightPreviewer.computeTouchWeight(key));
   }, [
-    analyzedKeyboard,
-    frontWeightTargetSerie?.data,
-    strikeWeightTargetSerie?.data,
-    strikeWeightRatioTargetSerie?.data,
-    supportSpringBalanceWeightTargetSerie?.data,
+    generateDesignedKeyboardFromSeries,
+    frontWeightTargetSerie,
+    strikeWeightRatioTargetSerie,
+    strikeWeightTargetSerie,
+    supportSpringBalanceWeightTargetSerie,
     touchWeightPreviewer,
   ]);
 

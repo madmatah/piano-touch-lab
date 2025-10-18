@@ -10,6 +10,7 @@ export interface FrontWeightDesignProps {
 }
 
 export enum FrontWeightDesignMode {
+  Computed = 'computed',
   StandardCurves = 'standard-curves',
   AsMeasured = 'as-measured',
 }
