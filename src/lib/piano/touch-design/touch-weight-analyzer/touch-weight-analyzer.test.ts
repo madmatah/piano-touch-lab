@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { KeyColor } from '@/lib/piano/keyboard/key-color.enum';
 import type { KeyWith } from '@/lib/piano/keyboard/key';
-import { TouchWeightAnalyzer } from '@/lib/piano/touch-design/touch-weight-analyzer';
+import { TouchWeightAnalyzer } from '@/lib/piano/touch-design/touch-weight-analyzer/touch-weight-analyzer';
 import {
   DEFAULT_KEY_WEIGHT_RATIO,
   DEFAULT_WIPPEN_RADIUS_WEIGHT,

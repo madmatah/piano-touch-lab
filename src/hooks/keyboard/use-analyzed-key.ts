@@ -1,7 +1,7 @@
 import {
   touchWeightAnalyzerRequirementsSymbol,
   type TouchWeightAnalyzerRequirements,
-} from '@/lib/piano/touch-design/touch-weight-analyzer-requirements';
+} from '@/lib/piano/touch-design/touch-weight-analyzer/touch-weight-analyzer-requirements';
 import { useMeasuredKey } from './use-measured-key';
 import { useInjection } from 'inversify-react';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';

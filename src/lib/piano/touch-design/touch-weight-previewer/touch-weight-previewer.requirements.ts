@@ -1,7 +1,7 @@
 import type {
   TouchWeightAnalyzedKey,
   TouchWeightKeyAnalysis,
-} from './touch-weight-key-analysis';
+} from '../touch-weight-key-analysis';
 
 export const touchWeightPreviewerRequirementsSymbol = Symbol(
   'TouchWeightPreviewerRequirements',

@@ -12,7 +12,7 @@ import { useMemo } from 'react';
 import {
   touchWeightPreviewerRequirementsSymbol,
   type TouchWeightPreviewerRequirements,
-} from '@/lib/piano/touch-design/touch-weight-previewer.requirements';
+} from '@/lib/piano/touch-design/touch-weight-previewer/touch-weight-previewer.requirements';
 import { useInjection } from 'inversify-react';
 import { useWippenSupportSpringsTargetSerie } from '@/components/design/wippen-support-springs/hooks/use-wippen-support-springs-target-serie';
 import { useGenerateDesignedKeyboardFromSeries } from './use-generate-designed-keyboard-from-series';
