@@ -10,7 +10,7 @@ import {
 } from './FrontWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, HourglassIcon } from 'lucide-react';
 import { useStrikeWeightDesign } from '@/hooks/store/use-design-store';
 import { useFrontWeightTargetSerie } from './hooks/use-front-weight-target-serie';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
@@ -48,7 +48,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     frontWeightDesignTarget,
   );
 
-  const hasEnoughData =
+  const hasEnoughInputData =
     analyzedKeyboard
       .mapToArray((key) => key.payload.frontWeight)
       .filter((v) => v !== undefined && v !== null).length >=
@@ -144,7 +144,16 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     ],
   );
 
-  return !hasEnoughData ? (
+  const shouldDisplayComputeModeWaitingMessage = useMemo(() => {
+    const hasEnoughOutputData = targetSerie?.data?.some((key) => key?.payload);
+
+    return (
+      frontWeightDesignMode === FrontWeightDesignMode.Computed &&
+      !hasEnoughOutputData
+    );
+  }, [frontWeightDesignMode, targetSerie]);
+
+  return !hasEnoughInputData ? (
     <Alert variant="default" className="w-full mx-auto my-10">
       <AlertCircleIcon />
       <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
@@ -164,10 +173,24 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
           />
         </div>
         <div className="w-full 2xl:max-w-[--breakpoint-2xl] 3xl:max-w-[100rem]">
-          <FrontWeightChart
-            keyboard={analyzedKeyboard}
-            targetSerie={targetSerie ?? undefined}
-          />
+          {shouldDisplayComputeModeWaitingMessage ? (
+            <Alert variant="default" className="w-full mx-auto my-10">
+              <HourglassIcon />
+              <AlertTitle>
+                {t('Waiting for remaining design targets to be specified.')}
+              </AlertTitle>
+              <AlertDescription>
+                {t(
+                  'The front weight will be computed when all other design targets will be specified.',
+                )}
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <FrontWeightChart
+              keyboard={analyzedKeyboard}
+              targetSerie={targetSerie ?? undefined}
+            />
+          )}
         </div>
       </div>
     </div>
