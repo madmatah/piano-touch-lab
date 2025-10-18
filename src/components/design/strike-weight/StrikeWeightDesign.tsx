@@ -10,7 +10,6 @@ import { StrikeWeightChart } from '../../charts/StrikeWeightChart';
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignProps,
-  type StrikeWeightDesignSmoothTarget,
   type StrikeWeightDesignTarget,
 } from './StrikeWeightDesign.types';
 
@@ -53,18 +52,6 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     useTargetSeries(analyzedKeyboard);
 
   const { frontWeightDesignMode } = useFrontWeightDesign();
-  const smoothCurveTargets: TargetSelectorTarget<StrikeWeightDesignSmoothTarget>[] =
-    [
-      {
-        label: t('Smoothed with Least Squares Regression'),
-        value: SmoothStrategy.LeastSquaresRegression,
-      },
-      {
-        label: t('Smoothed with LOESS'),
-        value: SmoothStrategy.Loess,
-      },
-    ];
-
   const balanceWeightLabelFormatter = useCallback(
     (value: number) => {
       return t('{{value}}g', {
@@ -150,9 +137,8 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
       ),
       label: t('Generate a smoothed curve'),
       options: {
-        placeholder: t('Select your smoothing algorithm'),
-        selectorUi: TargetSelectorUi.HtmlSelect,
-        targets: smoothCurveTargets,
+        selectorUi: TargetSelectorUi.UniqueTargetSelector,
+        target: SmoothStrategy.LeastSquaresRegression,
       },
       value: StrikeWeightDesignMode.Smoothed,
     },
