@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "bun run build.ts",
+    "checks": "bun lint && bun typecheck && bun test",
     "dev": "bun --hot src/index.tsx",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
