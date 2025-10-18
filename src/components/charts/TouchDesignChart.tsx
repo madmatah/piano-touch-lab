@@ -17,6 +17,7 @@ export interface TouchDesignChartProps {
   title: string;
   series: TouchDesignSerie[];
   yAxisName: string;
+  maxYAxisValue?: number;
 }
 
 const getEchartSeriePropertiesByVariant = (
@@ -149,7 +150,7 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
       name: t('Key Number'),
       type: 'category',
     },
-    yAxis: { name: props.yAxisName, type: 'value' },
+    yAxis: { max: props.maxYAxisValue, name: props.yAxisName, type: 'value' },
   };
 
   return (
