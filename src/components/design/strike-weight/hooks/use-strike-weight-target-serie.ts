@@ -17,7 +17,7 @@ export const useStrikeWeightTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
   mode: StrikeWeightDesignMode | null,
   target: StrikeWeightDesignTarget | null,
-): { targetSerie: TouchDesignSerie | null } => {
+): { targetSerie: TouchDesignSerie } => {
   const { getStrikeWeightCurve } = useStrikeWeightCurve(keyboard);
   const { generateSerie } = useGenerateSerie(keyboard);
   const { smoothLsr } = useSmoothedSerieLsr({

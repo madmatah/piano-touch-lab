@@ -14,7 +14,7 @@ export const useWippenSupportSpringsTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
   mode: WippenSupportSpringsDesignMode | null,
   target: WippenSupportSpringsDesignTarget,
-): { targetSerie: TouchDesignSerie | null } => {
+): { targetSerie: TouchDesignSerie } => {
   const { generateSerie } = useGenerateSerie(keyboard);
 
   const name = 'Target';

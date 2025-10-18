@@ -4,6 +4,7 @@ import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch
 
 export enum StrikeWeightDesignMode {
   AsMeasured = 'as-measured',
+  Computed = 'computed',
   StandardCurves = 'standard-curves',
   Smoothed = 'smoothed',
 }

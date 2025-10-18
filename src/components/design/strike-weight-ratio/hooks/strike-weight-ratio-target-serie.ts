@@ -15,7 +15,7 @@ export const useStrikeWeightRatioTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
   mode: StrikeWeightRatioDesignMode | null,
   target: StrikeWeightRatioDesignTarget | null,
-): { targetSerie: TouchDesignSerie | null } => {
+): { targetSerie: TouchDesignSerie } => {
   const { t } = useTranslation();
   const { generateSerie } = useGenerateSerie(keyboard);
   const { smoothMean, smoothMedian } = useSmoothedSerieAverage();

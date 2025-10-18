@@ -22,5 +22,10 @@ export const useFrontWeightRecommendation = (
       }
       isFirstRender.current = false;
     }
-  }, [frontWeightDesignTarget, isFirstRender, setFrontWeightDesign]);
+  }, [
+    frontWeightDesignMode,
+    frontWeightDesignTarget,
+    isFirstRender,
+    setFrontWeightDesign,
+  ]);
 };
