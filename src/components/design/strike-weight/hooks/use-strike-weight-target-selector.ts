@@ -10,10 +10,11 @@ import {
 
 export const useStrikeWeightTargetSelector = () => {
   const {
+    strikeWeightDesignComputedBalanceWeightTarget,
     strikeWeightDesignMode,
-    strikeWeightDesignTarget,
     strikeWeightDesignSmoothTarget,
     strikeWeightDesignStandarTarget,
+    strikeWeightDesignTarget,
   } = useStrikeWeightDesign();
   const { updateStrikeWeightDesign } = useDesignActions();
 
@@ -30,14 +31,20 @@ export const useStrikeWeightTargetSelector = () => {
         updateStrikeWeightDesign(mode, strikeWeightDesignStandarTarget);
       } else if (mode === StrikeWeightDesignMode.Smoothed) {
         updateStrikeWeightDesign(mode, strikeWeightDesignSmoothTarget);
+      } else if (mode === StrikeWeightDesignMode.Computed) {
+        updateStrikeWeightDesign(
+          mode,
+          strikeWeightDesignComputedBalanceWeightTarget,
+        );
       } else {
         updateStrikeWeightDesign(mode, null);
       }
     },
     [
-      updateStrikeWeightDesign,
+      strikeWeightDesignComputedBalanceWeightTarget,
       strikeWeightDesignSmoothTarget,
       strikeWeightDesignStandarTarget,
+      updateStrikeWeightDesign,
     ],
   );
 

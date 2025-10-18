@@ -15,6 +15,11 @@ import {
   frontWeightCalculatorRequirementsSymbol,
   type FrontWeightCalculatorRequirements,
 } from './lib/piano/touch-design/front-weight-calculator/front-weight-calculator.requirements';
+import { StrikeWeightCalculator } from './lib/piano/touch-design/strike-weight-calculator/strike-weight-calculator';
+import {
+  strikeWeightCalculatorRequirementsSymbol,
+  type StrikeWeightCalculatorRequirements,
+} from './lib/piano/touch-design/strike-weight-calculator/strike-weight-calculator.requirements';
 
 export const container = new Container();
 
@@ -33,5 +38,11 @@ container
     frontWeightCalculatorRequirementsSymbol,
   )
   .to(FrontWeightCalculator);
+
+container
+  .bind<StrikeWeightCalculatorRequirements>(
+    strikeWeightCalculatorRequirementsSymbol,
+  )
+  .to(StrikeWeightCalculator);
 
 await container.load(smootherContainerModule);

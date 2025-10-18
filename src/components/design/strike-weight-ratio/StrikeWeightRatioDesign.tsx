@@ -17,10 +17,10 @@ import {} from '@/hooks/store/use-design-store';
 import { useStrikeWeightRatioRecommendation } from './hooks/use-strike-weight-ratio-recommendation';
 import { useTranslation } from '@/hooks/use-translation';
 import { useStrikeWeightRatioTargetSelector } from './hooks/use-strike-weight-ratio-target-selector';
-import { useStrikeWeightRatioTargetSerie } from './hooks/strike-weight-ratio-target-serie';
 import { useMemo } from 'react';
 import { StrikeWeightRatioChart } from '@/components/charts/StrikeWeightRatioChart';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
+import { useTargetSeries } from '../hooks/use-target-series-generators';
 
 export const StrikeWeightRatioDesign: React.FC<
   StrikeWeightRatioDesignProps
@@ -45,11 +45,8 @@ export const StrikeWeightRatioDesign: React.FC<
     updateStrikeWeightRatioDesign,
   );
 
-  const { targetSerie } = useStrikeWeightRatioTargetSerie(
-    analyzedKeyboard,
-    strikeWeightRatioDesignMode,
-    strikeWeightRatioDesignTarget,
-  );
+  const { strikeWeightRatioTargetSerie: targetSerie } =
+    useTargetSeries(analyzedKeyboard);
 
   const hasEnoughData = useMemo(() => {
     return (

@@ -12,13 +12,13 @@ import {
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon, HourglassIcon } from 'lucide-react';
 import { useStrikeWeightDesign } from '@/hooks/store/use-design-store';
-import { useFrontWeightTargetSerie } from './hooks/use-front-weight-target-serie';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
 import { useFrontWeightRecommendation } from './hooks/use-front-weight-recommendation';
 import { useFrontWeightTargetSelector } from './hooks/use-frontweight-target-selector';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
 import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
+import { useTargetSeries } from '../hooks/use-target-series-generators';
 
 export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   analyzedKeyboard,
@@ -42,11 +42,8 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     updateFrontWeightDesign,
   );
 
-  const { targetSerie } = useFrontWeightTargetSerie(
-    analyzedKeyboard,
-    frontWeightDesignMode,
-    frontWeightDesignTarget,
-  );
+  const { frontWeightTargetSerie: targetSerie } =
+    useTargetSeries(analyzedKeyboard);
 
   const hasEnoughInputData =
     analyzedKeyboard

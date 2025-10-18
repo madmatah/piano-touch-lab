@@ -5,7 +5,6 @@ import {
 } from '../TargetSelector';
 
 import {} from '@/hooks/store/use-design-store';
-import { useWippenSupportSpringsTargetSerie } from './hooks/use-wippen-support-springs-target-serie';
 import { useWippenSupportSpringsRecommendation } from './hooks/use-wippen-support-springs-recommendation';
 import { useTranslation } from '@/hooks/use-translation';
 import {
@@ -17,6 +16,7 @@ import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpri
 import { useWippenSupportSpringsTargetSelector } from './hooks/use-wippen-support-springs-target-selector';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { WippenDesignSelector } from './wippen-design-selector/WippenDesignSelector';
+import { useTargetSeries } from '../hooks/use-target-series-generators';
 
 export const WippenSupportSpringsDesign: React.FC<
   WippenSupportSpringsDesignProps
@@ -35,11 +35,8 @@ export const WippenSupportSpringsDesign: React.FC<
     wippenSupportSpringsDesignTarget,
     updateWippenSupportSpringsDesign,
   );
-  const { targetSerie } = useWippenSupportSpringsTargetSerie(
-    analyzedKeyboard,
-    wippenSupportSpringsDesignMode,
-    wippenSupportSpringsDesignTarget,
-  );
+  const { supportSpringBalanceWeightTargetSerie: targetSerie } =
+    useTargetSeries(analyzedKeyboard);
 
   const targetSelectorModes: TargetSelectorMode<
     WippenSupportSpringsDesignMode,
