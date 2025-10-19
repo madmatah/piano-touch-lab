@@ -42,10 +42,7 @@ interface MeasuresStoreActions {
 
 export type MeasuresStore = VersionedMeasuresStoreState & MeasuresStoreActions;
 
-const createMeasuresStore = (
-  measureProfileName: string,
-  keyboard: KeyboardRequirements,
-) =>
+const createMeasuresStore = (keyboard: KeyboardRequirements) =>
   create<MeasuresStore>()(
     persist(
       (set) => ({
@@ -81,7 +78,7 @@ const createMeasuresStore = (
         wippenRadiusWeight: null,
       }),
       {
-        name: `piano-touch.measures.${measureProfileName}`,
+        name: `ptl.measures`,
         partialize: (state: MeasuresStore): VersionedMeasuresStoreState => ({
           keyWeightRatio: state.keyWeightRatio,
           keys: state.keys,
@@ -94,40 +91,22 @@ const createMeasuresStore = (
 
 type MeasuresBoundStore = ReturnType<typeof createMeasuresStore>;
 
-const measuresStoreRegistry: Record<string, MeasuresBoundStore> = {};
+let measuresStore: MeasuresBoundStore | undefined = undefined;
 
-export const getOrCreateMeasuresStore = (
-  measureProfileName: string,
-  keyboard: KeyboardRequirements,
-): MeasuresBoundStore => {
-  let store = measuresStoreRegistry[measureProfileName];
-  if (!store) {
-    store = createMeasuresStore(measureProfileName, keyboard);
-    measuresStoreRegistry[measureProfileName] = store;
-  }
-  return store;
-};
-
-export const useMeasuresStore = (
-  measureProfileName = 'default',
-): MeasuresBoundStore => {
+export const useMeasuresStore = (): MeasuresBoundStore => {
   const { keyboard } = useKeyboard();
-  return getOrCreateMeasuresStore(measureProfileName, keyboard);
+  measuresStore ??= createMeasuresStore(keyboard);
+  return measuresStore;
 };
 
-export const useMeasuredKeyFromStore = (
-  keyIndex: number,
-  measureProfileName?: string,
-) => {
-  return useMeasuresStore(measureProfileName)(
+export const useMeasuredKeyFromStore = (keyIndex: number) => {
+  return useMeasuresStore()(
     useShallow((state: MeasuresStore) => state.keys?.[keyIndex]),
   );
 };
 
-export const useGlobalMeasures = (
-  measureProfileName?: string,
-): GlobalMeasures => {
-  return useMeasuresStore(measureProfileName)(
+export const useGlobalMeasures = (): GlobalMeasures => {
+  return useMeasuresStore()(
     useShallow((state: MeasuresStore) => ({
       keyWeightRatio: state.keyWeightRatio,
       wippenRadiusWeight: state.wippenRadiusWeight,
@@ -135,8 +114,8 @@ export const useGlobalMeasures = (
   );
 };
 
-export const useMeasureActions = (measureProfileName?: string) => {
-  return useMeasuresStore(measureProfileName)(
+export const useMeasureActions = () => {
+  return useMeasuresStore()(
     useShallow((state: MeasuresStore) => ({
       updateGlobalMeasure: state.updateGlobalMeasure,
       updateKeyMeasure: state.updateKeyMeasure,

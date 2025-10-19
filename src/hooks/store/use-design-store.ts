@@ -67,7 +67,7 @@ interface DesignStoreActions {
 
 export type DesignStore = VersionedDesignStoreState & DesignStoreActions;
 
-const createDesignStore = (measureProfileName: string) =>
+const createDesignStore = () =>
   create<DesignStore>()(
     persist(
       (set) => ({
@@ -208,7 +208,7 @@ const createDesignStore = (measureProfileName: string) =>
         wippenSupportSpringsDesignTarget: null,
       }),
       {
-        name: `piano-touch.design.${measureProfileName}`,
+        name: `ptl.design`,
         partialize: (state: DesignStore): VersionedDesignStoreState => ({
           frontWeightDesignComputedBalanceWeightTarget:
             state.frontWeightDesignComputedBalanceWeightTarget,
@@ -247,21 +247,15 @@ const createDesignStore = (measureProfileName: string) =>
 
 type DesignBoundStore = ReturnType<typeof createDesignStore>;
 
-const designStoreRegistry: Record<string, DesignBoundStore> = {};
+let designStore: DesignBoundStore | undefined = undefined;
 
-export const useDesignStore = (
-  measureProfileName = 'default',
-): DesignBoundStore => {
-  let store = designStoreRegistry[measureProfileName];
-  if (!store) {
-    store = createDesignStore(measureProfileName);
-    designStoreRegistry[measureProfileName] = store;
-  }
-  return store;
+export const useDesignStore = (): DesignBoundStore => {
+  designStore ??= createDesignStore();
+  return designStore;
 };
 
-export const useFrontWeightDesign = (measureProfileName?: string) => {
-  return useDesignStore(measureProfileName)(
+export const useFrontWeightDesign = () => {
+  return useDesignStore()(
     useShallow((state: DesignStore) => ({
       frontWeightDesignComputedBalanceWeightTarget:
         state.frontWeightDesignComputedBalanceWeightTarget,
@@ -272,8 +266,8 @@ export const useFrontWeightDesign = (measureProfileName?: string) => {
   );
 };
 
-export const useStrikeWeightDesign = (measureProfileName?: string) => {
-  return useDesignStore(measureProfileName)(
+export const useStrikeWeightDesign = () => {
+  return useDesignStore()(
     useShallow((state: DesignStore) => ({
       strikeWeightDesignComputedBalanceWeightTarget:
         state.strikeWeightDesignComputedBalanceWeightTarget,
@@ -287,8 +281,8 @@ export const useStrikeWeightDesign = (measureProfileName?: string) => {
   );
 };
 
-export const useStrikeWeightRatioDesign = (measureProfileName?: string) => {
-  return useDesignStore(measureProfileName)(
+export const useStrikeWeightRatioDesign = () => {
+  return useDesignStore()(
     useShallow((state: DesignStore) => ({
       strikeWeightRatioDesignLatestFixedTarget:
         state.strikeWeightRatioDesignLatestFixedTarget,
@@ -300,8 +294,8 @@ export const useStrikeWeightRatioDesign = (measureProfileName?: string) => {
   );
 };
 
-export const useDesignActions = (measureProfileName?: string) => {
-  return useDesignStore(measureProfileName)(
+export const useDesignActions = () => {
+  return useDesignStore()(
     useShallow((state: DesignStore) => ({
       updateFrontWeightDesign: state.updateFrontWeightDesign,
       updateStrikeWeightDesign: state.updateStrikeWeightDesign,
@@ -311,8 +305,8 @@ export const useDesignActions = (measureProfileName?: string) => {
   );
 };
 
-export const useWippenSupportSpringsDesign = (measureProfileName?: string) => {
-  return useDesignStore(measureProfileName)(
+export const useWippenSupportSpringsDesign = () => {
+  return useDesignStore()(
     useShallow((state: DesignStore) => ({
       wippenSupportSpringsDesignLatestNumberOfSprings:
         state.wippenSupportSpringsDesignLatestNumberOfSprings,

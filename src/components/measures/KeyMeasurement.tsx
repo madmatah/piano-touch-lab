@@ -30,8 +30,8 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
   keyNumber,
 }) => {
   const keyIndex = keyNumber - 1;
-  const keySpec = useMeasuredKeyFromStore(keyIndex, 'default');
-  const { updateKeyMeasure } = useMeasureActions('default');
+  const keySpec = useMeasuredKeyFromStore(keyIndex);
+  const { updateKeyMeasure } = useMeasureActions();
   const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
   const { t } = useTranslation();

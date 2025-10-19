@@ -5,6 +5,7 @@ import type {
 } from '@/lib/piano/touch-design/measured-key.requirements';
 import type { DesignStoreState } from '@/hooks/store/use-design-store';
 import type { MeasureOptionsStoreState } from '@/hooks/store/use-measure-options-store';
+import type { PianoProfileStoreState } from '@/hooks/store/use-piano-profile-store';
 import { FrontWeightDesignMode } from '@/components/design/front-weight/FrontWeightDesign.types';
 import { StrikeWeightDesignMode } from '@/components/design/strike-weight/StrikeWeightDesign.types';
 import { StrikeWeightRatioDesignMode } from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign.types';
@@ -22,10 +23,13 @@ export type DesignBackupRequirements = DesignStoreState;
 
 export type MeasureOptionsBackupRequirements = MeasureOptionsStoreState;
 
+export type PianoBackupRequirements = PianoProfileStoreState;
+
 export interface FullBackupRequirements {
   measures: MeasureBackupRequirements;
   design: DesignBackupRequirements;
   measureOptions: MeasureOptionsBackupRequirements;
+  piano?: PianoBackupRequirements;
 }
 
 export const KeyMeasureSchema = z
@@ -82,6 +86,13 @@ export const MeasureOptionsBackupSchema = z
   })
   .strict();
 
+export const PianoBackupSchema = z
+  .object({
+    keyCount: z.number().optional(),
+    pianoName: z.string().nullable().optional(),
+  })
+  .strict();
+
 export const makeDataSchema = (expectedLength: number) =>
   z
     .object({
@@ -97,6 +108,7 @@ export const makeFullDataSchema = (expectedLength: number) =>
       design: DesignBackupSchema,
       measureOptions: MeasureOptionsBackupSchema,
       measures: makeDataSchema(expectedLength),
+      piano: PianoBackupSchema.optional(),
     })
     .strict();
 
@@ -166,23 +178,19 @@ export function parseMeasuresBackupText(
 
 export function buildMeasuresExportPayload(
   measures: MeasureBackupRequirements,
-  profile = 'default',
 ) {
   return {
     createdAt: new Date().toISOString(),
     data: measures,
-    profile,
   };
 }
 
 export function buildFullBackupExportPayload(
   fullBackup: FullBackupRequirements,
-  profile = 'default',
 ) {
   return {
     createdAt: new Date().toISOString(),
     data: fullBackup,
-    profile,
   };
 }
 

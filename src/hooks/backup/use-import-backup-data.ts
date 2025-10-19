@@ -8,6 +8,7 @@ import {
 import { useMeasureActions } from '@/hooks/store/use-measure-store';
 import { useDesignActions } from '@/hooks/store/use-design-store';
 import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-store';
+import { usePianoProfileActions } from '@/hooks/store/use-piano-profile-store';
 import type z from 'zod';
 
 export const useImportBackupData = () => {
@@ -19,6 +20,7 @@ export const useImportBackupData = () => {
     updateWippenSupportSpringsDesign,
   } = useDesignActions();
   const { updateState: updateMeasureOptionsState } = useMeasureOptionsActions();
+  const { updateState: updatePianoState } = usePianoProfileActions();
 
   const transformKeys = useCallback(
     (
@@ -84,6 +86,13 @@ export const useImportBackupData = () => {
         useSupportSpringMeasurements:
           data.measureOptions.useSupportSpringMeasurements,
       });
+
+      if (data.piano) {
+        updatePianoState({
+          keyCount: data.piano.keyCount ?? 88,
+          pianoName: data.piano.pianoName ?? null,
+        });
+      }
     },
     [
       transformKeys,
@@ -93,6 +102,7 @@ export const useImportBackupData = () => {
       updateStrikeWeightRatioDesign,
       updateWippenSupportSpringsDesign,
       updateMeasureOptionsState,
+      updatePianoState,
     ],
   );
 

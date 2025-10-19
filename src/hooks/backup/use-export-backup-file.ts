@@ -1,6 +1,7 @@
 import { useMeasuresStore } from '@/hooks/store/use-measure-store';
 import { useDesignStore } from '@/hooks/store/use-design-store';
 import { useMeasureOptionsStore } from '@/hooks/store/use-measure-options-store';
+import { usePianoProfileStore } from '@/hooks/store/use-piano-profile-store';
 import {
   buildFullBackupExportPayload,
   createMeasuresExportBlob,
@@ -10,8 +11,8 @@ import { useDownloadBlob } from './use-download-blob';
 import { formatISO } from 'date-fns';
 import { useShallow } from 'zustand/shallow';
 
-export const useExportBackupFile = (profile = 'default') => {
-  const measureStoreState = useMeasuresStore(profile)(
+export const useExportBackupFile = () => {
+  const measureStoreState = useMeasuresStore()(
     useShallow((state) => ({
       keyWeightRatio: state.keyWeightRatio,
       keys: state.keys,
@@ -19,7 +20,7 @@ export const useExportBackupFile = (profile = 'default') => {
     })),
   );
 
-  const designStoreState = useDesignStore(profile)(
+  const designStoreState = useDesignStore()(
     useShallow((state) => ({
       frontWeightDesignComputedBalanceWeightTarget:
         state.frontWeightDesignComputedBalanceWeightTarget,
@@ -58,6 +59,13 @@ export const useExportBackupFile = (profile = 'default') => {
     })),
   );
 
+  const pianoProfileState = usePianoProfileStore()(
+    useShallow((state) => ({
+      keyCount: state.keyCount,
+      pianoName: state.pianoName,
+    })),
+  );
+
   const [isExporting, setIsExporting] = useState(false);
   const { downloadBlob } = useDownloadBlob();
 
@@ -66,18 +74,16 @@ export const useExportBackupFile = (profile = 'default') => {
     const filename = `piano-touch-export-${currentDay}.json`;
     setIsExporting(true);
     try {
-      const payload = buildFullBackupExportPayload(
-        {
-          design: designStoreState,
-          measureOptions: measureOptionsState,
-          measures: {
-            keyWeightRatio: measureStoreState.keyWeightRatio,
-            keys: measureStoreState.keys,
-            wippenRadiusWeight: measureStoreState.wippenRadiusWeight,
-          },
+      const payload = buildFullBackupExportPayload({
+        design: designStoreState,
+        measureOptions: measureOptionsState,
+        measures: {
+          keyWeightRatio: measureStoreState.keyWeightRatio,
+          keys: measureStoreState.keys,
+          wippenRadiusWeight: measureStoreState.wippenRadiusWeight,
         },
-        profile,
-      );
+        piano: pianoProfileState,
+      });
       const blob = createMeasuresExportBlob(payload);
       downloadBlob(blob, filename);
     } finally {
@@ -88,7 +94,7 @@ export const useExportBackupFile = (profile = 'default') => {
     measureStoreState,
     designStoreState,
     measureOptionsState,
-    profile,
+    pianoProfileState,
   ]);
 
   return { exportBackupFile, isExporting };

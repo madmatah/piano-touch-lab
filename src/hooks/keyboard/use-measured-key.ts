@@ -7,14 +7,12 @@ import { useMemo } from 'react';
 
 export const useMeasuredKey = (
   keyNumber: number,
-  measureProfileName?: string,
 ): { measuredKey: KeyWith<MeasuredKeyRequirements> | undefined } => {
-  const { computeKeyMeasurements } =
-    useKeyMeasurementsHelpers(measureProfileName);
+  const { computeKeyMeasurements } = useKeyMeasurementsHelpers();
   const { keyboard } = useKeyboard();
   const keyIndex = keyNumber - 1;
   const key = keyboard.getKeyByNumber(keyNumber);
-  const keyMeasures = useMeasuredKeyFromStore(keyIndex, measureProfileName);
+  const keyMeasures = useMeasuredKeyFromStore(keyIndex);
 
   const measuredKey = useMemo(() => {
     if (key !== undefined && keyMeasures !== undefined) {
