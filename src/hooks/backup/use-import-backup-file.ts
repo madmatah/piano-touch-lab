@@ -3,10 +3,11 @@ import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { useImportBackupData } from './use-import-backup-data';
+import { useTranslation } from '../use-translation';
 
 export const useImportBackupFile = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-
+  const { t } = useTranslation();
   const open = useCallback(() => {
     inputRef.current?.click();
   }, []);
@@ -19,6 +20,9 @@ export const useImportBackupFile = () => {
   const { importMeasuresOnly, importFullBackup } = useImportBackupData();
   const [isImporting, setIsImporting] = useState(false);
 
+  const successMessage = t('File imported successfully');
+  const errorMessage = t('Import failed: invalid file format.');
+
   const importFromFile = useCallback(
     async (file: File) => {
       setIsImporting(true);
@@ -27,26 +31,32 @@ export const useImportBackupFile = () => {
         const expectedLength = keyboard.size;
         const parsed = parseMeasuresBackupText(text, expectedLength);
         if (!parsed.ok) {
-          toast.error(parsed.error || 'Import failed. Invalid file format.');
+          toast.error(errorMessage);
           return false;
         }
 
         if (parsed.isFullBackup) {
           importFullBackup(parsed.data);
-          toast.success('Full backup imported successfully');
+          toast.success(successMessage);
         } else {
           importMeasuresOnly(parsed.data);
-          toast.success('Measures imported successfully');
+          toast.success(successMessage);
         }
         return true;
       } catch {
-        toast.error('Import failed. Invalid file format.');
+        toast.error(errorMessage);
         return false;
       } finally {
         setIsImporting(false);
       }
     },
-    [keyboard.size, importMeasuresOnly, importFullBackup],
+    [
+      keyboard.size,
+      importFullBackup,
+      successMessage,
+      importMeasuresOnly,
+      errorMessage,
+    ],
   );
 
   const onInputFileChange = useCallback<
