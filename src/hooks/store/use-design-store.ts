@@ -18,6 +18,8 @@ import {
   type WippenSupportSpringsDesignTarget,
   type WippenTensionDesign,
 } from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign.types';
+import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
+import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 
 export interface DesignStoreState {
   frontWeightDesignMode: FrontWeightDesignMode | null;
@@ -69,18 +71,19 @@ const createDesignStore = (measureProfileName: string) =>
   create<DesignStore>()(
     persist(
       (set) => ({
-        frontWeightDesignComputedBalanceWeightTarget: null,
-        frontWeightDesignMode: null,
-        frontWeightDesignStandardTarget: null,
+        frontWeightDesignComputedBalanceWeightTarget: 38,
+        frontWeightDesignMode: FrontWeightDesignMode.AsMeasured,
+        frontWeightDesignStandardTarget: 7,
         frontWeightDesignTarget: null,
-        strikeWeightDesignComputedBalanceWeightTarget: null,
-        strikeWeightDesignLatestSmoothTarget: null,
-        strikeWeightDesignLatestStandarTarget: null,
-        strikeWeightDesignMode: null,
+        strikeWeightDesignComputedBalanceWeightTarget: 38,
+        strikeWeightDesignLatestSmoothTarget:
+          SmoothStrategy.LeastSquaresRegression,
+        strikeWeightDesignLatestStandarTarget: StrikeWeightLevel.Level7,
+        strikeWeightDesignMode: StrikeWeightDesignMode.AsMeasured,
         strikeWeightDesignTarget: null,
-        strikeWeightRatioDesignLatestFixedTarget: null,
-        strikeWeightRatioDesignLatestSmoothTarget: null,
-        strikeWeightRatioDesignMode: null,
+        strikeWeightRatioDesignLatestFixedTarget: 5.5,
+        strikeWeightRatioDesignLatestSmoothTarget: SmoothStrategy.Median,
+        strikeWeightRatioDesignMode: StrikeWeightRatioDesignMode.AsMeasured,
         strikeWeightRatioDesignTarget: null,
         updateFrontWeightDesign: (
           mode: FrontWeightDesignMode | null,
@@ -198,9 +201,9 @@ const createDesignStore = (measureProfileName: string) =>
             return newState;
           }),
         version: 1,
-        wippenSupportSpringsDesignLatestNumberOfSprings: null,
-        wippenSupportSpringsDesignLatestSpringBalanceWeight: null,
-        wippenSupportSpringsDesignLatestTensionDropIndex: null,
+        wippenSupportSpringsDesignLatestNumberOfSprings: 60,
+        wippenSupportSpringsDesignLatestSpringBalanceWeight: 9,
+        wippenSupportSpringsDesignLatestTensionDropIndex: 20,
         wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode.None,
         wippenSupportSpringsDesignTarget: null,
       }),
