@@ -32,8 +32,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
-import { useExportMeasures } from '@/hooks/backup/use-export-measures';
-import { useImportMeasures } from '../../hooks/backup/use-import-measures';
+import { useExportBackupFile } from '@/hooks/backup/use-export-backup-file';
+import { useImportBackupFile } from '../../hooks/backup/use-import-backup-file';
 import { useTranslation } from '@/hooks/use-translation';
 import { SidebarLanguageSwitcher } from './SidebarLanguageSwitcher';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
@@ -57,8 +57,8 @@ type MenuEntry = {
 );
 
 export const AppSidebar = () => {
-  const { exportMeasures } = useExportMeasures();
-  const { inputRef, onInputFileChange, triggerImport } = useImportMeasures();
+  const { exportBackupFile } = useExportBackupFile();
+  const { inputRef, onInputFileChange, triggerImport } = useImportBackupFile();
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
@@ -154,7 +154,7 @@ export const AppSidebar = () => {
         {
           icon: FileDown,
           name: t('Export', { ns: 'navigation' }),
-          onClick: exportMeasures,
+          onClick: exportBackupFile,
         },
         {
           icon: FileUp,
