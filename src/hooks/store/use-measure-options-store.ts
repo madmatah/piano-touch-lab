@@ -32,7 +32,7 @@ const createMeasureOptionsStore = () =>
         useSupportSpringMeasurements: false,
       }),
       {
-        name: `piano-touch.measure-options`,
+        name: `ptl.measure-options`,
         partialize: (state: MeasureOptionsStore): MeasureOptionsStoreState => ({
           useManualSWRMeasurements: state.useManualSWRMeasurements,
           useSupportSpringMeasurements: state.useSupportSpringMeasurements,

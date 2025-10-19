@@ -28,7 +28,7 @@ const createAppStateStore = () =>
         updateState: (newState: AppStateStoreState) => set(() => newState),
       }),
       {
-        name: `piano-touch.app-state`,
+        name: `ptl.app-state`,
         partialize: (state: MeasureOptionsStore): AppStateStoreState => ({
           hasLoadedDemoData: state.hasLoadedDemoData,
         }),

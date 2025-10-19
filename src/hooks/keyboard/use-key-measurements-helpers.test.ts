@@ -58,7 +58,7 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
 
     beforeEach(() => {
       const { result: hookResult } = renderHook(() =>
-        useKeyMeasurementsHelpers(measureProfileName),
+        useKeyMeasurementsHelpers(),
       );
       result = hookResult.current.computeKeyMeasurements(keyMeasure);
     });
@@ -88,7 +88,7 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
 
       it('should set measuredStrikeWeightRatio to null', () => {
         const { result: hookResult } = renderHook(() =>
-          useKeyMeasurementsHelpers(measureProfileName),
+          useKeyMeasurementsHelpers(),
         );
         result = hookResult.current.computeKeyMeasurements(keyMeasure);
 
@@ -104,7 +104,7 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
 
       it('should preserve the original measuredStrikeWeightRatio value', () => {
         const { result: hookResult } = renderHook(() =>
-          useKeyMeasurementsHelpers(measureProfileName),
+          useKeyMeasurementsHelpers(),
         );
         result = hookResult.current.computeKeyMeasurements(keyMeasure);
 
@@ -121,7 +121,7 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
 
       it('should use the local keyWeightRatio value', () => {
         const { result: hookResult } = renderHook(() =>
-          useKeyMeasurementsHelpers(measureProfileName),
+          useKeyMeasurementsHelpers(),
         );
         result = hookResult.current.computeKeyMeasurements(keyMeasure);
 
@@ -136,29 +136,11 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
 
       it('should use the local wippenRadiusWeight value', () => {
         const { result: hookResult } = renderHook(() =>
-          useKeyMeasurementsHelpers(measureProfileName),
+          useKeyMeasurementsHelpers(),
         );
         result = hookResult.current.computeKeyMeasurements(keyMeasure);
 
         expect(result.wippenRadiusWeight).toBe(15);
-      });
-    });
-
-    describe('When measureProfileName is undefined', () => {
-      beforeEach(() => {
-        measureProfileName = undefined;
-      });
-
-      it('should work with undefined measureProfileName', () => {
-        const { result: hookResult } = renderHook(() =>
-          useKeyMeasurementsHelpers(measureProfileName),
-        );
-        result = hookResult.current.computeKeyMeasurements(keyMeasure);
-
-        expect(result.keyWeightRatio).toBe(globalMeasure.keyWeightRatio);
-        expect(result.wippenRadiusWeight).toBe(
-          globalMeasure.wippenRadiusWeight,
-        );
       });
     });
   });

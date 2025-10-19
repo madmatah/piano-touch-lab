@@ -3,15 +3,13 @@ import { useCallback } from 'react';
 import { useGlobalMeasures } from '../store/use-measure-store';
 import { useMeasureOptions } from '../store/use-measure-options-store';
 
-export const useKeyMeasurementsHelpers = (
-  measureProfileName?: string,
-): {
+export const useKeyMeasurementsHelpers = (): {
   computeKeyMeasurements: (
     keyMeasure: MeasuredKeyRequirements,
   ) => MeasuredKeyRequirements;
 } => {
   const { useManualSWRMeasurements } = useMeasureOptions();
-  const globalMeasure = useGlobalMeasures(measureProfileName);
+  const globalMeasure = useGlobalMeasures();
 
   const computeKeyMeasurements = useCallback(
     (keyMeasure: MeasuredKeyRequirements) => {

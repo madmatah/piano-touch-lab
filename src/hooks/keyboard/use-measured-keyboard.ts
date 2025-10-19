@@ -9,12 +9,11 @@ import {
 } from '../store/use-measure-store';
 import { useKeyMeasurementsHelpers } from './use-key-measurements-helpers';
 
-export const useMeasuredKeyboard = (
-  measureProfileName?: string,
-): KeyboardLike<KeyWith<MeasuredKeyRequirements>> => {
-  const { computeKeyMeasurements } =
-    useKeyMeasurementsHelpers(measureProfileName);
-  const pianoMeasureState = useMeasuresStore(measureProfileName)(
+export const useMeasuredKeyboard = (): KeyboardLike<
+  KeyWith<MeasuredKeyRequirements>
+> => {
+  const { computeKeyMeasurements } = useKeyMeasurementsHelpers();
+  const pianoMeasureState = useMeasuresStore()(
     useShallow((state: MeasuresStore) => ({
       keys: state.keys,
     })),
