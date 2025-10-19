@@ -1,6 +1,6 @@
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import Joi from 'joi';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 export const useValidatedNumericInputField = (
   inputValue: OptionalNumber,
@@ -11,6 +11,10 @@ export const useValidatedNumericInputField = (
   const [currentValue, setCurrentValue] = useState<string>(
     inputValue?.toString() ?? '',
   );
+
+  useEffect(() => {
+    setCurrentValue(inputValue?.toString() ?? '');
+  }, [inputValue]);
 
   const getSanitizedValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     return e.target.value.replaceAll(',', '.').replace(/[\s]/g, '');

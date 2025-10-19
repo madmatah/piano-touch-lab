@@ -76,7 +76,7 @@ const createMeasuresStore = (
               index === keyIndex ? keySpec : spec,
             ),
           })),
-        updateState: (newState: MeasuresStoreState) => set(() => newState),
+        updateState: (newState: MeasuresStoreState) => set(newState),
         version: 1,
         wippenRadiusWeight: null,
       }),
@@ -141,6 +141,7 @@ export const useMeasureActions = (measureProfileName?: string) => {
       updateGlobalMeasure: state.updateGlobalMeasure,
       updateKeyMeasure: state.updateKeyMeasure,
       updateKeyMeasures: state.updateKeyMeasures,
+      updateState: state.updateState,
     })),
   );
 };
