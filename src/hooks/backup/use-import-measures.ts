@@ -1,12 +1,13 @@
-import { useMeasuresStore } from '@/hooks/store/use-measure-store';
-import { useDesignStore } from '@/hooks/store/use-design-store';
-import { useMeasureOptionsStore } from '@/hooks/store/use-measure-options-store';
+import { useMeasureActions } from '@/hooks/store/use-measure-store';
+import { useDesignActions } from '@/hooks/store/use-design-store';
+import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-store';
 import {
   type MeasureBackupRequirements,
   parseMeasuresBackupText,
 } from '@/lib/backup/measure-backup';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 
 export const useImportMeasures = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -19,9 +20,15 @@ export const useImportMeasures = () => {
     if (inputRef.current) inputRef.current.value = '';
   }, []);
 
-  const measuresStore = useMeasuresStore();
-  const designStore = useDesignStore();
-  const measureOptionsStore = useMeasureOptionsStore();
+  const { keyboard } = useKeyboard();
+  const { updateState: updateMeasureState } = useMeasureActions();
+  const {
+    updateFrontWeightDesign,
+    updateStrikeWeightDesign,
+    updateStrikeWeightRatioDesign,
+    updateWippenSupportSpringsDesign,
+  } = useDesignActions();
+  const { updateState: updateMeasureOptionsState } = useMeasureOptionsActions();
   const [isImporting, setIsImporting] = useState(false);
 
   const importFromFile = useCallback(
@@ -29,7 +36,7 @@ export const useImportMeasures = () => {
       setIsImporting(true);
       try {
         const text = await file.text();
-        const expectedLength = measuresStore.getState().keys.length;
+        const expectedLength = keyboard.size;
         const parsed = parseMeasuresBackupText(text, expectedLength);
         if (!parsed.ok) {
           toast.error(parsed.error || 'Import failed. Invalid file format.');
@@ -51,38 +58,30 @@ export const useImportMeasures = () => {
               wippenRadiusWeight: k.wippenRadiusWeight ?? null,
             }));
 
-          measuresStore.getState().updateState({
+          updateMeasureState({
             keyWeightRatio: parsed.data.measures.keyWeightRatio ?? null,
             keys: nextKeys,
             wippenRadiusWeight: parsed.data.measures.wippenRadiusWeight ?? null,
           });
 
-          designStore
-            .getState()
-            .updateFrontWeightDesign(
-              parsed.data.design.frontWeightDesignMode as never,
-              parsed.data.design.frontWeightDesignTarget,
-            );
-          designStore
-            .getState()
-            .updateStrikeWeightDesign(
-              parsed.data.design.strikeWeightDesignMode as never,
-              parsed.data.design.strikeWeightDesignTarget as never,
-            );
-          designStore
-            .getState()
-            .updateStrikeWeightRatioDesign(
-              parsed.data.design.strikeWeightRatioDesignMode as never,
-              parsed.data.design.strikeWeightRatioDesignTarget,
-            );
-          designStore
-            .getState()
-            .updateWippenSupportSpringsDesign(
-              parsed.data.design.wippenSupportSpringsDesignMode as never,
-              parsed.data.design.wippenSupportSpringsDesignTarget as never,
-            );
+          updateFrontWeightDesign(
+            parsed.data.design.frontWeightDesignMode as never,
+            parsed.data.design.frontWeightDesignTarget,
+          );
+          updateStrikeWeightDesign(
+            parsed.data.design.strikeWeightDesignMode as never,
+            parsed.data.design.strikeWeightDesignTarget as never,
+          );
+          updateStrikeWeightRatioDesign(
+            parsed.data.design.strikeWeightRatioDesignMode as never,
+            parsed.data.design.strikeWeightRatioDesignTarget,
+          );
+          updateWippenSupportSpringsDesign(
+            parsed.data.design.wippenSupportSpringsDesignMode as never,
+            parsed.data.design.wippenSupportSpringsDesignTarget as never,
+          );
 
-          measureOptionsStore.getState().updateState({
+          updateMeasureOptionsState({
             useManualSWRMeasurements:
               parsed.data.measureOptions.useManualSWRMeasurements,
             useSupportSpringMeasurements:
@@ -105,7 +104,7 @@ export const useImportMeasures = () => {
               wippenRadiusWeight: k.wippenRadiusWeight ?? null,
             }));
 
-          measuresStore.getState().updateState({
+          updateMeasureState({
             keyWeightRatio: parsed.data.keyWeightRatio ?? null,
             keys: nextKeys,
             wippenRadiusWeight: parsed.data.wippenRadiusWeight ?? null,
@@ -121,7 +120,15 @@ export const useImportMeasures = () => {
         setIsImporting(false);
       }
     },
-    [measuresStore, designStore, measureOptionsStore],
+    [
+      keyboard.size,
+      updateMeasureState,
+      updateFrontWeightDesign,
+      updateStrikeWeightDesign,
+      updateStrikeWeightRatioDesign,
+      updateWippenSupportSpringsDesign,
+      updateMeasureOptionsState,
+    ],
   );
 
   const onInputFileChange = useCallback<
