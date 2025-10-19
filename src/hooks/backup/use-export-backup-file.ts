@@ -10,7 +10,7 @@ import { useDownloadBlob } from './use-download-blob';
 import { formatISO } from 'date-fns';
 import { useShallow } from 'zustand/shallow';
 
-export const useExportMeasures = (profile = 'default') => {
+export const useExportBackupFile = (profile = 'default') => {
   const measureStoreState = useMeasuresStore(profile)(
     useShallow((state) => ({
       keyWeightRatio: state.keyWeightRatio,
@@ -61,7 +61,7 @@ export const useExportMeasures = (profile = 'default') => {
   const [isExporting, setIsExporting] = useState(false);
   const { downloadBlob } = useDownloadBlob();
 
-  const exportMeasures = useCallback(() => {
+  const exportBackupFile = useCallback(() => {
     const currentDay = formatISO(new Date(), { representation: 'date' });
     const filename = `piano-touch-export-${currentDay}.json`;
     setIsExporting(true);
@@ -91,5 +91,5 @@ export const useExportMeasures = (profile = 'default') => {
     profile,
   ]);
 
-  return { exportMeasures, isExporting };
+  return { exportBackupFile, isExporting };
 };
