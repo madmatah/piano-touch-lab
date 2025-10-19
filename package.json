@@ -58,6 +58,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "tailwindcss-animate": "^1.0.7",
+    "tslog": "^4.10.2",
     "typescript-cubic-spline": "^1.0.1",
     "usehooks-ts": "^3.1.1",
     "yarn": "^1.22.22",

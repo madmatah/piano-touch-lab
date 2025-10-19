@@ -1,8 +1,10 @@
+import { useAutoloadDemoData } from '@/hooks/demo/use-autoload-demo-data';
 import { MainLayout } from '../MainLayout';
 import { useTranslation } from '@/hooks/use-translation';
 
 export const Homepage = () => {
   const { t } = useTranslation();
+  useAutoloadDemoData();
 
   return (
     <MainLayout>

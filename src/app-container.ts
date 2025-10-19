@@ -1,4 +1,6 @@
 import { Container } from 'inversify';
+
+import { Logger } from 'tslog';
 import {
   type TouchWeightAnalyzerRequirements,
   touchWeightAnalyzerRequirementsSymbol,
@@ -20,6 +22,10 @@ import {
   strikeWeightCalculatorRequirementsSymbol,
   type StrikeWeightCalculatorRequirements,
 } from './lib/piano/touch-design/strike-weight-calculator/strike-weight-calculator.requirements';
+import {
+  loggerSymbol,
+  type LoggerRequirements,
+} from './lib/logger/logger.requirements';
 
 export const container = new Container();
 
@@ -44,5 +50,12 @@ container
     strikeWeightCalculatorRequirementsSymbol,
   )
   .to(StrikeWeightCalculator);
+
+container
+  .bind<LoggerRequirements>(loggerSymbol)
+  .toDynamicValue((): LoggerRequirements => {
+    return new Logger();
+  })
+  .inSingletonScope();
 
 await container.load(smootherContainerModule);
