@@ -1,11 +1,19 @@
 {
+  "Adjustment Sheet": "Adjustment Sheet",
   "Analyze": "Analyze",
+  "Data Sheet": "Data Sheet",
   "Design": "Design",
   "Export": "Export",
   "File": "File",
+  "Front Weight": "Front Weight",
   "Help": "Help",
   "Import": "Import",
   "Language": "Language",
   "Measure": "Measure",
-  "Toggle": "Toggle"
+  "Strike Weight": "Strike Weight",
+  "Strike Weight Ratio": "Strike Weight Ratio",
+  "Toggle": "Toggle",
+  "Touch Weight": "Touch Weight",
+  "Touch Weight Preview": "Touch Weight Preview",
+  "Wippen Support Springs": "Wippen Support Springs"
 }

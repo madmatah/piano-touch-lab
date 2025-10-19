@@ -13,7 +13,7 @@ import {
   SidebarMenuSubButton,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   BadgeQuestionMark,
   ChartLine,
@@ -24,6 +24,7 @@ import {
   FlaskConical,
   Scale,
   Settings2,
+  type LucideIcon,
 } from 'lucide-react';
 import { AppSidebarItem } from './AppSidebarItem';
 import {
@@ -35,13 +36,47 @@ import { useExportMeasures } from '@/hooks/backup/use-export-measures';
 import { useImportMeasures } from '../../hooks/backup/use-import-measures';
 import { useTranslation } from '@/hooks/use-translation';
 import { SidebarLanguageSwitcher } from './SidebarLanguageSwitcher';
+import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
+import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
+import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
+import { useMemo } from 'react';
+
+type SubmenuItem = {
+  icon?: LucideIcon;
+  name: string;
+  isHidden?: boolean;
+  isDisabled?: boolean;
+} & ({ url: string; onClick?: never } | { onClick: () => void; url?: never });
+
+type MenuEntry = {
+  icon: LucideIcon;
+  name: string;
+} & (
+  | { url: string; submenu?: never; shouldOpenFirstEntry?: never }
+  | { submenu: SubmenuItem[]; url?: never; shouldOpenFirstEntry?: boolean }
+);
 
 export const AppSidebar = () => {
   const { exportMeasures } = useExportMeasures();
   const { inputRef, onInputFileChange, triggerImport } = useImportMeasures();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const { useSupportSpringMeasurements } = useMeasureOptions();
 
-  const menuEntries = [
+  const analyzedKeyboard = useAnalyzedKeyboard();
+  const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+
+  const isDesignCompleted = useMemo(() => {
+    const requiredDataPercentage = 0.8;
+    return (
+      designedKeyboard
+        .mapToArray((key) => key.payload.downWeightWithoutSpringSupport)
+        .filter((v) => v !== undefined && v !== null).length >=
+      Math.round(designedKeyboard.size * requiredDataPercentage)
+    );
+  }, [designedKeyboard]);
+
+  const menuEntries: MenuEntry[] = [
     {
       icon: Scale,
       name: t('Measure', { ns: 'navigation' }),
@@ -50,13 +85,83 @@ export const AppSidebar = () => {
     {
       icon: ChartLine,
       name: t('Analyze', { ns: 'navigation' }),
-      url: '/analyze',
+      shouldOpenFirstEntry: true,
+      submenu: [
+        {
+          name: t('Touch Weight', { ns: 'navigation' }),
+          url: '/analyze/touch-weight',
+        },
+        {
+          name: t('Front Weight', { ns: 'navigation' }),
+          url: '/analyze/front-weight',
+        },
+        {
+          name: t('Strike Weight', { ns: 'navigation' }),
+          url: '/analyze/strike-weight',
+        },
+        {
+          name: t('Strike Weight Ratio', { ns: 'navigation' }),
+          url: '/analyze/strike-weight-ratio',
+        },
+        {
+          isHidden: !useSupportSpringMeasurements,
+          name: t('Wippen Support Springs', { ns: 'navigation' }),
+          url: '/analyze/wippen-support-springs',
+        },
+        {
+          name: t('Data Sheet', { ns: 'navigation' }),
+          url: '/analyze/data-sheet',
+        },
+      ],
     },
-
     {
       icon: Settings2,
       name: t('Design', { ns: 'navigation' }),
-      url: '/design',
+      shouldOpenFirstEntry: true,
+      submenu: [
+        {
+          name: t('Wippen Support Springs', { ns: 'navigation' }),
+          url: '/design/wippen-support-springs',
+        },
+        {
+          name: t('Front Weight', { ns: 'navigation' }),
+          url: '/design/front-weight',
+        },
+        {
+          name: t('Strike Weight', { ns: 'navigation' }),
+          url: '/design/strike-weight',
+        },
+        {
+          name: t('Strike Weight Ratio', { ns: 'navigation' }),
+          url: '/design/strike-weight-ratio',
+        },
+        {
+          isDisabled: !isDesignCompleted,
+          name: t('Touch Weight Preview', { ns: 'navigation' }),
+          url: '/design/touch-weight-preview',
+        },
+        {
+          isDisabled: !isDesignCompleted,
+          name: t('Adjustment Sheet', { ns: 'navigation' }),
+          url: '/design/adjustment-sheet',
+        },
+      ],
+    },
+    {
+      icon: FileText,
+      name: t('File', { ns: 'navigation' }),
+      submenu: [
+        {
+          icon: FileDown,
+          name: t('Export', { ns: 'navigation' }),
+          onClick: exportMeasures,
+        },
+        {
+          icon: FileUp,
+          name: t('Import', { ns: 'navigation' }),
+          onClick: triggerImport,
+        },
+      ],
     },
     {
       icon: BadgeQuestionMark,
@@ -64,6 +169,85 @@ export const AppSidebar = () => {
       url: '/help',
     },
   ];
+
+  const isParentActive = (submenu: SubmenuItem[]) => {
+    return submenu.some(
+      (item) => 'url' in item && item.url && pathname.startsWith(item.url),
+    );
+  };
+
+  const getFirstValidSubmenuUrl = (submenu: SubmenuItem[]) => {
+    const validItem = submenu.find(
+      (item) =>
+        'url' in item &&
+        item.url &&
+        item.isHidden !== true &&
+        item.isDisabled !== true,
+    );
+    return validItem && 'url' in validItem ? validItem.url : null;
+  };
+
+  const renderSubmenuItem = (item: SubmenuItem, index: number) => {
+    if (item.isHidden) {
+      return null;
+    }
+    if ('url' in item && item.url) {
+      const isActive = pathname === item.url;
+      const isDisabled = item.isDisabled;
+      return (
+        <SidebarMenuSubItem key={`submenu-item-${index}`}>
+          <SidebarMenuSubButton asChild isActive={isActive}>
+            <NavLink
+              to={item.url}
+              className={`group/submenu-item ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={(e) => isDisabled && e.preventDefault()}
+            >
+              {item.icon && (
+                <item.icon
+                  className={`transition transition-duration-200 ${
+                    isDisabled
+                      ? 'opacity-50'
+                      : 'group-hover/submenu-item:stroke-primary group-hover/submenu-item:scale-120'
+                  }`}
+                />
+              )}
+              <span
+                className={`${isActive ? 'font-semibold' : ''} ${isDisabled ? 'opacity-50' : ''}`}
+              >
+                {item.name}
+              </span>
+            </NavLink>
+          </SidebarMenuSubButton>
+        </SidebarMenuSubItem>
+      );
+    } else if ('onClick' in item && item.onClick) {
+      const isDisabled = item.isDisabled;
+      return (
+        <SidebarMenuSubItem key={`submenu-item-${index}`}>
+          <SidebarMenuSubButton asChild>
+            <div
+              className={`group/submenu-item ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              onClick={isDisabled ? undefined : item.onClick}
+            >
+              {item.icon && (
+                <item.icon
+                  className={`transition transition-duration-200 ${
+                    isDisabled
+                      ? 'opacity-50'
+                      : 'group-hover/submenu-item:stroke-primary group-hover/submenu-item:scale-120'
+                  }`}
+                />
+              )}
+              <span className={isDisabled ? 'opacity-50' : ''}>
+                {item.name}
+              </span>
+            </div>
+          </SidebarMenuSubButton>
+        </SidebarMenuSubItem>
+      );
+    }
+    return null;
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -91,74 +275,89 @@ export const AppSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuEntries.map((menuEntry, index) => (
-                <AppSidebarItem
-                  key={`menu-item-${index}`}
-                  destinationUrl={menuEntry.url}
-                  label={menuEntry.name}
-                  icon={<menuEntry.icon />}
-                />
-              ))}
+              {menuEntries.map((menuEntry, index) => {
+                if ('url' in menuEntry && menuEntry.url) {
+                  return (
+                    <AppSidebarItem
+                      key={`menu-item-${index}`}
+                      destinationUrl={menuEntry.url}
+                      label={menuEntry.name}
+                      icon={<menuEntry.icon />}
+                    />
+                  );
+                } else if ('submenu' in menuEntry && menuEntry.submenu) {
+                  const isActive = isParentActive(menuEntry.submenu);
+                  const firstValidUrl = menuEntry.shouldOpenFirstEntry
+                    ? getFirstValidSubmenuUrl(menuEntry.submenu)
+                    : null;
 
-              <Collapsible>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton asChild tooltip="Files">
-                      <a className="cursor-pointer">
-                        <FileText />
-                        <span>{t('File', { ns: 'navigation' })}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuAction className="data-[state=open]:rotate-90">
-                        <ChevronRight />
-                        <span className="sr-only">
-                          {t('Toggle', { ns: 'navigation' })}
-                        </span>
-                      </SidebarMenuAction>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        <SidebarMenuSubItem>
-                          <SidebarMenuSubButton asChild>
-                            <div>
-                              <FileDown />
-                              <a
-                                onClick={exportMeasures}
-                                className="cursor-pointer"
-                              >
-                                <span>{t('Export', { ns: 'navigation' })}</span>
-                              </a>
-                            </div>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                        <SidebarMenuSubItem>
-                          <SidebarMenuSubButton asChild>
-                            <div>
-                              <input
-                                ref={inputRef}
-                                type="file"
-                                accept="application/json"
-                                className="hidden"
-                                onChange={onInputFileChange}
+                  return (
+                    <Collapsible
+                      key={`menu-item-${index}`}
+                      defaultOpen={isActive}
+                    >
+                      <SidebarMenuItem>
+                        {firstValidUrl ? (
+                          <SidebarMenuButton asChild isActive={isActive}>
+                            <NavLink
+                              to={firstValidUrl}
+                              className="cursor-pointer group/item"
+                            >
+                              <menuEntry.icon
+                                className={
+                                  isActive
+                                    ? 'scale-120 transition transition-duration-200'
+                                    : 'group-hover/item:stroke-primary group-hover/item:scale-120 transition transition-duration-200'
+                                }
                               />
-                              <FileUp />
-                              <a
-                                onClick={triggerImport}
-                                className="cursor-pointer"
-                              >
-                                <span>{t('Import', { ns: 'navigation' })}</span>
+                              <span>{menuEntry.name}</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        ) : (
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuButton asChild isActive={isActive}>
+                              <a className="cursor-pointer group/item">
+                                <menuEntry.icon
+                                  className={
+                                    isActive
+                                      ? 'scale-120 transition transition-duration-200'
+                                      : 'group-hover/item:stroke-primary group-hover/item:scale-120 transition transition-duration-200'
+                                  }
+                                />
+                                <span>{menuEntry.name}</span>
                               </a>
-                            </div>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </>
-                </SidebarMenuItem>
-              </Collapsible>
+                            </SidebarMenuButton>
+                          </CollapsibleTrigger>
+                        )}
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuAction className="data-[state=open]:rotate-90">
+                            <ChevronRight />
+                            <span className="sr-only">
+                              {t('Toggle', { ns: 'navigation' })}
+                            </span>
+                          </SidebarMenuAction>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {menuEntry.submenu.map((item, subIndex) =>
+                              renderSubmenuItem(item, subIndex),
+                            )}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  );
+                }
+                return null;
+              })}
+
+              <input
+                ref={inputRef}
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={onInputFileChange}
+              />
               <SidebarSeparator />
               <SidebarLanguageSwitcher />
             </SidebarMenu>

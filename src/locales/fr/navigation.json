@@ -1,11 +1,19 @@
 {
+  "Adjustment Sheet": "Fiche de réglage",
   "Analyze": "Analysez",
+  "Data Sheet": "Fiche de données",
   "Design": "Concevez",
   "Export": "Exporter",
   "File": "Fichier",
+  "Front Weight": "Poids avant",
   "Help": "Aide",
   "Import": "Importer",
   "Language": "Langue",
   "Measure": "Mesurez",
-  "Toggle": "Activer/Désactiver"
+  "Strike Weight": "Poids d'attaque",
+  "Strike Weight Ratio": "Rapport de poids d'attaque",
+  "Toggle": "Activer/Désactiver",
+  "Touch Weight": "Équilibre statique",
+  "Touch Weight Preview": "Aperçu du Toucher",
+  "Wippen Support Springs": "Ressorts de Support de Wippen"
 }
