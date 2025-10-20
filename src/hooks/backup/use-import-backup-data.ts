@@ -91,7 +91,9 @@ export const useImportBackupData = () => {
         updatePianoState({
           isDemoProfile: data.piano.isDemoProfile ?? false,
           keyCount: data.piano.keyCount ?? 88,
-          pianoName: data.piano.pianoName ?? null,
+          brand: data.piano.brand ?? null,
+          model: data.piano.model ?? null,
+          serialNumber: data.piano.serialNumber ?? null,
         });
       }
     },

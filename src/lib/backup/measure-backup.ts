@@ -93,7 +93,9 @@ export const PianoBackupSchema = z
   .object({
     isDemoProfile: z.boolean().optional(),
     keyCount: z.number().optional(),
-    pianoName: z.string().nullable().optional(),
+    brand: z.string().nullable().optional(),
+    model: z.string().nullable().optional(),
+    serialNumber: z.string().nullable().optional(),
   })
   .strict();
 

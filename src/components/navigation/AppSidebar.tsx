@@ -64,7 +64,7 @@ export const AppSidebar = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
-  const { pianoName } = usePianoProfileState();
+  const { displayName } = usePianoProfileState();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
 
@@ -81,7 +81,7 @@ export const AppSidebar = () => {
   const menuEntries: MenuEntry[] = [
     {
       icon: Piano,
-      name: pianoName ?? t('Piano', { ns: 'navigation' }),
+      name: displayName || t('Piano', { ns: 'navigation' }),
       url: '/piano',
     },
     {

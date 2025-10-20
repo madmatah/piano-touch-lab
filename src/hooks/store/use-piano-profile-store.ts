@@ -3,9 +3,11 @@ import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 
 export interface PianoProfileStoreState {
+  brand: string | null;
   isDemoProfile: boolean;
   keyCount: number;
-  pianoName: string | null;
+  model: string | null;
+  serialNumber: string | null;
 }
 
 interface VersionedPianoProfileStoreState extends PianoProfileStoreState {
@@ -27,9 +29,11 @@ const createPianoProfileStore = () =>
   create<PianoProfileStore>()(
     persist(
       (set) => ({
+        brand: null,
         isDemoProfile: false,
         keyCount: 88,
-        pianoName: null,
+        model: null,
+        serialNumber: null,
         updateSingleState: (property, value) =>
           set(() => ({
             [property]: value,
@@ -42,9 +46,11 @@ const createPianoProfileStore = () =>
         partialize: (
           state: PianoProfileStore,
         ): VersionedPianoProfileStoreState => ({
+          brand: state.brand,
           isDemoProfile: state.isDemoProfile,
           keyCount: state.keyCount,
-          pianoName: state.pianoName,
+          model: state.model,
+          serialNumber: state.serialNumber,
           version: state.version,
         }),
       },
@@ -63,9 +69,12 @@ export const usePianoProfileStore = (): PianoProfileBoundStore => {
 export const usePianoProfileState = () => {
   return usePianoProfileStore()(
     useShallow((state: PianoProfileStore) => ({
+      brand: state.brand,
+      displayName: `${state.brand ?? ''} ${state.model ?? ''}`.trim(),
       isDemoProfile: state.isDemoProfile,
       keyCount: state.keyCount,
-      pianoName: state.pianoName,
+      model: state.model,
+      serialNumber: state.serialNumber,
     })),
   );
 };
