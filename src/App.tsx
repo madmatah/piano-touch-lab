@@ -22,6 +22,7 @@ import { DesignStrikeWeightRatioPage } from './components/pages/design/DesignStr
 import { DesignTouchWeightPreviewPage } from './components/pages/design/DesignTouchWeightPreviewPage';
 import { DesignAdjustmentSheetPage } from './components/pages/design/DesignAdjustmentSheetPage';
 import { AnalyzeDataSheetPage } from './components/pages/analyze/AnalyzeDatasheetPage';
+import { PianoPage } from './components/pages/PianoPage';
 
 export function App() {
   return (
@@ -80,6 +81,7 @@ export function App() {
             />
             <Route path="/help" Component={HelpPage} />
             <Route path="/measure" Component={MeasurePage} />
+            <Route path="/piano" Component={PianoPage} />
           </Routes>
         </BrowserRouter>
         <Toaster position="top-center" richColors />
