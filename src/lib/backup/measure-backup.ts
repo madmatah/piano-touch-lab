@@ -23,7 +23,10 @@ export type DesignBackupRequirements = DesignStoreState;
 
 export type MeasureOptionsBackupRequirements = MeasureOptionsStoreState;
 
-export type PianoBackupRequirements = PianoProfileStoreState;
+export type PianoBackupRequirements = Omit<
+  PianoProfileStoreState,
+  'isDemoProfile'
+>;
 
 export interface FullBackupRequirements {
   measures: MeasureBackupRequirements;
@@ -88,6 +91,7 @@ export const MeasureOptionsBackupSchema = z
 
 export const PianoBackupSchema = z
   .object({
+    isDemoProfile: z.boolean().optional(),
     keyCount: z.number().optional(),
     pianoName: z.string().nullable().optional(),
   })
