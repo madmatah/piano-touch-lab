@@ -5,7 +5,7 @@ import {
   usePianoProfileState,
   usePianoProfileActions,
 } from '@/hooks/store/use-piano-profile-store';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   Field,
   FieldDescription,
@@ -18,21 +18,29 @@ import { Input } from '@/components/ui/input';
 
 export const PianoPage = () => {
   const { t } = useTranslation();
-  const { pianoName } = usePianoProfileState();
+  const { brand, model, serialNumber } = usePianoProfileState();
   const { updateSingleState } = usePianoProfileActions();
-  const [localPianoName, setLocalPianoName] = useState(pianoName ?? '');
 
-  const handlePianoNameChange = useCallback(
+  const handleBrandChange = useCallback(
     (value: string) => {
-      setLocalPianoName(value);
-      updateSingleState('pianoName', value ?? null);
+      updateSingleState('brand', value || null);
     },
     [updateSingleState],
   );
 
-  const handleBlur = useCallback(() => {
-    updateSingleState('pianoName', localPianoName ?? null);
-  }, [updateSingleState, localPianoName]);
+  const handleModelChange = useCallback(
+    (value: string) => {
+      updateSingleState('model', value || null);
+    },
+    [updateSingleState],
+  );
+
+  const handleSerialNumberChange = useCallback(
+    (value: string) => {
+      updateSingleState('serialNumber', value || null);
+    },
+    [updateSingleState],
+  );
 
   return (
     <MainLayout pageTitle={t('Piano')} pageIcon={<Piano />}>
@@ -46,13 +54,32 @@ export const PianoPage = () => {
           </FieldDescription>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="piano-name">{t('Piano Name')}</FieldLabel>
+              <FieldLabel htmlFor="piano-brand">{t('Brand')}</FieldLabel>
               <Input
-                id="piano-name"
-                placeholder={t('Enter your piano name')}
-                value={localPianoName}
-                onChange={(e) => handlePianoNameChange(e.target.value)}
-                onBlur={handleBlur}
+                id="piano-brand"
+                placeholder={t('Enter your piano brand')}
+                value={brand ?? ''}
+                onChange={(e) => handleBrandChange(e.target.value)}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="piano-model">{t('Model')}</FieldLabel>
+              <Input
+                id="piano-model"
+                placeholder={t('Enter your piano model')}
+                value={model ?? ''}
+                onChange={(e) => handleModelChange(e.target.value)}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="piano-serial">
+                {t('Serial Number')}
+              </FieldLabel>
+              <Input
+                id="piano-serial"
+                placeholder={t('Enter your piano serial number')}
+                value={serialNumber ?? ''}
+                onChange={(e) => handleSerialNumberChange(e.target.value)}
               />
             </Field>
           </FieldGroup>

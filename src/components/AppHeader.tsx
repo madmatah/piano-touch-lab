@@ -12,7 +12,7 @@ export interface AppHeaderProps {
 
 export const AppHeader = ({ title, icon }: AppHeaderProps) => {
   const { isMobile } = useSidebar();
-  const { pianoName } = usePianoProfileState();
+  const { displayName } = usePianoProfileState();
   const { t } = useTranslation();
   const iconElement =
     icon && React.isValidElement(icon)
@@ -40,7 +40,7 @@ export const AppHeader = ({ title, icon }: AppHeaderProps) => {
                 {t('Piano Touch Lab')}
               </h1>
               <div className="text-sm text-muted-foreground align-end truncate overflow-hidden flex-1">
-                {pianoName ?? ''}
+                {displayName || ''}
               </div>
             </div>
           </div>
