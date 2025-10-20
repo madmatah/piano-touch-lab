@@ -3,6 +3,7 @@ import { useSidebar } from './ui/sidebar';
 import { AppSidebarTrigger } from './navigation/AppSidebarTrigger';
 import React, { type ReactElement } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
+import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
 
 export interface AppHeaderProps {
   title?: string;
@@ -11,6 +12,7 @@ export interface AppHeaderProps {
 
 export const AppHeader = ({ title, icon }: AppHeaderProps) => {
   const { isMobile } = useSidebar();
+  const { pianoName } = usePianoProfileState();
   const { t } = useTranslation();
   const iconElement =
     icon && React.isValidElement(icon)
@@ -33,8 +35,13 @@ export const AppHeader = ({ title, icon }: AppHeaderProps) => {
                 />
               </>
             ) : null}
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-medium">{t('Piano Touch Lab')}</h1>
+            <div className="flex flex-row items-center justify-between w-full">
+              <h1 className="text-base font-medium flex-1">
+                {t('Piano Touch Lab')}
+              </h1>
+              <div className="text-sm text-muted-foreground align-end truncate overflow-hidden flex-1">
+                {pianoName ?? ''}
+              </div>
             </div>
           </div>
         </div>

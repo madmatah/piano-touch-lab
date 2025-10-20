@@ -22,6 +22,7 @@ import {
   FileText,
   FileUp,
   FlaskConical,
+  Piano,
   Scale,
   Settings2,
   type LucideIcon,
@@ -40,6 +41,7 @@ import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { useMemo } from 'react';
+import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
 
 type SubmenuItem = {
   icon?: LucideIcon;
@@ -62,7 +64,7 @@ export const AppSidebar = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
-
+  const { pianoName } = usePianoProfileState();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
 
@@ -77,6 +79,11 @@ export const AppSidebar = () => {
   }, [designedKeyboard]);
 
   const menuEntries: MenuEntry[] = [
+    {
+      icon: Piano,
+      name: pianoName ?? t('Piano', { ns: 'navigation' }),
+      url: '/piano',
+    },
     {
       icon: Scale,
       name: t('Measure', { ns: 'navigation' }),
