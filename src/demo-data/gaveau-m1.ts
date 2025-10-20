@@ -921,6 +921,7 @@ export const gaveauModele1: FullBackupData = {
     wippenRadiusWeight: 19.5,
   },
   piano: {
+    isDemoProfile: true,
     keyCount: 88,
     pianoName: 'Gaveau Modèle 1 (demo)',
   },

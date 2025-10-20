@@ -21,7 +21,6 @@ void mock.module('../store/use-measure-options-store', () => ({
 }));
 
 describe('The useKeyMeasurementsHelpers() hook', () => {
-  let measureProfileName: string | undefined;
   let globalMeasure: {
     keyWeightRatio: number | null;
     wippenRadiusWeight: number | null;
@@ -30,7 +29,6 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
   let keyMeasure: MeasuredKeyRequirements;
 
   beforeEach(() => {
-    measureProfileName = 'test-profile';
     globalMeasure = {
       keyWeightRatio: 0.5,
       wippenRadiusWeight: 10,
