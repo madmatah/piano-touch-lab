@@ -151,6 +151,20 @@ if (appEnv === 'demo') {
   await cp('config/deploy/netlify/_redirects', path.join(outdir, '_redirects'));
 }
 
+console.log('🔧 Processing HTML files...');
+const htmlPath = path.join(outdir, 'index.html');
+let html = await Bun.file(htmlPath).text();
+
+let bodyInjections = '';
+
+if (appEnv === 'demo') {
+  bodyInjections =
+    '<script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
+}
+
+html = html.replace('<!-- BUILD_INJECT_BODY -->', bodyInjections);
+await Bun.write(htmlPath, html);
+
 const end = performance.now();
 
 const outputTable = result.outputs.map((output) => ({
