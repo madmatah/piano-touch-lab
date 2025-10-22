@@ -9,8 +9,10 @@ export const useStrikeWeightCurve = (
 ): {
   getStrikeWeightCurve: (level: StrikeWeightLevel) => number[];
 } => {
-  const { generateCubicInterpolatedKeyboardSerie } =
-    useInterpolatedSerieCubicSpline(keyboard);
+  const {
+    generateCubicInterpolatedKeyboardSerie,
+    interpolateStandardKeypointsToKeyboardSize,
+  } = useInterpolatedSerieCubicSpline(keyboard);
 
   const smoothedStrikeWeightCurves: Map<StrikeWeightLevel, number[]> =
     useMemo(() => {
@@ -19,12 +21,17 @@ export const useStrikeWeightCurve = (
           return [
             level,
             generateCubicInterpolatedKeyboardSerie(
-              strikeWeightKeyPointsByLevel[level],
+              interpolateStandardKeypointsToKeyboardSize(
+                strikeWeightKeyPointsByLevel[level],
+              ),
             ),
           ];
         }),
       );
-    }, [generateCubicInterpolatedKeyboardSerie]);
+    }, [
+      generateCubicInterpolatedKeyboardSerie,
+      interpolateStandardKeypointsToKeyboardSize,
+    ]);
 
   const getStrikeWeightCurve = useCallback(
     (level: StrikeWeightLevel) => {

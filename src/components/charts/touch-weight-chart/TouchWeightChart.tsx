@@ -124,7 +124,7 @@ export const TouchWeightChart = (props: TouchWeightChartProps) => {
         value !== null ? `${Math.round(value * 10) / 10} g` : '-',
     },
     xAxis: {
-      max: 88,
+      max: analyzedKeyboard.size,
       min: 0,
       name: t('Note'),
       type: 'value',
