@@ -8,8 +8,10 @@ export const useFrontWeightCurve = (
 ): {
   getFrontWeightCurve: (level: number) => number[];
 } => {
-  const { generateCubicInterpolatedKeyboardSerie } =
-    useInterpolatedSerieCubicSpline(keyboard);
+  const {
+    generateCubicInterpolatedKeyboardSerie,
+    interpolateStandardKeypointsToKeyboardSize,
+  } = useInterpolatedSerieCubicSpline(keyboard);
 
   const smoothedFrontWeightCurves: Map<number, number[]> = useMemo(() => {
     return new Map(
@@ -17,12 +19,17 @@ export const useFrontWeightCurve = (
         return [
           level,
           generateCubicInterpolatedKeyboardSerie(
-            generateCustomFrontWeightKeypoints(Number(level)),
+            interpolateStandardKeypointsToKeyboardSize(
+              generateCustomFrontWeightKeypoints(Number(level)),
+            ),
           ),
         ];
       }),
     );
-  }, [generateCubicInterpolatedKeyboardSerie]);
+  }, [
+    generateCubicInterpolatedKeyboardSerie,
+    interpolateStandardKeypointsToKeyboardSize,
+  ]);
 
   const getFrontWeightCurve = useCallback(
     (level: number) => {

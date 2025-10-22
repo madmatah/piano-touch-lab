@@ -13,10 +13,26 @@ export const useInterpolatedSerieCubicSpline = <T>(
   generateCubicInterpolatedKeyboardSerie: (
     keypoints: Map<number, number>,
   ) => number[];
+  interpolateStandardKeypointsToKeyboardSize: (
+    keypoints: Map<number, number>,
+  ) => Map<number, number>;
 } => {
   const cubicSplineSmoother = useNamedInjection<
     CurveSmootherRequirements<undefined>
   >(curveSmootherRequirementsSymbol, SmoothStrategy.CubicSpline);
+
+  const interpolateStandardKeypointsToKeyboardSize = useCallback(
+    (keypoints: Map<number, number>): Map<number, number> => {
+      return new Map(
+        keypoints.entries().map(([index, keypoint]) => {
+          const interpolatedIndex =
+            1 + Math.round(((index - 1) * (keyboard.size - 1)) / 87);
+          return [interpolatedIndex, keypoint];
+        }),
+      );
+    },
+    [keyboard.size],
+  );
 
   const generateCubicInterpolatedKeyboardSerie = useCallback(
     (keypoints: Map<number, number>): number[] => {
@@ -34,5 +50,8 @@ export const useInterpolatedSerieCubicSpline = <T>(
     [keyboard, cubicSplineSmoother],
   );
 
-  return { generateCubicInterpolatedKeyboardSerie };
+  return {
+    generateCubicInterpolatedKeyboardSerie,
+    interpolateStandardKeypointsToKeyboardSize,
+  };
 };

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
+import { useEffect } from 'react';
 import type {
   MeasuredKeyRequirements,
   OptionalNumber,
@@ -38,9 +39,21 @@ interface MeasuresStoreActions {
     value: OptionalNumber,
   ) => void;
   updateState: (newState: MeasuresStoreState) => void;
+  syncKeyboardSize: (targetSize: number) => void;
 }
 
 export type MeasuresStore = VersionedMeasuresStoreState & MeasuresStoreActions;
+
+const defaultKeySpec: MeasuredKeyRequirements = {
+  downWeightWithSpringSupport: null,
+  downWeightWithoutSpringSupport: null,
+  frontWeight: null,
+  keyWeightRatio: null,
+  measuredStrikeWeightRatio: null,
+  strikeWeight: null,
+  upWeight: null,
+  wippenRadiusWeight: null,
+};
 
 const createMeasuresStore = (keyboard: KeyboardRequirements) =>
   create<MeasuresStore>()(
@@ -48,15 +61,19 @@ const createMeasuresStore = (keyboard: KeyboardRequirements) =>
       (set) => ({
         keyWeightRatio: null,
         keys: Array.from({ length: keyboard.size }, () => ({
-          downWeightWithSpringSupport: null,
-          downWeightWithoutSpringSupport: null,
-          frontWeight: null,
-          keyWeightRatio: null,
-          measuredStrikeWeightRatio: null,
-          strikeWeight: null,
-          upWeight: null,
-          wippenRadiusWeight: null,
+          ...defaultKeySpec,
         })),
+        syncKeyboardSize: (targetSize: number) =>
+          set((state) => {
+            if (state.keys.length < targetSize) {
+              const newKeys = [...state.keys];
+              for (let i = state.keys.length; i < targetSize; i++) {
+                newKeys.push({ ...defaultKeySpec });
+              }
+              return { keys: newKeys };
+            }
+            return state;
+          }),
         updateGlobalMeasure: (property, value) =>
           set(() => ({
             [property]: value,
@@ -96,12 +113,19 @@ let measuresStore: MeasuresBoundStore | undefined = undefined;
 export const useMeasuresStore = (): MeasuresBoundStore => {
   const { keyboard } = useKeyboard();
   measuresStore ??= createMeasuresStore(keyboard);
+
+  useEffect(() => {
+    measuresStore?.getState().syncKeyboardSize(keyboard.size);
+  }, [keyboard.size]);
+
   return measuresStore;
 };
 
 export const useMeasuredKeyFromStore = (keyIndex: number) => {
   return useMeasuresStore()(
-    useShallow((state: MeasuresStore) => state.keys?.[keyIndex]),
+    useShallow(
+      (state: MeasuresStore) => state.keys?.[keyIndex] ?? defaultKeySpec,
+    ),
   );
 };
 

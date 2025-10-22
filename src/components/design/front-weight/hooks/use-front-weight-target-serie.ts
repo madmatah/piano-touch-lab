@@ -30,8 +30,10 @@ export const useFrontWeightTargetSerie = (
 } => {
   const { t } = useTranslation();
   const { generateSerie } = useGenerateSerie(keyboard);
-  const { generateCubicInterpolatedKeyboardSerie } =
-    useInterpolatedSerieCubicSpline(keyboard);
+  const {
+    generateCubicInterpolatedKeyboardSerie,
+    interpolateStandardKeypointsToKeyboardSize,
+  } = useInterpolatedSerieCubicSpline(keyboard);
   const { generateDesignedKeyboardFromSeries } =
     useGenerateDesignedKeyboardFromSeries(keyboard);
   const frontWeightCalculator = useInjection<FrontWeightCalculatorRequirements>(
@@ -83,7 +85,9 @@ export const useFrontWeightTargetSerie = (
         !isNaN(targetNumber)
       ) {
         const frontWeightCurve = generateCubicInterpolatedKeyboardSerie(
-          generateCustomFrontWeightKeypoints(targetNumber),
+          interpolateStandardKeypointsToKeyboardSize(
+            generateCustomFrontWeightKeypoints(targetNumber),
+          ),
         );
         return generateSerie(
           (key) => frontWeightCurve[key.number - 1] ?? null,
@@ -99,6 +103,7 @@ export const useFrontWeightTargetSerie = (
       generateCubicInterpolatedKeyboardSerie,
       generateDesignedKeyboardFromSeries,
       generateSerie,
+      interpolateStandardKeypointsToKeyboardSize,
       name,
       nullTargetSerie,
       variant,
