@@ -9,6 +9,7 @@ import { useMeasureActions } from '@/hooks/store/use-measure-store';
 import { useDesignActions } from '@/hooks/store/use-design-store';
 import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-store';
 import { usePianoProfileActions } from '@/hooks/store/use-piano-profile-store';
+import type { Note } from '@/lib/music/theory/spn';
 import type z from 'zod';
 
 export const useImportBackupData = () => {
@@ -89,11 +90,15 @@ export const useImportBackupData = () => {
 
       if (data.piano) {
         updatePianoState({
+          brand: data.piano.brand ?? null,
           isDemoProfile: data.piano.isDemoProfile ?? false,
           keyCount: data.piano.keyCount ?? 88,
-          brand: data.piano.brand ?? null,
           model: data.piano.model ?? null,
           serialNumber: data.piano.serialNumber ?? null,
+          startNote: (data.piano.startNote ?? {
+            letter: 'A',
+            octave: 0,
+          }) as Note,
         });
       }
     },
