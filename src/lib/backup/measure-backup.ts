@@ -91,11 +91,18 @@ export const MeasureOptionsBackupSchema = z
 
 export const PianoBackupSchema = z
   .object({
+    brand: z.string().nullable().optional(),
     isDemoProfile: z.boolean().optional(),
     keyCount: z.number().optional(),
-    brand: z.string().nullable().optional(),
     model: z.string().nullable().optional(),
     serialNumber: z.string().nullable().optional(),
+    startNote: z
+      .object({
+        letter: z.string(),
+        octave: z.number(),
+      })
+      .nullable()
+      .optional(),
   })
   .strict();
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
+import type { Note } from '@/lib/music/theory/spn';
 
 export interface PianoProfileStoreState {
   brand: string | null;
@@ -8,6 +9,7 @@ export interface PianoProfileStoreState {
   keyCount: number;
   model: string | null;
   serialNumber: string | null;
+  startNote: Note | null;
 }
 
 interface VersionedPianoProfileStoreState extends PianoProfileStoreState {
@@ -17,7 +19,7 @@ interface VersionedPianoProfileStoreState extends PianoProfileStoreState {
 interface PianoStoreActions {
   updateSingleState: (
     property: keyof PianoProfileStoreState,
-    value: string | null | number,
+    value: string | null | number | Note,
   ) => void;
   updateState: (newState: PianoProfileStoreState) => void;
 }
@@ -34,6 +36,7 @@ const createPianoProfileStore = () =>
         keyCount: 88,
         model: null,
         serialNumber: null,
+        startNote: { letter: 'A', octave: 0 },
         updateSingleState: (property, value) =>
           set(() => ({
             [property]: value,
@@ -51,6 +54,7 @@ const createPianoProfileStore = () =>
           keyCount: state.keyCount,
           model: state.model,
           serialNumber: state.serialNumber,
+          startNote: state.startNote,
           version: state.version,
         }),
       },
@@ -75,6 +79,7 @@ export const usePianoProfileState = () => {
       keyCount: state.keyCount,
       model: state.model,
       serialNumber: state.serialNumber,
+      startNote: state.startNote,
     })),
   );
 };

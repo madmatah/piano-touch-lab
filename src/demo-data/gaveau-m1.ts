@@ -926,5 +926,6 @@ export const gaveauModele1: FullBackupData = {
     keyCount: 88,
     model: 'Modèle 1',
     serialNumber: '89XXX',
+    startNote: { letter: 'A', octave: 0 },
   },
 };

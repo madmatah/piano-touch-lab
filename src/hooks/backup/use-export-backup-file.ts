@@ -61,10 +61,11 @@ export const useExportBackupFile = () => {
 
   const pianoProfileState = usePianoProfileStore()(
     useShallow((state) => ({
-      keyCount: state.keyCount,
       brand: state.brand,
+      keyCount: state.keyCount,
       model: state.model,
       serialNumber: state.serialNumber,
+      startNote: state.startNote,
     })),
   );
 
