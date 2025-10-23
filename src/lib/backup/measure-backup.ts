@@ -151,6 +151,44 @@ export type ParseResult =
   | { data: FullBackupData; ok: true; isFullBackup: true }
   | { error: string; ok: false };
 
+function extractKeyCountFromData(data: unknown): number | null {
+  if (typeof data !== 'object' || data === null) return null;
+
+  const obj = data as Record<string, unknown>;
+
+  if ('data' in obj && typeof obj.data === 'object' && obj.data !== null) {
+    const dataObj = obj.data as Record<string, unknown>;
+
+    if (
+      'piano' in dataObj &&
+      typeof dataObj.piano === 'object' &&
+      dataObj.piano !== null
+    ) {
+      const piano = dataObj.piano as Record<string, unknown>;
+      if ('keyCount' in piano && typeof piano.keyCount === 'number') {
+        return piano.keyCount;
+      }
+    }
+
+    if ('keys' in dataObj && Array.isArray(dataObj.keys)) {
+      return dataObj.keys.length;
+    }
+  }
+
+  if ('piano' in obj && typeof obj.piano === 'object' && obj.piano !== null) {
+    const piano = obj.piano as Record<string, unknown>;
+    if ('keyCount' in piano && typeof piano.keyCount === 'number') {
+      return piano.keyCount;
+    }
+  }
+
+  if ('keys' in obj && Array.isArray(obj.keys)) {
+    return obj.keys.length;
+  }
+
+  return null;
+}
+
 export function parseMeasuresBackupText(
   jsonText: string,
   expectedLength: number,
@@ -162,25 +200,28 @@ export function parseMeasuresBackupText(
     return { error: 'Invalid JSON', ok: false };
   }
 
-  const fullFileSchema = makeFullFileSchema(expectedLength);
+  const fileKeyCount = extractKeyCountFromData(parsed);
+  const actualExpectedLength = fileKeyCount ?? expectedLength;
+
+  const fullFileSchema = makeFullFileSchema(actualExpectedLength);
   const fullFileResult = fullFileSchema.safeParse(parsed);
   if (fullFileResult.success) {
     return { data: fullFileResult.data.data, isFullBackup: true, ok: true };
   }
 
-  const fullDataSchema = makeFullDataSchema(expectedLength);
+  const fullDataSchema = makeFullDataSchema(actualExpectedLength);
   const fullDataResult = fullDataSchema.safeParse(parsed);
   if (fullDataResult.success) {
     return { data: fullDataResult.data, isFullBackup: true, ok: true };
   }
 
-  const fileSchema = makeFileSchema(expectedLength);
+  const fileSchema = makeFileSchema(actualExpectedLength);
   const fileResult = fileSchema.safeParse(parsed);
   if (fileResult.success) {
     return { data: fileResult.data.data, isFullBackup: false, ok: true };
   }
 
-  const dataSchema = makeDataSchema(expectedLength);
+  const dataSchema = makeDataSchema(actualExpectedLength);
   const dataResult = dataSchema.safeParse(parsed);
   if (dataResult.success) {
     return { data: dataResult.data, isFullBackup: false, ok: true };
