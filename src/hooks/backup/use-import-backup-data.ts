@@ -9,8 +9,20 @@ import { useMeasureActions } from '@/hooks/store/use-measure-store';
 import { useDesignActions } from '@/hooks/store/use-design-store';
 import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-store';
 import { usePianoProfileActions } from '@/hooks/store/use-piano-profile-store';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import type { Note } from '@/lib/music/theory/spn';
 import type z from 'zod';
+
+const defaultKeySpec = {
+  downWeightWithSpringSupport: null,
+  downWeightWithoutSpringSupport: null,
+  frontWeight: null,
+  keyWeightRatio: null,
+  measuredStrikeWeightRatio: null,
+  strikeWeight: null,
+  upWeight: null,
+  wippenRadiusWeight: null,
+};
 
 export const useImportBackupData = () => {
   const { updateState: updateMeasureState } = useMeasureActions();
@@ -22,6 +34,7 @@ export const useImportBackupData = () => {
   } = useDesignActions();
   const { updateState: updateMeasureOptionsState } = useMeasureOptionsActions();
   const { updateState: updatePianoState } = usePianoProfileActions();
+  const { keyboard } = useKeyboard();
 
   const transformKeys = useCallback(
     (
@@ -42,26 +55,46 @@ export const useImportBackupData = () => {
     [],
   );
 
+  const extendKeysToKeyboardSize = useCallback(
+    (
+      keys: MeasureBackupRequirements['keys'],
+    ): MeasureBackupRequirements['keys'] => {
+      if (keys.length >= keyboard.size) {
+        return keys;
+      }
+
+      const extendedKeys = [...keys];
+      for (let i = keys.length; i < keyboard.size; i++) {
+        extendedKeys.push({ ...defaultKeySpec });
+      }
+
+      return extendedKeys;
+    },
+    [keyboard.size],
+  );
+
   const importMeasuresOnly = useCallback(
     (data: MeasuresData): void => {
       const nextKeys = transformKeys(data.keys);
+      const extendedKeys = extendKeysToKeyboardSize(nextKeys);
 
       updateMeasureState({
         keyWeightRatio: data.keyWeightRatio ?? null,
-        keys: nextKeys,
+        keys: extendedKeys,
         wippenRadiusWeight: data.wippenRadiusWeight ?? null,
       });
     },
-    [transformKeys, updateMeasureState],
+    [transformKeys, extendKeysToKeyboardSize, updateMeasureState],
   );
 
   const importFullBackup = useCallback(
     (data: FullBackupData): void => {
       const nextKeys = transformKeys(data.measures.keys);
+      const extendedKeys = extendKeysToKeyboardSize(nextKeys);
 
       updateMeasureState({
         keyWeightRatio: data.measures.keyWeightRatio ?? null,
-        keys: nextKeys,
+        keys: extendedKeys,
         wippenRadiusWeight: data.measures.wippenRadiusWeight ?? null,
       });
 
@@ -104,6 +137,7 @@ export const useImportBackupData = () => {
     },
     [
       transformKeys,
+      extendKeysToKeyboardSize,
       updateMeasureState,
       updateFrontWeightDesign,
       updateStrikeWeightDesign,

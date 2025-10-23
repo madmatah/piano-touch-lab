@@ -82,7 +82,7 @@ export const useExportBackupFile = () => {
         measureOptions: measureOptionsState,
         measures: {
           keyWeightRatio: measureStoreState.keyWeightRatio,
-          keys: measureStoreState.keys,
+          keys: measureStoreState.keys.slice(0, pianoProfileState.keyCount),
           wippenRadiusWeight: measureStoreState.wippenRadiusWeight,
         },
         piano: pianoProfileState,
