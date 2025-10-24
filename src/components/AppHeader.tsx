@@ -4,6 +4,7 @@ import { AppSidebarTrigger } from './navigation/AppSidebarTrigger';
 import React, { type ReactElement } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
+import { FlaskConical } from 'lucide-react';
 
 export interface AppHeaderProps {
   title?: string;
@@ -12,7 +13,7 @@ export interface AppHeaderProps {
 
 export const AppHeader = ({ title, icon }: AppHeaderProps) => {
   const { isMobile } = useSidebar();
-  const { displayName } = usePianoProfileState();
+  const { displayName, serialNumber } = usePianoProfileState();
   const { t } = useTranslation();
   const iconElement =
     icon && React.isValidElement(icon)
@@ -23,6 +24,16 @@ export const AppHeader = ({ title, icon }: AppHeaderProps) => {
 
   return (
     <>
+      <div className="not-print:hidden flex items-center justify-between w-full">
+        <div className="flex items-center gap-2">
+          <FlaskConical className="!size-4" />
+          <span className="text-sm font-semibold">{t('Piano Touch Lab')}</span>
+        </div>
+        <div className="flex text-sm">{title}</div>
+        <div className="text-sm text-muted-foreground align-end truncate overflow-hidden">
+          {displayName ?? ''} {serialNumber ? `— ${serialNumber}` : null}
+        </div>
+      </div>
       {isMobile ? (
         <div className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
           <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
