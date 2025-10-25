@@ -25,6 +25,7 @@ type GlobalMeasures = Pick<
 >;
 
 interface MeasuresStoreActions {
+  reset: () => void;
   updateKeyMeasure: (
     keyIndex: number,
     property: keyof MeasuredKeyRequirements,
@@ -55,14 +56,22 @@ const defaultKeySpec: MeasuredKeyRequirements = {
   wippenRadiusWeight: null,
 };
 
+const createDefaultMeasuresStoreValues = (
+  keyboardSize: number,
+): MeasuresStoreState => ({
+  keyWeightRatio: null,
+  keys: Array.from({ length: keyboardSize }, () => ({
+    ...defaultKeySpec,
+  })),
+  wippenRadiusWeight: null,
+});
+
 const createMeasuresStore = (keyboard: KeyboardRequirements) =>
   create<MeasuresStore>()(
     persist(
       (set) => ({
-        keyWeightRatio: null,
-        keys: Array.from({ length: keyboard.size }, () => ({
-          ...defaultKeySpec,
-        })),
+        ...createDefaultMeasuresStoreValues(keyboard.size),
+        reset: () => set(() => createDefaultMeasuresStoreValues(keyboard.size)),
         syncKeyboardSize: (targetSize: number) =>
           set((state) => {
             if (state.keys.length < targetSize) {
@@ -141,6 +150,7 @@ export const useGlobalMeasures = (): GlobalMeasures => {
 export const useMeasureActions = () => {
   return useMeasuresStore()(
     useShallow((state: MeasuresStore) => ({
+      reset: state.reset,
       updateGlobalMeasure: state.updateGlobalMeasure,
       updateKeyMeasure: state.updateKeyMeasure,
       updateKeyMeasures: state.updateKeyMeasures,

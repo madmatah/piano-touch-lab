@@ -47,6 +47,7 @@ interface VersionedDesignStoreState extends DesignStoreState {
 }
 
 interface DesignStoreActions {
+  reset: () => void;
   updateFrontWeightDesign: (
     mode: FrontWeightDesignMode | null,
     target: FrontWeightDesignTarget | null,
@@ -67,24 +68,33 @@ interface DesignStoreActions {
 
 export type DesignStore = VersionedDesignStoreState & DesignStoreActions;
 
+const defaultDesignStoreValues: DesignStoreState = {
+  frontWeightDesignComputedBalanceWeightTarget: 38,
+  frontWeightDesignMode: FrontWeightDesignMode.AsMeasured,
+  frontWeightDesignStandardTarget: 7,
+  frontWeightDesignTarget: null,
+  strikeWeightDesignComputedBalanceWeightTarget: 38,
+  strikeWeightDesignLatestSmoothTarget: SmoothStrategy.LeastSquaresRegression,
+  strikeWeightDesignLatestStandarTarget: StrikeWeightLevel.Level7,
+  strikeWeightDesignMode: StrikeWeightDesignMode.AsMeasured,
+  strikeWeightDesignTarget: null,
+  strikeWeightRatioDesignLatestFixedTarget: 5.5,
+  strikeWeightRatioDesignLatestSmoothTarget: SmoothStrategy.Median,
+  strikeWeightRatioDesignMode: StrikeWeightRatioDesignMode.AsMeasured,
+  strikeWeightRatioDesignTarget: null,
+  wippenSupportSpringsDesignLatestNumberOfSprings: 60,
+  wippenSupportSpringsDesignLatestSpringBalanceWeight: 9,
+  wippenSupportSpringsDesignLatestTensionDropIndex: 20,
+  wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode.None,
+  wippenSupportSpringsDesignTarget: null,
+};
+
 const createDesignStore = () =>
   create<DesignStore>()(
     persist(
       (set) => ({
-        frontWeightDesignComputedBalanceWeightTarget: 38,
-        frontWeightDesignMode: FrontWeightDesignMode.AsMeasured,
-        frontWeightDesignStandardTarget: 7,
-        frontWeightDesignTarget: null,
-        strikeWeightDesignComputedBalanceWeightTarget: 38,
-        strikeWeightDesignLatestSmoothTarget:
-          SmoothStrategy.LeastSquaresRegression,
-        strikeWeightDesignLatestStandarTarget: StrikeWeightLevel.Level7,
-        strikeWeightDesignMode: StrikeWeightDesignMode.AsMeasured,
-        strikeWeightDesignTarget: null,
-        strikeWeightRatioDesignLatestFixedTarget: 5.5,
-        strikeWeightRatioDesignLatestSmoothTarget: SmoothStrategy.Median,
-        strikeWeightRatioDesignMode: StrikeWeightRatioDesignMode.AsMeasured,
-        strikeWeightRatioDesignTarget: null,
+        ...defaultDesignStoreValues,
+        reset: () => set(() => defaultDesignStoreValues),
         updateFrontWeightDesign: (
           mode: FrontWeightDesignMode | null,
           target: FrontWeightDesignTarget | null,
@@ -297,6 +307,7 @@ export const useStrikeWeightRatioDesign = () => {
 export const useDesignActions = () => {
   return useDesignStore()(
     useShallow((state: DesignStore) => ({
+      reset: state.reset,
       updateFrontWeightDesign: state.updateFrontWeightDesign,
       updateStrikeWeightDesign: state.updateStrikeWeightDesign,
       updateStrikeWeightRatioDesign: state.updateStrikeWeightRatioDesign,

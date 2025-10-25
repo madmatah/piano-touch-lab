@@ -17,6 +17,7 @@ interface VersionedPianoProfileStoreState extends PianoProfileStoreState {
 }
 
 interface PianoStoreActions {
+  reset: () => void;
   updateSingleState: (
     property: keyof PianoProfileStoreState,
     value: string | null | number | Note,
@@ -27,16 +28,21 @@ interface PianoStoreActions {
 export type PianoProfileStore = VersionedPianoProfileStoreState &
   PianoStoreActions;
 
+const defaultPianoProfileStoreValues: PianoProfileStoreState = {
+  brand: null,
+  isDemoProfile: false,
+  keyCount: 88,
+  model: null,
+  serialNumber: null,
+  startNote: { letter: 'A', octave: 0 },
+};
+
 const createPianoProfileStore = () =>
   create<PianoProfileStore>()(
     persist(
       (set) => ({
-        brand: null,
-        isDemoProfile: false,
-        keyCount: 88,
-        model: null,
-        serialNumber: null,
-        startNote: { letter: 'A', octave: 0 },
+        ...defaultPianoProfileStoreValues,
+        reset: () => set(() => defaultPianoProfileStoreValues),
         updateSingleState: (property, value) =>
           set(() => ({
             [property]: value,
@@ -87,6 +93,7 @@ export const usePianoProfileState = () => {
 export const usePianoProfileActions = () => {
   return usePianoProfileStore()(
     useShallow((state: PianoProfileStore) => ({
+      reset: state.reset,
       updateSingleState: state.updateSingleState,
       updateState: state.updateState,
     })),
