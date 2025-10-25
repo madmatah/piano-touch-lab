@@ -16,6 +16,8 @@ export interface TouchDesignSerie {
   data: readonly TouchDesignDataPoint[];
   variant?: TouchDesignSerieVariant;
   color?: string;
+  shouldDisplayInTooltip?: boolean;
+  shouldDisplayInLegend?: boolean;
   sharpItemStyle?: EchartsDataItemStyle;
   flatItemStyle?: EchartsDataItemStyle;
 }

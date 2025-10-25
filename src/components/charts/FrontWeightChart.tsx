@@ -31,6 +31,7 @@ export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
           sharpItemStyle: {
             color: '#333',
           },
+          shouldDisplayInTooltip: true,
         },
       ),
     [generateSerie, t],
