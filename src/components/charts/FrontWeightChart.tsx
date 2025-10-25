@@ -25,7 +25,7 @@ export const FrontWeightChart = <T,>(props: FrontWeightChartProps<T>) => {
     () =>
       generateSerie(
         (key) => key.payload.frontWeight,
-        t('Front Weight'),
+        t('Measured Front Weight'),
         TouchDesignSerieVariant.Measured,
         {
           sharpItemStyle: {

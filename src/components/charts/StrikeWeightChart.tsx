@@ -25,7 +25,7 @@ export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
     () =>
       generateSerie(
         (key) => key.payload.strikeWeight,
-        t('Strike Weight'),
+        t('Measured Strike Weight'),
         TouchDesignSerieVariant.Measured,
         {
           sharpItemStyle: {
