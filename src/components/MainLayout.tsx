@@ -2,10 +2,12 @@ import React, { type ReactElement } from 'react';
 import { AppSidebar } from '@/components/navigation/AppSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppHeader } from './AppHeader';
+import { DemoProfileInformationCard } from './demo-profile-information/DemoProfileInformationCard';
 
 export interface MainLayoutProps {
   pageTitle?: string;
   pageIcon?: ReactElement<React.HTMLAttributes<HTMLElement>>;
+  shouldDisplayDemoCard?: boolean;
   children: React.ReactNode;
 }
 
@@ -13,6 +15,7 @@ export const MainLayout = ({
   pageTitle,
   pageIcon,
   children,
+  shouldDisplayDemoCard = true,
 }: MainLayoutProps) => {
   return (
     <SidebarProvider
@@ -25,6 +28,7 @@ export const MainLayout = ({
       <AppSidebar />
       <SidebarInset>
         <AppHeader title={pageTitle} icon={pageIcon} />
+        {shouldDisplayDemoCard ? <DemoProfileInformationCard /> : null}
         <div className="flex-1 w-full p-6">{children}</div>
       </SidebarInset>
     </SidebarProvider>

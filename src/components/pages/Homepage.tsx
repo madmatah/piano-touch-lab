@@ -7,7 +7,7 @@ export const Homepage = () => {
   useAutoloadDemoData();
 
   return (
-    <MainLayout>
+    <MainLayout shouldDisplayDemoCard={false}>
       <section className="py-10">
         <div className="container">
           <div className="flex flex-col gap-5">
