@@ -87,6 +87,8 @@ describe('The useGenerateSerie hook', () => {
           flatItemStyle: undefined,
           name: fakeName,
           sharpItemStyle: undefined,
+          shouldDisplayInLegend: true,
+          shouldDisplayInTooltip: true,
           variant: fakeVariant,
         });
       });
