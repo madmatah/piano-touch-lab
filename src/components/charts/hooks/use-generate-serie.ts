@@ -17,10 +17,14 @@ export const useGenerateSerie = <T>(keyboard: KeyboardLike<KeyWith<T>>) => {
       options?: {
         flatItemStyle?: EchartsDataItemStyle;
         sharpItemStyle?: EchartsDataItemStyle;
+        shouldDisplayInLegend?: boolean;
+        shouldDisplayInTooltip?: boolean;
       },
     ): TouchDesignSerie => {
       const flatItemStyle = options?.flatItemStyle;
       const sharpItemStyle = options?.sharpItemStyle;
+      const shouldDisplayInTooltip = options?.shouldDisplayInTooltip ?? true;
+      const shouldDisplayInLegend = options?.shouldDisplayInLegend ?? true;
 
       const data: readonly TouchDesignDataPoint[] = keyboard
         .map<number | undefined>((key) => valueSelector(key) ?? undefined)
@@ -31,6 +35,8 @@ export const useGenerateSerie = <T>(keyboard: KeyboardLike<KeyWith<T>>) => {
         flatItemStyle,
         name,
         sharpItemStyle,
+        shouldDisplayInLegend,
+        shouldDisplayInTooltip,
         variant,
       };
     },

@@ -103,6 +103,9 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
     name: serie.name,
     showSymbol: false,
     smooth: 0.3,
+    tooltip: {
+      show: serie.shouldDisplayInTooltip ?? true,
+    },
     type: 'line',
     ...getEchartSeriePropertiesByVariant(serie),
   }));
@@ -113,7 +116,9 @@ export const TouchDesignChart = (props: TouchDesignChartProps) => {
       left: 40,
     },
     legend: {
-      data: props.series.map((serie) => serie.name),
+      data: props.series
+        .filter((serie) => serie.shouldDisplayInLegend)
+        .map((serie) => serie.name),
     },
     series,
     title: {

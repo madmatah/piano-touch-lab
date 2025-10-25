@@ -23,6 +23,7 @@ export const useDefaultSerie = <T, Name extends string>(
           (key) => seriesMap[serieName]?.[key.number - 1] ?? null,
           `${serieName}`,
           variant,
+          { shouldDisplayInLegend: false, shouldDisplayInTooltip: false },
         );
       }),
     [generateSerie, seriesNames, seriesWithBoldVariant, seriesMap],
