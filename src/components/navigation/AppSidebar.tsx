@@ -19,6 +19,7 @@ import {
   ChartLine,
   ChevronRight,
   FileDown,
+  FilePlus,
   FileText,
   FileUp,
   FlaskConical,
@@ -41,6 +42,7 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { useMemo } from 'react';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
+import { useNewProfileDialog } from '@/contexts/new-profile-dialog-context';
 import type { MenuEntry, SubmenuItem } from './AppSidebar.types';
 
 export const AppSidebar = () => {
@@ -52,6 +54,7 @@ export const AppSidebar = () => {
   const { displayName, isDemoProfile } = usePianoProfileState();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+  const { openNewProfileDialog } = useNewProfileDialog();
 
   const isDesignCompleted = useMemo(() => {
     const requiredDataPercentage = 0.8;
@@ -153,6 +156,11 @@ export const AppSidebar = () => {
       icon: FileText,
       name: t('File', { ns: 'navigation' }),
       submenu: [
+        {
+          icon: FilePlus,
+          name: t('New Profile', { ns: 'navigation' }),
+          onClick: openNewProfileDialog,
+        },
         {
           icon: FileDown,
           name: t('Export', { ns: 'navigation' }),

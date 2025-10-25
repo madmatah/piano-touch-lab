@@ -8,6 +8,7 @@ export interface MeasureOptionsStoreState {
 }
 
 interface MeasureOptionsStoreActions {
+  reset: () => void;
   updateOption: (
     property: keyof MeasureOptionsStoreState,
     value: boolean,
@@ -18,18 +19,23 @@ interface MeasureOptionsStoreActions {
 export type MeasureOptionsStore = MeasureOptionsStoreState &
   MeasureOptionsStoreActions;
 
+const defaultMeasureOptionsStoreValues: MeasureOptionsStoreState = {
+  useManualSWRMeasurements: false,
+  useSupportSpringMeasurements: false,
+};
+
 const createMeasureOptionsStore = () =>
   create<MeasureOptionsStore>()(
     persist(
       (set) => ({
+        ...defaultMeasureOptionsStoreValues,
+        reset: () => set(() => defaultMeasureOptionsStoreValues),
         updateOption: (property, value) =>
           set(() => ({
             [property]: value,
           })),
         updateState: (newState: MeasureOptionsStoreState) =>
           set(() => newState),
-        useManualSWRMeasurements: false,
-        useSupportSpringMeasurements: false,
       }),
       {
         name: `ptl.measure-options`,
@@ -62,6 +68,7 @@ export const useMeasureOptions = () => {
 export const useMeasureOptionsActions = () => {
   return useMeasureOptionsStore()(
     useShallow((state: MeasureOptionsStore) => ({
+      reset: state.reset,
       updateOption: state.updateOption,
       updateState: state.updateState,
     })),

@@ -1,15 +1,17 @@
 import { Info } from 'lucide-react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
+import { useNewProfileDialog } from '@/contexts/new-profile-dialog-context';
 import { Trans } from 'react-i18next';
 import { useCallback } from 'react';
 
 export const DemoProfileInformationCard = () => {
   const { isDemoProfile } = usePianoProfileState();
+  const { openNewProfileDialog } = useNewProfileDialog();
 
   const onCreateNewProfile = useCallback(() => {
-    // FIXME: open the create new profile dialog
-  }, []);
+    openNewProfileDialog();
+  }, [openNewProfileDialog]);
 
   return isDemoProfile ? (
     <div className="max-w-5xl p-5 print:hidden">
