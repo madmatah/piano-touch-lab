@@ -2,7 +2,6 @@ import { useTranslation } from '@/hooks/use-translation';
 import { ChevronRight, Globe } from 'lucide-react';
 import {
   SidebarMenuAction,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
@@ -13,6 +12,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from '../ui/collapsible';
+import { AppSidebarMenuButton } from './AppSidebarMenuButton';
 
 export const SidebarLanguageSwitcher = () => {
   const { changeLanguage, currentLanguage, t } = useTranslation();
@@ -45,12 +45,12 @@ export const SidebarLanguageSwitcher = () => {
     <Collapsible>
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton asChild tooltip="Language">
+          <AppSidebarMenuButton>
             <a className="cursor-pointer">
               <Globe />
               <span>{t('Language', { ns: 'navigation' })}</span>
             </a>
-          </SidebarMenuButton>
+          </AppSidebarMenuButton>
         </CollapsibleTrigger>
         <>
           <CollapsibleTrigger asChild>

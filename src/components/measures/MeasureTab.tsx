@@ -6,7 +6,7 @@ export const MeasureTab = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="container p-6">
+    <section className="container">
       <div className="flex flex-col gap-5">
         <div className="relative flex flex-col gap-5">
           <h2 className="text-xl font-bold">{t('For each note')}</h2>

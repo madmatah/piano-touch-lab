@@ -108,7 +108,7 @@ export const WippenSupportSpringsDesign: React.FC<
 
   return (
     <div>
-      <div className="flex flex-col gap-1 items-center">
+      <div className="flex flex-col gap-1">
         <div className="w-full max-w-[1000px]">
           <TargetSelector
             title={t('Target selection')}

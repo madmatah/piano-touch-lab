@@ -14,8 +14,8 @@ export const DemoProfileInformationCard = () => {
   }, [openNewProfileDialog]);
 
   return isDemoProfile ? (
-    <div className="max-w-5xl p-5 print:hidden">
-      <Alert variant="info">
+    <div className="max-w-full p-0 pb-2 print:hidden">
+      <Alert variant="info" className="rounded-none border-none">
         <Info />
         <AlertDescription>
           <p>

@@ -151,14 +151,14 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   }, [frontWeightDesignMode, targetSerie]);
 
   return !hasEnoughInputData ? (
-    <Alert variant="default" className="w-full mx-auto my-10">
+    <Alert variant="default" className="w-full my-10">
       <AlertCircleIcon />
       <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
       <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
     </Alert>
   ) : (
     <div>
-      <div className="flex flex-col gap-1 items-center">
+      <div className="flex flex-col gap-1">
         <div className="w-full max-w-[1000px]">
           <TargetSelector
             title={t('Choose a target from the standard front weight curves.')}
@@ -171,7 +171,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
         </div>
         <div className="w-full 2xl:max-w-[--breakpoint-2xl] 3xl:max-w-[100rem]">
           {shouldDisplayComputeModeWaitingMessage ? (
-            <Alert variant="default" className="w-full mx-auto my-10">
+            <Alert variant="default" className="w-full my-10">
               <HourglassIcon />
               <AlertTitle>
                 {t('Waiting for remaining design targets to be specified.')}
