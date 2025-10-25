@@ -34,7 +34,7 @@ export const MeasureOptionsTab = () => {
   );
 
   return (
-    <section className="container p-6">
+    <section className="container">
       <div className="flex flex-col gap-5">
         <h2 className="text-xl font-bold">{t('Options')}</h2>
 

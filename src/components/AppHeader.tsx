@@ -50,7 +50,7 @@ export const AppHeader = ({ title, icon }: AppHeaderProps) => {
               <h1 className="text-base font-medium flex-1">
                 {t('Piano Touch Lab')}
               </h1>
-              <div className="text-sm text-muted-foreground align-end truncate overflow-hidden flex-1">
+              <div className="text-sm text-muted-foreground text-right truncate overflow-hidden flex-1">
                 {displayName || ''}
               </div>
             </div>
@@ -58,8 +58,8 @@ export const AppHeader = ({ title, icon }: AppHeaderProps) => {
         </div>
       ) : null}{' '}
       {title ? (
-        <header className="pt-8 print:hidden">
-          <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance flex items-center justify-center gap-2 mb-5">
+        <header className="py-2 px-6 pl-10 print:hidden">
+          <h1 className="scroll-m-20 text-center text-2xl xl:text-3xl font-semibold tracking-tight text-balance flex items-center gap-2 mb-2 xl:mb-2">
             {iconElement ?? null} {title}
           </h1>
         </header>

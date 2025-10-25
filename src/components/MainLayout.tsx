@@ -22,14 +22,15 @@ export const MainLayout = ({
       style={
         {
           '--header-height': 'calc(var(--spacing) * 12)',
+          '--sidebar-width': 'var(--ptl-sidebar-width)',
         } as React.CSSProperties
       }
     >
       <AppSidebar />
       <SidebarInset>
-        <AppHeader title={pageTitle} icon={pageIcon} />
         {shouldDisplayDemoCard ? <DemoProfileInformationCard /> : null}
-        <div className="flex-1 w-full p-6">{children}</div>
+        <AppHeader title={pageTitle} icon={pageIcon} />
+        <div className="flex-1 w-full p-6 pl-10">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

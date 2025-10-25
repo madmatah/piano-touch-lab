@@ -44,6 +44,7 @@ import { useMemo } from 'react';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
 import { useNewProfileDialog } from '@/contexts/new-profile-dialog-context';
 import type { MenuEntry, SubmenuItem } from './AppSidebar.types';
+import { AppSidebarMenuButton } from './AppSidebarMenuButton';
 
 export const AppSidebar = () => {
   const { exportBackupFile } = useExportBackupFile();
@@ -266,14 +267,14 @@ export const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 h-8 [&>svg]:size-4 xl:h-12 xl:[&>svg]:size-10"
             >
               <NavLink
                 className="flex items-center gap-1 group/sidebar-header"
                 to="/"
               >
-                <FlaskConical className="!size-5 group-hover/sidebar-header:text-primary group-hover/sidebar-header:animate-[spin_800ms_ease-in-out] transition duration-150" />
-                <span className="text-base font-semibold">
+                <FlaskConical className="!size-5 xl:!size-6 group-hover/sidebar-header:text-primary group-hover/sidebar-header:animate-[spin_800ms_ease-in-out] transition duration-150" />
+                <span className="text-base font-semibold xl:text-2xl">
                   {t('Piano Touch Lab')}
                 </span>
               </NavLink>
@@ -309,7 +310,7 @@ export const AppSidebar = () => {
                     >
                       <SidebarMenuItem>
                         {firstValidUrl ? (
-                          <SidebarMenuButton asChild isActive={isActive}>
+                          <AppSidebarMenuButton isActive={isActive}>
                             <NavLink
                               to={firstValidUrl}
                               className="cursor-pointer group/item"
@@ -323,10 +324,10 @@ export const AppSidebar = () => {
                               />
                               <span>{menuEntry.name}</span>
                             </NavLink>
-                          </SidebarMenuButton>
+                          </AppSidebarMenuButton>
                         ) : (
                           <CollapsibleTrigger asChild>
-                            <SidebarMenuButton asChild isActive={isActive}>
+                            <AppSidebarMenuButton isActive={isActive}>
                               <a className="cursor-pointer group/item">
                                 <menuEntry.icon
                                   className={
@@ -337,11 +338,11 @@ export const AppSidebar = () => {
                                 />
                                 <span>{menuEntry.name}</span>
                               </a>
-                            </SidebarMenuButton>
+                            </AppSidebarMenuButton>
                           </CollapsibleTrigger>
                         )}
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuAction className="data-[state=open]:rotate-90">
+                          <SidebarMenuAction className="data-[state=open]:rotate-90 peer-data-[size=default]/menu-button:top-1.5 xl:peer-data-[size=default]/menu-button:top-2.5">
                             <ChevronRight />
                             <span className="sr-only">
                               {t('Toggle', { ns: 'navigation' })}

@@ -1,6 +1,6 @@
 import React, { useMemo, type ReactElement } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
+import { SidebarMenuItem } from '../ui/sidebar';
 import { Badge } from '../ui/badge';
 import type { MenuItemBadge } from './AppSidebar.types';
 import {
@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '../ui/tooltip';
+import { AppSidebarMenuButton } from './AppSidebarMenuButton';
 
 export interface AppSidebarItemProps {
   destinationUrl: string;
@@ -66,13 +67,13 @@ export const AppSidebarItem: React.FC<AppSidebarItemProps> = (
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isActive}>
+      <AppSidebarMenuButton isActive={isActive}>
         <NavLink to={props.destinationUrl} className="group/item ">
           {icon ?? null}
           <span>{props.label}</span>
           {badgeElement}
         </NavLink>
-      </SidebarMenuButton>
+      </AppSidebarMenuButton>
     </SidebarMenuItem>
   );
 };

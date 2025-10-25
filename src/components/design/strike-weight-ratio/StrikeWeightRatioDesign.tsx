@@ -105,14 +105,14 @@ export const StrikeWeightRatioDesign: React.FC<
   ];
 
   return !hasEnoughData ? (
-    <Alert variant="default" className="w-full mx-auto my-10">
+    <Alert variant="default" className="w-full my-10">
       <AlertCircleIcon />
       <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
       <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
     </Alert>
   ) : (
     <div>
-      <div className="flex flex-col gap-1 items-center">
+      <div className="flex flex-col gap-1">
         <div className="w-full max-w-[1000px]">
           <TargetSelector
             title={t('Target selection')}
