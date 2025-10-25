@@ -25,7 +25,6 @@ import {
   Piano,
   Scale,
   Settings2,
-  type LucideIcon,
 } from 'lucide-react';
 import { AppSidebarItem } from './AppSidebarItem';
 import {
@@ -42,21 +41,7 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { useMemo } from 'react';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
-
-type SubmenuItem = {
-  icon?: LucideIcon;
-  name: string;
-  isHidden?: boolean;
-  isDisabled?: boolean;
-} & ({ url: string; onClick?: never } | { onClick: () => void; url?: never });
-
-type MenuEntry = {
-  icon: LucideIcon;
-  name: string;
-} & (
-  | { url: string; submenu?: never; shouldOpenFirstEntry?: never }
-  | { submenu: SubmenuItem[]; url?: never; shouldOpenFirstEntry?: boolean }
-);
+import type { MenuEntry, SubmenuItem } from './AppSidebar.types';
 
 export const AppSidebar = () => {
   const { exportBackupFile } = useExportBackupFile();
@@ -64,7 +49,7 @@ export const AppSidebar = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
-  const { displayName } = usePianoProfileState();
+  const { displayName, isDemoProfile } = usePianoProfileState();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
 
@@ -80,6 +65,16 @@ export const AppSidebar = () => {
 
   const menuEntries: MenuEntry[] = [
     {
+      badge: isDemoProfile
+        ? {
+            label: 'Demo',
+            tooltipContent: t(
+              'This is a sample piano profile to help you discover the application.',
+              { ns: 'navigation' },
+            ),
+            variant: 'outline',
+          }
+        : undefined,
       icon: Piano,
       name: displayName || t('Piano', { ns: 'navigation' }),
       url: '/piano',
@@ -221,7 +216,7 @@ export const AppSidebar = () => {
               <span
                 className={`${isActive ? 'font-semibold' : ''} ${isDisabled ? 'opacity-50' : ''}`}
               >
-                {item.name}
+                {item.name}{' '}
               </span>
             </NavLink>
           </SidebarMenuSubButton>
@@ -286,10 +281,11 @@ export const AppSidebar = () => {
                 if ('url' in menuEntry && menuEntry.url) {
                   return (
                     <AppSidebarItem
-                      key={`menu-item-${index}`}
+                      badge={menuEntry.badge}
                       destinationUrl={menuEntry.url}
-                      label={menuEntry.name}
                       icon={<menuEntry.icon />}
+                      key={`menu-item-${index}`}
+                      label={menuEntry.name}
                     />
                   );
                 } else if ('submenu' in menuEntry && menuEntry.submenu) {
