@@ -29,7 +29,7 @@ export const SupportSpringBalanceWeightChart = <T,>(
           useSupportSpringMeasurements
             ? key.payload.supportSpringBalanceWeight
             : null,
-        t('Support Spring Balance Weight'),
+        t('Measured Support Spring Balance Weight'),
         TouchDesignSerieVariant.Measured,
         {
           sharpItemStyle: {

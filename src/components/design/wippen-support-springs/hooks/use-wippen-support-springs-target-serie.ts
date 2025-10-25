@@ -9,6 +9,7 @@ import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useCallback, useMemo } from 'react';
 import { TouchDesignSerieVariant } from '@/components/charts/TouchDesignChart';
 import { generateSupportSpringBalanceWeightCurve } from '@/lib/piano/touch-design/generate-support-spring-balance-weight-curve';
+import { useTranslation } from '@/hooks/use-translation';
 
 export const useWippenSupportSpringsTargetSerie = (
   keyboard: TouchWeightAnalyzedKeyboard,
@@ -18,9 +19,10 @@ export const useWippenSupportSpringsTargetSerie = (
     target: WippenSupportSpringsDesignTarget,
   ) => TouchDesignSerie;
 } => {
+  const { t } = useTranslation();
   const { generateSerie } = useGenerateSerie(keyboard);
 
-  const name = 'Target';
+  const name = useMemo(() => t('Target'), [t]);
   const variant = TouchDesignSerieVariant.Target;
 
   const nullTargetSerie = useMemo(() => {
@@ -63,7 +65,7 @@ export const useWippenSupportSpringsTargetSerie = (
 
       return nullTargetSerie;
     },
-    [nullTargetSerie, generateSerie, variant],
+    [nullTargetSerie, generateSerie, name, variant],
   );
 
   return {

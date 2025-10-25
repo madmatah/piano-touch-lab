@@ -39,7 +39,7 @@ export const StrikeWeightRatioChart = <T,>(
     () =>
       generateSerie(
         (key) => key.payload.strikeWeightRatio,
-        t('Strike Weight Ratio'),
+        t('Computed Strike Weight Ratio'),
         TouchDesignSerieVariant.Measured,
         defaultSerieOptions,
       ),
