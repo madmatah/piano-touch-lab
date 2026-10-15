@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Trans } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,10 @@ import {
 } from '@/components/charts/interfaces';
 import { Button } from '@/components/ui/button';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
-import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-store';
+import {
+  useMeasureOptions,
+  useMeasureOptionsActions,
+} from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatGrams } from '@/lib/format/format-weight';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
@@ -28,7 +31,20 @@ export const AnalyzeWippenSupportSpringPage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { currentLanguage, t } = useTranslation();
   const { updateOption } = useMeasureOptionsActions();
+  const { useSupportSpringMeasurements } = useMeasureOptions();
   const navigate = useNavigate();
+
+  // With nothing measured, the chart gives way to a panel that explains the
+  // option and links to the design: the page then has nothing to print, and
+  // no need for a second link under it.
+  const hasReadings = useMemo(
+    () =>
+      useSupportSpringMeasurements &&
+      analyzedKeyboard
+        .getKeys()
+        .some((key) => key.payload.supportSpringBalanceWeight !== null),
+    [analyzedKeyboard, useSupportSpringMeasurements],
+  );
 
   // Switching the option on is only half the answer: the values are entered in
   // Measure, so take the reader there rather than leaving them on a page that
@@ -66,7 +82,7 @@ export const AnalyzeWippenSupportSpringPage = () => {
       headerRight={
         <>
           <PianoIdentity />
-          <PrintButton />
+          {hasReadings ? <PrintButton /> : null}
         </>
       }
     >
@@ -94,9 +110,11 @@ export const AnalyzeWippenSupportSpringPage = () => {
           </>
         }
       />
-      <AnalysisFooter
-        action={{ label: t('Design the springs'), to: DESIGN_PATH }}
-      />
+      {hasReadings ? (
+        <AnalysisFooter
+          action={{ label: t('Design the springs'), to: DESIGN_PATH }}
+        />
+      ) : null}
     </MainLayout>
   );
 };

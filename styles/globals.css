@@ -400,6 +400,24 @@
 @page {
   size: A4 portrait;
   margin: 14mm 15mm 12mm;
+
+  /*
+   * Which piano, when, and which page: the words come from <PrintMargins>,
+   * the look from here. Small and grey, in the margin the sheet keeps anyway.
+   */
+  @bottom-left {
+    color: #4f483f;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 7.5pt;
+    vertical-align: middle;
+  }
+
+  @bottom-right {
+    color: #4f483f;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 7.5pt;
+    vertical-align: middle;
+  }
 }
 
 /*
@@ -432,9 +450,14 @@
 }
 
 @media print {
-  /* The dark theme is already out of the way; this is the paper palette. */
+  /*
+   * The dark theme is already out of the way; this is the paper palette.
+   * `!important` because the theme is also written inline on <html>, before
+   * the first frame, and an inline dark scheme would otherwise win here and
+   * paint the margins of every sheet the browser's own dark grey.
+   */
   :root {
-    color-scheme: light;
+    color-scheme: light !important;
 
     --background: #ffffff;
     --card: #ffffff;
@@ -519,7 +542,8 @@
     gap: 1rem;
   }
 
-  [data-slot='page-content'] h1 {
+  /* The page titles over the figures; not the masthead of a printed sheet. */
+  [data-slot='page-content'] h1:not([data-slot='print-title']) {
     font-size: 24px;
   }
 

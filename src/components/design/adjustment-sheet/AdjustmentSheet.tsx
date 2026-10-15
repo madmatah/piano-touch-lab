@@ -1,6 +1,5 @@
 import { DesignPrintSummary } from '@/components/design/steps/DesignPrintSummary';
 import { PrintHeader } from '@/components/print/PrintHeader';
-import { PrintTableFooter } from '@/components/print/PrintTableFooter';
 import { useTranslation } from '@/hooks/use-translation';
 import {
   formatSignedWeightValue,
@@ -156,7 +155,6 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
                 />
               ))}
             </tbody>
-            <PrintTableFooter colSpan={summary.hasSprings ? 7 : 6} />
           </table>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 border-t border-border px-4 py-3.5 text-[13px] text-muted-foreground print:hidden">

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { DemoProfileBanner } from './layout/DemoProfileBanner';
 import { PageHeader } from './layout/PageHeader';
 import { PianoIdentity } from './layout/PianoIdentity';
+import { PrintMargins } from './print/PrintMargins';
 
 export interface MainLayoutProps {
   children: React.ReactNode;
@@ -42,6 +43,7 @@ export const MainLayout = ({
       }
     >
       <AppSidebar steps={steps} />
+      <PrintMargins />
       {/*
        * `min-w-0`: beside the sidebar, the page is a flex item, and a flex
        * item refuses by default to be narrower than the widest thing in it.

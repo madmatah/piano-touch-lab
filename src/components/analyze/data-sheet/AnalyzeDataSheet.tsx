@@ -3,8 +3,6 @@ import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
-import { PrintTableFooter } from '@/components/print/PrintTableFooter';
-
 import { AnalyzeDataSheetTableRow } from './AnalyzeDataSheetTableRow';
 
 /**
@@ -121,9 +119,6 @@ export const AnalyzeDataSheet: React.FC<{
               />
             ))}
           </tbody>
-          <PrintTableFooter
-            colSpan={2 + measuredColumns.length + computedColumns.length}
-          />
         </table>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { KeyReadingStrip } from '../analyze/key-reading/KeyReadingStrip';
+import { DesignPrintSummary } from './steps/DesignPrintSummary';
 import {
   readingMark,
   touchWeightReadingRows,
@@ -70,7 +71,7 @@ const ComparisonTile = ({
   unchangedLabel: string;
   value: string;
 }) => (
-  <div className="flex flex-[1_1_200px] flex-col gap-1.5 rounded-md border border-border bg-card px-[18px] py-4">
+  <div className="flex flex-[1_1_200px] flex-col gap-1.5 rounded-md border border-border bg-card px-[18px] py-4 print:gap-0.5 print:px-3 print:py-2">
     <span className="text-[13px] text-muted-foreground">{label}</span>
     <span className="flex items-baseline gap-2">
       {isUnchanged ? null : (
@@ -78,7 +79,9 @@ const ComparisonTile = ({
           {before}
         </span>
       )}
-      <span className="font-mono text-[22px] font-medium">{value}</span>
+      <span className="font-mono text-[22px] font-medium print:text-[15px]">
+        {value}
+      </span>
       {isUnchanged ? (
         <span className="text-[12.5px] text-ptl-ink-3">{unchangedLabel}</span>
       ) : null}
@@ -176,8 +179,14 @@ export const TouchWeightPreview = ({
 
   return (
     <div data-slot="page-wide" className="flex flex-col gap-4">
-      {/* The tiles are read, so they keep the measure the prose keeps. */}
-      <div className="flex max-w-[var(--ptl-text-measure)] flex-wrap gap-3">
+      {/* The four settings these weights come from, as every design sheet. */}
+      <DesignPrintSummary />
+      {/*
+       * The tiles are read, so they keep the measure the prose keeps. On
+       * paper they share the sheet with the design recap and the figure, so
+       * they go on one compact row.
+       */}
+      <div className="flex max-w-[var(--ptl-text-measure)] flex-wrap gap-3 print:max-w-none print:flex-nowrap print:gap-2">
         {tiles.map((tile) => (
           <ComparisonTile
             key={tile.label}
@@ -206,7 +215,7 @@ export const TouchWeightPreview = ({
             </span>
             <Link
               to="/design/adjustment-sheet"
-              className="inline-flex items-center gap-2 font-semibold text-ptl-brass transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-2 font-semibold text-ptl-brass transition-colors hover:text-foreground print:hidden"
             >
               {t('See the adjustment sheet')}
               <ArrowRight className="size-4" />
