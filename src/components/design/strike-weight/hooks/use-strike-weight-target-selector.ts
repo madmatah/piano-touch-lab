@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
-} from '../StrikeWeightDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-design';
 import {
   useDesignActions,
   useStrikeWeightDesign,

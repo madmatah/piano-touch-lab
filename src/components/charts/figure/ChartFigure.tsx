@@ -1,5 +1,5 @@
 import { MIN_PLOT_WIDTH, PLOT_INSET } from '../chart-geometry';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,7 @@ export interface ChartFigureProps {
   /** Legend and toggles, above a rule at its head. */
   header?: React.ReactNode;
   /** Geometry of the keyboard axis, used to place the hover band. */
-  geometry?: KeyboardGeometry;
+  geometry?: KeyboardPlacement;
   /** The key being read, marked by a brass band across the plot. */
   highlightedKey?: number | null;
   /** Names the plot for a reader who arrives on it with the keyboard. */
@@ -118,7 +118,7 @@ const HoverBand = ({
   geometry,
   keyNumber,
 }: {
-  geometry: KeyboardGeometry;
+  geometry: KeyboardPlacement;
   keyNumber: number;
 }) => {
   const placed = geometry.keysByNumber.get(keyNumber);

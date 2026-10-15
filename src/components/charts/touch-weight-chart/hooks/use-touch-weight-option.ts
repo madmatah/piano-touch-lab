@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import type { XYCoordinates } from '@/lib/geometry/coordinates';
 import type { KeyWith } from '@/lib/piano/keyboard';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import { CHART_HEIGHTS, PLOT_INSET } from '../../chart-geometry';
 import {
@@ -108,12 +108,12 @@ const isMeasured = (
   point.payload !== undefined && !Number.isNaN(point.payload);
 
 /** A reading sits above the balance rail slot of its own key. */
-const positionOf = (geometry: KeyboardGeometry, keyNumber: number): number =>
+const positionOf = (geometry: KeyboardPlacement, keyNumber: number): number =>
   geometry.keysByNumber.get(keyNumber)?.backCenter ?? 0;
 
 const pointsOf = (
   serie: TouchDesignSerie,
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
 ): XYCoordinates[] =>
   serie.data
     .filter(isMeasured)
@@ -149,7 +149,7 @@ const buildPanelAxis = (
 const buildScatterSerie = (
   serie: TouchDesignSerie,
   style: SerieStyle,
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
   tokens: ChartTokens,
 ): SeriesOption => ({
   data: pointsOf(serie, geometry),
@@ -169,7 +169,7 @@ const buildScatterSerie = (
 const buildRangeSerie = (
   down: TouchDesignSerie,
   up: TouchDesignSerie,
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
   tokens: ChartTokens,
 ): SeriesOption => {
   const upByKey = new Map(
@@ -228,7 +228,7 @@ const buildBaselineSerie = (
 /** The state the design is compared against, drawn hollow behind it. */
 const buildGhostSerie = (
   serie: TouchDesignSerie,
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
   tokens: ChartTokens,
 ): SeriesOption => ({
   data: pointsOf(serie, geometry),
@@ -252,7 +252,7 @@ export interface TouchWeightOptionInput {
   extraWeightHeight?: number;
   /** The reference bands behind the friction panel. */
   frictionZones: SeriesOption[];
-  geometry: KeyboardGeometry;
+  geometry: KeyboardPlacement;
   /** The piano as it stands, drawn hollow behind the designed readings. */
   ghostSerie?: TouchDesignSerie | null;
   locale: string;

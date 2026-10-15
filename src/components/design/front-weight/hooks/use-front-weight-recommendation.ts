@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import {
   FrontWeightDesignMode,
   type FrontWeightDesignTarget,
-} from '../FrontWeightDesign.types';
+} from '@/lib/piano/touch-design/design/front-weight-design';
 
 export const useFrontWeightRecommendation = (
   frontWeightDesignMode: FrontWeightDesignMode | null,

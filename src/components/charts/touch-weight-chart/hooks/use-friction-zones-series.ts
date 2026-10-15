@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import type { XYCoordinates } from '@/lib/geometry/coordinates';
 import type { Polygon } from '@/lib/geometry/polygon/polygon';
 import type { Key } from '@/lib/piano/keyboard';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 import {
   getKeyFrictionThresholds,
   type FrictionZone,
@@ -28,7 +28,7 @@ export type FrictionZoneLabels = Record<FrictionZoneKind, string>;
 export interface FrictionZonesInput {
   /** Index of the grid the friction panel is drawn in. */
   axisIndex: number;
-  geometry: KeyboardGeometry;
+  geometry: KeyboardPlacement;
   keys: readonly Key[];
   labels: FrictionZoneLabels;
   tokens: ChartTokens;

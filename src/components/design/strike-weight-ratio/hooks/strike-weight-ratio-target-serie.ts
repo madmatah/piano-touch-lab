@@ -6,7 +6,7 @@ import { TouchDesignSerieVariant } from '@/components/charts/KeyboardChart';
 import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignTarget,
-} from '../StrikeWeightRatioDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-ratio-design';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { useSmoothedSerieAverage } from '@/components/charts/hooks/use-smoothed-serie-average';
 import { useTranslation } from '@/hooks/use-translation';

@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 
 import { useTranslation } from '@/hooks/use-translation';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import {
   buildGrid,
@@ -29,7 +29,7 @@ export enum TouchDesignSerieVariant {
 }
 
 export interface KeyboardChartProps {
-  geometry: KeyboardGeometry;
+  geometry: KeyboardPlacement;
   /** Plot height in pixels, excluding the keyboard underneath. */
   height: number;
   /** Called with the chart instance, to follow the pointer. */

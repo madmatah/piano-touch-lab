@@ -1,12 +1,17 @@
+import type { KeyWith } from '@/lib/piano/keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import { useCallback } from 'react';
-import type { TouchDesignSerie } from '@/components/charts/interfaces';
+
+/** A target, key by key: only its values matter to the design. */
+interface KeyedTarget {
+  data: readonly KeyWith<number | undefined>[];
+}
 
 interface GenerateDesignedKeyboardFromSeriesProps {
-  frontWeightTargetSerie: TouchDesignSerie;
-  strikeWeightTargetSerie: TouchDesignSerie;
-  strikeWeightRatioTargetSerie: TouchDesignSerie;
-  supportSpringBalanceWeightTargetSerie: TouchDesignSerie;
+  frontWeightTargetSerie: KeyedTarget;
+  strikeWeightTargetSerie: KeyedTarget;
+  strikeWeightRatioTargetSerie: KeyedTarget;
+  supportSpringBalanceWeightTargetSerie: KeyedTarget;
 }
 
 export const useGenerateDesignedKeyboardFromSeries = (

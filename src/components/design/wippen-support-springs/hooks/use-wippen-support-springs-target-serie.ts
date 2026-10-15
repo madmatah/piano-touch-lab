@@ -2,7 +2,7 @@ import {
   WippenSupportSpringsDesignMode,
   type WippenSupportSpringsDesignTarget,
   type WippenTensionDesign,
-} from '../WippenSupportSpringsDesign.types';
+} from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';

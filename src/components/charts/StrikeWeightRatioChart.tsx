@@ -4,7 +4,7 @@ import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-key
 import { useTranslation } from '@/hooks/use-translation';
 import { formatRatio } from '@/lib/format/format-weight';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
@@ -116,7 +116,7 @@ const ChartReferenceOverlay = ({
   scale,
   stems,
 }: {
-  geometry: KeyboardGeometry;
+  geometry: KeyboardPlacement;
   median: number | null;
   medianLabel: string;
   scale: AxisScale;

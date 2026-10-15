@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignTarget,
-} from '../StrikeWeightRatioDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-ratio-design';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 
 export const useStrikeWeightRatioRecommendation = (

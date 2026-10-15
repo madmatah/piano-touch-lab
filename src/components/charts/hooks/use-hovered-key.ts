@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   findKeyAtBackPosition,
-  type KeyboardGeometry,
+  type KeyboardPlacement,
 } from '@/lib/piano/keyboard/keyboard-geometry';
 
 export interface HoveredKeyApi {
@@ -27,7 +27,7 @@ export interface HoveredKeyApi {
  * or from the arrow keys.
  */
 export const useHoveredKey = (
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
   keyCount: number,
   gridCount = 1,
 ): HoveredKeyApi => {

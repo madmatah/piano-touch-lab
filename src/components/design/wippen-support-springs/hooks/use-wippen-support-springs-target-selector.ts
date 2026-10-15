@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import {
   WippenSupportSpringsDesignMode,
   type WippenSupportSpringsDesignTarget,
-} from '../WippenSupportSpringsDesign.types';
+} from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 import {
   useDesignActions,
   useWippenSupportSpringsDesign,

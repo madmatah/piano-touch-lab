@@ -4,20 +4,20 @@ import { useShallow } from 'zustand/shallow';
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
-} from '@/components/design/strike-weight/StrikeWeightDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-design';
 import {
   FrontWeightDesignMode,
   type FrontWeightDesignTarget,
-} from '@/components/design/front-weight/FrontWeightDesign.types';
+} from '@/lib/piano/touch-design/design/front-weight-design';
 import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignTarget,
-} from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-ratio-design';
 import {
   WippenSupportSpringsDesignMode,
   type WippenSupportSpringsDesignTarget,
   type WippenTensionDesign,
-} from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign.types';
+} from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 

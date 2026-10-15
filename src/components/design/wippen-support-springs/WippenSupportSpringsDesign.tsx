@@ -9,9 +9,9 @@ import { useWippenSupportSpringsRecommendation } from './hooks/use-wippen-suppor
 import { useTranslation } from '@/hooks/use-translation';
 import {
   WippenSupportSpringsDesignMode,
-  type WippenSupportSpringsDesignProps,
   type WippenSupportSpringsDesignTarget,
-} from './WippenSupportSpringsDesign.types';
+} from '@/lib/piano/touch-design/design/wippen-support-springs-design';
+import { type WippenSupportSpringsDesignProps } from './WippenSupportSpringsDesign.types';
 import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpringBalanceWeightChart';
 import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';

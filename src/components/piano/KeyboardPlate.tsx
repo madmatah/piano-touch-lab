@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardDrawing } from './keyboard-drawing';
 
 /**
  * How a single key is painted: plain, tinted brass (a key already measured,
@@ -11,7 +11,7 @@ export type PianoKeyTone = 'plain' | 'marked' | 'current';
 export interface KeyboardPlateProps {
   /** Drawn over the keys, in the same coordinates. */
   children?: React.ReactNode;
-  geometry: KeyboardGeometry;
+  geometry: KeyboardDrawing;
   /** The key being read right now, painted brass wherever it sits. */
   highlightedKey?: number | null;
   toneByKeyNumber?: ReadonlyMap<number, PianoKeyTone>;
@@ -21,7 +21,7 @@ export interface KeyboardPlateProps {
 export const KEYBED_OVERHANG = 4;
 
 /** How tall the plate is drawn, keybed included, in the units of its geometry. */
-export const keybedHeight = (geometry: KeyboardGeometry): number =>
+export const keybedHeight = (geometry: KeyboardDrawing): number =>
   geometry.height + KEYBED_OVERHANG;
 
 const joinPaths = (paths: string[]) => paths.join('');

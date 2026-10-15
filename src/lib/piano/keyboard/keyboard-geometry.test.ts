@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
 
 import {
-  computeKeyboardGeometry,
+  computeKeyboardPlacement,
   findKeyAtBackPosition,
   findKeyAtPosition,
   isOctaveStart,
-  type KeyboardGeometry,
+  type KeyboardPlacement,
 } from './keyboard-geometry';
 import { KeyboardFactory } from './keyboard-factory';
 import { Standard88Layout } from './layout/standard-88-layout';
@@ -13,13 +13,14 @@ import { KeyColor } from './key-color.enum';
 
 const KEYS = KeyboardFactory.fromLayout(Standard88Layout).getKeys();
 const PROBED_KEYS = [1, 2, 44, 87, 88];
+const WHITE_KEY_WIDTH = 20;
 
-describe('The computeKeyboardGeometry() function', () => {
-  let result: KeyboardGeometry;
+describe('The computeKeyboardPlacement() function', () => {
+  let result: KeyboardPlacement;
 
   describe('When laying out a standard 88-key keyboard', () => {
     beforeEach(() => {
-      result = computeKeyboardGeometry(KEYS);
+      result = computeKeyboardPlacement(KEYS, WHITE_KEY_WIDTH);
     });
 
     it('should place every key', () => {
@@ -48,16 +49,11 @@ describe('The computeKeyboardGeometry() function', () => {
       const centers = result.whiteKeys.map((key) => key.center);
       expect(centers).toEqual([...centers].sort((a, b) => a - b));
     });
-
-    it('should leave room for the felt above the keys', () => {
-      expect(result.height).toBe(104 + 4);
-      expect(result.whiteKeys[0]?.path.startsWith('M0.6 4')).toBe(true);
-    });
   });
 
   describe('When placing the keys at the balance rail', () => {
     beforeEach(() => {
-      result = computeKeyboardGeometry(KEYS);
+      result = computeKeyboardPlacement(KEYS, WHITE_KEY_WIDTH);
     });
 
     it('should give every key the same slot', () => {
@@ -101,37 +97,9 @@ describe('The computeKeyboardGeometry() function', () => {
     });
   });
 
-  describe('When the key sticks are not asked for', () => {
-    beforeEach(() => {
-      result = computeKeyboardGeometry(KEYS);
-    });
-
-    it('should leave them out', () => {
-      expect(result.leverHeight).toBe(0);
-      expect(result.keysByNumber.get(1)?.leverPath).toBe('');
-    });
-  });
-
-  describe('When the key sticks are asked for', () => {
-    beforeEach(() => {
-      result = computeKeyboardGeometry(KEYS, { leverHeight: 46 });
-    });
-
-    it('should push the keys down under them', () => {
-      expect(result.height).toBe(46 + 4 + 104);
-      expect(result.whiteKeys[0]?.path.startsWith('M0.6 50')).toBe(true);
-    });
-
-    it('should draw one behind every key', () => {
-      for (const key of result.keysByNumber.values()) {
-        expect(key.leverPath).not.toBe('');
-      }
-    });
-  });
-
   describe('When given a custom white key width', () => {
     beforeEach(() => {
-      result = computeKeyboardGeometry(KEYS, { whiteKeyWidth: 10 });
+      result = computeKeyboardPlacement(KEYS, 10);
     });
 
     it('should scale the layout', () => {
@@ -142,10 +110,13 @@ describe('The computeKeyboardGeometry() function', () => {
 
   describe('When given a keyboard that starts on a black key', () => {
     beforeEach(() => {
-      result = computeKeyboardGeometry([
-        { color: KeyColor.Black, name: 'A#0', number: 1, octave: 0 },
-        { color: KeyColor.White, name: 'B0', number: 2, octave: 0 },
-      ]);
+      result = computeKeyboardPlacement(
+        [
+          { color: KeyColor.Black, name: 'A#0', number: 1, octave: 0 },
+          { color: KeyColor.White, name: 'B0', number: 2, octave: 0 },
+        ],
+        WHITE_KEY_WIDTH,
+      );
     });
 
     it('should keep the black key at the left edge', () => {
@@ -156,7 +127,7 @@ describe('The computeKeyboardGeometry() function', () => {
 });
 
 describe('The findKeyAtBackPosition() function', () => {
-  const geometry = computeKeyboardGeometry(KEYS);
+  const geometry = computeKeyboardPlacement(KEYS, WHITE_KEY_WIDTH);
   let result: (number | null)[];
 
   describe('When the position is over the slots of the balance rail', () => {
@@ -176,7 +147,7 @@ describe('The findKeyAtBackPosition() function', () => {
 });
 
 describe('The findKeyAtPosition() function', () => {
-  const geometry = computeKeyboardGeometry(KEYS);
+  const geometry = computeKeyboardPlacement(KEYS, WHITE_KEY_WIDTH);
   let result: (number | null)[];
 
   describe('When the position is over the keys', () => {

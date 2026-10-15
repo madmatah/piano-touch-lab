@@ -1,7 +1,7 @@
 import type { XAXisComponentOption, YAXisComponentOption } from 'echarts';
 
 import { formatAxisValue } from '@/lib/format/format-weight';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import { PLOT_INSET } from '../chart-geometry';
 import type { ChartTokens } from '../chart-tokens';
@@ -167,7 +167,7 @@ export const buildValueAxis = (
  * covers exactly the same range.
  */
 export const buildKeyAxis = (
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
 ): XAXisComponentOption => ({
   axisLabel: { show: false },
   axisLine: { show: false },

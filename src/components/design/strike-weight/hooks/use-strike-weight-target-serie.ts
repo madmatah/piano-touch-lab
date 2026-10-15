@@ -2,7 +2,7 @@ import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level'
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
-} from '../StrikeWeightDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-design';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import {
   StrikeWeightDesignMode,
   type StrikeWeightDesignTarget,
-} from '../StrikeWeightDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-design';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 
 export const useStrikeWeightRecommendation = (

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
 import type { CustomSeriesOption } from 'echarts';
 
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import type { ChartTokens } from '../chart-tokens';
 import type { KeyRangeNote } from '../interfaces';
@@ -12,7 +12,7 @@ const GEOMETRY = {
   keysByNumber: new Map(
     [1, 2, 3, 4].map((number) => [number, { backCenter: number - 0.5 }]),
   ),
-} as unknown as KeyboardGeometry;
+} as unknown as KeyboardPlacement;
 
 const SCALE: AxisScale = { interval: 2, max: 10, min: 0 };
 

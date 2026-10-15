@@ -1,7 +1,7 @@
 import {
   type WippenSupportSpringsDesignTarget,
   type WippenTensionDesign,
-} from '../WippenSupportSpringsDesign.types';
+} from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 import { useTranslation } from '@/hooks/use-translation';
 import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { formatWeightValue } from '@/lib/format/format-weight';
