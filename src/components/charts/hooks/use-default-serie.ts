@@ -2,7 +2,7 @@ import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import { useGenerateSerie } from './use-generate-serie';
 import { useMemo } from 'react';
 import type { TouchDesignSerie } from '../interfaces';
-import { TouchDesignSerieVariant } from '../TouchDesignChart';
+import { TouchDesignSerieVariant } from '../KeyboardChart';
 
 export const useDefaultSerie = <T, Name extends string>(
   keyboard: KeyboardLike<KeyWith<T>>,

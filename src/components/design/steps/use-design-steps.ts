@@ -30,7 +30,10 @@ export interface DesignStep {
   /** Result tiles stay closed until the design resolves. */
   isAvailable: boolean;
   kind: 'parameter' | 'result';
+  /** The tile's caption, numbered: "1 · Front Weight". */
   label: string;
+  /** The same step without its number, for a printed recap. */
+  name: string;
   to: string;
   /** Where the parameter stands right now: "Computed · BW 39 g". */
   value: string;
@@ -150,6 +153,7 @@ export const useDesignSteps = (): DesignStep[] => {
         isAvailable: true,
         kind: 'parameter' as const,
         label: `1 · ${t('Wippen Support Springs', { ns: 'navigation' })}`,
+        name: t('Wippen Support Springs', { ns: 'navigation' }),
         to: '/design/wippen-support-springs',
         value: springsValue(),
       },
@@ -158,6 +162,7 @@ export const useDesignSteps = (): DesignStep[] => {
         isAvailable: true,
         kind: 'parameter' as const,
         label: `2 · ${t('Front Weight', { ns: 'navigation' })}`,
+        name: t('Front Weight', { ns: 'navigation' }),
         to: '/design/front-weight',
         value: frontWeightValue(),
       },
@@ -166,6 +171,7 @@ export const useDesignSteps = (): DesignStep[] => {
         isAvailable: true,
         kind: 'parameter' as const,
         label: `3 · ${t('Strike Weight', { ns: 'navigation' })}`,
+        name: t('Strike Weight', { ns: 'navigation' }),
         to: '/design/strike-weight',
         value: strikeWeightValue(),
       },
@@ -174,6 +180,7 @@ export const useDesignSteps = (): DesignStep[] => {
         isAvailable: true,
         kind: 'parameter' as const,
         label: `4 · ${t('Strike Weight Ratio', { ns: 'navigation' })}`,
+        name: t('Strike Weight Ratio', { ns: 'navigation' }),
         to: '/design/strike-weight-ratio',
         value: ratioValue(),
       },
@@ -182,6 +189,7 @@ export const useDesignSteps = (): DesignStep[] => {
         isAvailable: isResolved,
         kind: 'result' as const,
         label: `→ ${t('Touch Weight Preview', { ns: 'navigation' })}`,
+        name: t('Touch Weight Preview', { ns: 'navigation' }),
         to: '/design/touch-weight-preview',
         value: t('BW {{weight}}', {
           weight: formatGrams(average(designedBalanceWeights), currentLanguage),
@@ -192,6 +200,7 @@ export const useDesignSteps = (): DesignStep[] => {
         isAvailable: isResolved,
         kind: 'result' as const,
         label: `→ ${t('Adjustment Sheet', { ns: 'navigation' })}`,
+        name: t('Adjustment Sheet', { ns: 'navigation' }),
         to: '/design/adjustment-sheet',
         value: t('{{count}} keys', {
           count: designedCount,

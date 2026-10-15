@@ -57,5 +57,7 @@ export const AdjustmentSheetTableRow: React.FC<
     <td className={`${cellClassName} text-center`}>
       <span className="inline-block size-[18px] rounded-[3px] border-[1.5px] border-input align-middle" />
     </td>
+    {/* Room to write on the printed sheet; nothing to show on screen. */}
+    <td className={`${cellClassName} ptl-print-only border-l`} />
   </tr>
 );

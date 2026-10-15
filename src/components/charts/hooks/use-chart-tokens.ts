@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 /**
  * The design tokens a chart needs in JavaScript.
@@ -71,20 +72,37 @@ const readTokens = (): ChartTokens => {
   ) as ChartTokens;
 };
 
+const isSameTokens = (left: ChartTokens, right: ChartTokens): boolean =>
+  (Object.keys(left) as (keyof ChartTokens)[]).every(
+    (name) => left[name] === right[name],
+  );
+
 /**
- * Follows the theme.
+ * Follows the theme, and the printer.
  *
  * Both the class next-themes writes and the system preference are watched: the
  * second matters while the theme is still "system", when switching the
  * operating system to dark changes no class on the page.
+ *
+ * Printing is the third: the print stylesheet repaints the page but not a
+ * canvas, so the tokens are read again, synchronously, the moment the print
+ * media takes effect — otherwise a dark figure lands on a white sheet.
  */
 export const useChartTokens = (): ChartTokens => {
   const [tokens, setTokens] = useState(readTokens);
 
   useEffect(() => {
-    const refresh = () => setTokens(readTokens());
+    const refresh = () =>
+      setTokens((current) => {
+        const next = readTokens();
+        return isSameTokens(current, next) ? current : next;
+      });
     // The first render can happen before the theme class is applied.
     refresh();
+
+    // The browser does not wait for React between the media change and the
+    // printed rendering, hence the synchronous flush.
+    const refreshNow = () => flushSync(refresh);
 
     const observer = new MutationObserver(refresh);
     observer.observe(document.documentElement, {
@@ -92,12 +110,20 @@ export const useChartTokens = (): ChartTokens => {
       attributes: true,
     });
 
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    media.addEventListener('change', refresh);
+    const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+    scheme.addEventListener('change', refresh);
+
+    const print = window.matchMedia('print');
+    print.addEventListener('change', refreshNow);
+    window.addEventListener('beforeprint', refreshNow);
+    window.addEventListener('afterprint', refreshNow);
 
     return () => {
       observer.disconnect();
-      media.removeEventListener('change', refresh);
+      scheme.removeEventListener('change', refresh);
+      print.removeEventListener('change', refreshNow);
+      window.removeEventListener('beforeprint', refreshNow);
+      window.removeEventListener('afterprint', refreshNow);
     };
   }, []);
 

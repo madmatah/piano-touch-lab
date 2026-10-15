@@ -39,7 +39,7 @@ export const KeyReadingCard = ({
     <section
       aria-live="polite"
       className={cn(
-        'rounded-md border border-ptl-reading-border bg-ptl-reading px-5 pt-[18px] text-ptl-reading-foreground',
+        'rounded-md border border-ptl-reading-border bg-ptl-reading px-5 pt-[18px] text-ptl-reading-foreground print:hidden',
         footnote ? 'pb-3.5' : 'pb-2',
       )}
     >

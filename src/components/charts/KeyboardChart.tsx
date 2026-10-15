@@ -156,7 +156,6 @@ export const KeyboardChart = ({
     <ReactECharts
       option={option}
       notMerge
-      lazyUpdate
       onChartReady={onChartReady}
       style={{ height: height + 20, width: '100%' }}
     />

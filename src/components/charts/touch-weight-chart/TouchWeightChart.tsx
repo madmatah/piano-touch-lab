@@ -192,7 +192,6 @@ export const TouchWeightChart = ({
       <ReactECharts
         option={option}
         notMerge
-        lazyUpdate
         onChartReady={hover.bindChart}
         style={{ height: TOUCH_WEIGHT_PLOT_HEIGHT, width: '100%' }}
       />
