@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 
 import {
-  A4_LANDSCAPE,
-  A4_PORTRAIT,
+  LANDSCAPE_SHEET,
+  PORTRAIT_SHEET,
   filledPlotHeight,
   printablePlotHeight,
   printablePlotWidth,
@@ -118,20 +118,20 @@ describe('The printablePlotWidth() function', () => {
     restore();
   });
 
-  describe('When the page declares an A4 landscape sheet, with 14 mm side margins', () => {
+  describe('When the page declares a landscape sheet, with 14 mm side margins', () => {
     beforeEach(() => {
-      restore = setPrintSheet(A4_LANDSCAPE);
+      restore = setPrintSheet(LANDSCAPE_SHEET);
       result = [printablePlotWidth(0), printablePlotWidth(26)];
     });
 
-    it('should size the plot in pixels at 96 dpi, the frame taken off', () => {
-      expect(result).toEqual([1017, 991]);
+    it('should size the plot for the narrower of A4 and Letter, at 96 dpi, the frame taken off', () => {
+      expect(result).toEqual([950, 924]);
     });
   });
 
-  describe('When the page declares an A4 portrait sheet, with 15 mm side margins', () => {
+  describe('When the page declares a portrait sheet, with 15 mm side margins', () => {
     beforeEach(() => {
-      restore = setPrintSheet(A4_PORTRAIT);
+      restore = setPrintSheet(PORTRAIT_SHEET);
       result = [printablePlotWidth(0)];
     });
 
@@ -149,13 +149,13 @@ describe('The printablePlotHeight() function', () => {
     restore();
   });
 
-  describe('When the page declares an A4 landscape sheet, with 12 mm margins top and bottom', () => {
+  describe('When the page declares a landscape sheet, with 12 mm margins top and bottom', () => {
     beforeEach(() => {
-      restore = setPrintSheet(A4_LANDSCAPE);
+      restore = setPrintSheet(LANDSCAPE_SHEET);
       result = printablePlotHeight(166);
     });
 
-    it('should give the plot what the page leaves of 703 pixels', () => {
+    it('should give the plot what the page leaves of the 703 pixels the lower of A4 and Letter has', () => {
       expect(result).toBe(537);
     });
   });
@@ -168,7 +168,7 @@ describe('The setPrintSheet() function', () => {
   describe('When the page that declared a sheet goes', () => {
     beforeEach(() => {
       before = printablePlotWidth(0);
-      setPrintSheet(A4_LANDSCAPE)();
+      setPrintSheet(LANDSCAPE_SHEET)();
       result = printablePlotWidth(0);
     });
 
@@ -245,15 +245,15 @@ describe('The rememberPrintedSheetWidth() function', () => {
 
   afterEach(() => {
     restore();
-    restore = setPrintSheet(A4_LANDSCAPE);
-    laidOutOn(1017);
+    restore = setPrintSheet(LANDSCAPE_SHEET);
+    laidOutOn(950);
     restore();
     backOnScreen();
   });
 
   describe('When the print dialog laid the page out wider than the sheet it asked for', () => {
     beforeEach(() => {
-      restore = setPrintSheet(A4_LANDSCAPE);
+      restore = setPrintSheet(LANDSCAPE_SHEET);
       laidOutOn(1271);
       result = printablePlotWidth(26);
     });
@@ -265,10 +265,10 @@ describe('The rememberPrintedSheetWidth() function', () => {
 
   describe('When the next page asks for the same sheet', () => {
     beforeEach(() => {
-      const first = setPrintSheet(A4_LANDSCAPE);
+      const first = setPrintSheet(LANDSCAPE_SHEET);
       laidOutOn(1271);
       first();
-      restore = setPrintSheet(A4_LANDSCAPE);
+      restore = setPrintSheet(LANDSCAPE_SHEET);
       result = printablePlotWidth(26);
     });
 
@@ -279,10 +279,10 @@ describe('The rememberPrintedSheetWidth() function', () => {
 
   describe('When the next page asks for another sheet', () => {
     beforeEach(() => {
-      const landscape = setPrintSheet(A4_LANDSCAPE);
+      const landscape = setPrintSheet(LANDSCAPE_SHEET);
       laidOutOn(1271);
       landscape();
-      restore = setPrintSheet(A4_PORTRAIT);
+      restore = setPrintSheet(PORTRAIT_SHEET);
       result = printablePlotWidth(0);
     });
 

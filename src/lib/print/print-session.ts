@@ -2,7 +2,7 @@ const MM_PER_INCH = 25.4;
 const CSS_PX_PER_INCH = 96;
 
 export interface PrintSheet {
-  /** What `@page` is told: `A4 landscape`. */
+  /** What `@page` is told: `landscape`, never a paper. */
   size: string;
   /** What `@page` is told: `12mm 14mm`. */
   margin: string;
@@ -12,20 +12,35 @@ export interface PrintSheet {
   contentHeight: number;
 }
 
+/**
+ * The paper is the reader's: a page asks for an orientation only, and the
+ * printer keeps whatever paper it is loaded with — A4 in most of the world, US
+ * Letter in North America. A page that named A4 had its sheet shrunk or
+ * cropped on Letter.
+ *
+ * Until the figure can be measured against the sheet it got, it is sized for
+ * the smaller of the two papers, side by side, in millimetres: a first size
+ * too small grows into the sheet, where one too large is broken across two.
+ */
+const SMALLEST_PAPER = {
+  long: Math.min(297, 279.4),
+  short: Math.min(210, 215.9),
+};
+
 /** The sheet a page prints on when it asks for nothing else. */
-export const A4_PORTRAIT: PrintSheet = {
-  contentHeight: 297 - 14 - 12,
-  contentWidth: 210 - 15 * 2,
+export const PORTRAIT_SHEET: PrintSheet = {
+  contentHeight: SMALLEST_PAPER.long - 14 - 12,
+  contentWidth: SMALLEST_PAPER.short - 15 * 2,
   margin: '14mm 15mm 12mm',
-  size: 'A4 portrait',
+  size: 'portrait',
 };
 
 /** Turned over, for a figure of eighty-eight keys. */
-export const A4_LANDSCAPE: PrintSheet = {
-  contentHeight: 210 - 12 * 2,
-  contentWidth: 297 - 14 * 2,
+export const LANDSCAPE_SHEET: PrintSheet = {
+  contentHeight: SMALLEST_PAPER.short - 12 * 2,
+  contentWidth: SMALLEST_PAPER.long - 14 * 2,
   margin: '12mm 14mm',
-  size: 'A4 landscape',
+  size: 'landscape',
 };
 
 const toPixels = (mm: number): number =>
@@ -45,7 +60,7 @@ type Step = (phase: PrintPhase) => void;
 
 const steps = new Set<Step>();
 let isWired = false;
-let sheet: PrintSheet = A4_PORTRAIT;
+let sheet: PrintSheet = PORTRAIT_SHEET;
 
 const wire = (): void => {
   if (isWired || typeof window === 'undefined') {

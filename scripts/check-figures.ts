@@ -73,19 +73,27 @@ const PAGES = [
   '/design/touch-weight-preview',
 ];
 
+/** The two papers in use, in inches, as the print dialog hands them over. */
+const A4 = { paperHeight: 297 / 25.4, paperWidth: 210 / 25.4 };
+const LETTER = { paperHeight: 11, paperWidth: 8.5 };
+
 /**
  * The sheets a figure has to come out right on.
  *
- * The second is the reader's: the margins and the paper of the print dialog
- * override what the stylesheet asks for, and a figure sized for the sheet the
- * stylesheet had in mind then leaves a band of white beside it.
+ * The stylesheet asks for an orientation and margins, never a paper: the
+ * printer keeps its own, A4 or US Letter. The last sheet is the reader's
+ * margins: those of the print dialog override what the stylesheet asks for,
+ * and a figure sized for the sheet the stylesheet had in mind then leaves a
+ * band of white beside it.
  */
-const STYLESHEET_SHEET = {
-  margin: null,
-  name: 'the sheet the stylesheet asks for',
+const A4_SHEET = { margin: null, name: 'A4', paper: A4 };
+const LETTER_SHEET = { margin: null, name: 'US Letter', paper: LETTER };
+const READERS_SHEET = {
+  margin: '0mm',
+  name: 'a sheet the reader chose',
+  paper: A4,
 };
-const READERS_SHEET = { margin: '0mm', name: 'a sheet the reader chose' };
-const SHEETS = [STYLESHEET_SHEET, READERS_SHEET];
+const SHEETS = [A4_SHEET, LETTER_SHEET, READERS_SHEET];
 
 /** The tallest plot the design draws unaided. */
 const DESIGNED_PLOT = 384;
@@ -232,6 +240,20 @@ const WATCH_PRINT = `(() => {
     }
   });
   return 'ok';
+})()`;
+
+/**
+ * The demonstration piano is weighed with its springs, but with the option to
+ * count them off: its springs page shows the panel that asks for the option,
+ * and has no figure to measure. The option is turned on for that page alone,
+ * so that every other figure is measured as the demonstration draws it.
+ */
+const measureSprings = (isOn: boolean) => `(() => {
+  const stored = JSON.parse(localStorage.getItem('ptl.measure-options') ?? 'null');
+  if (!stored) return 'nothing stored';
+  stored.state.useSupportSpringMeasurements = ${String(isOn)};
+  localStorage.setItem('ptl.measure-options', JSON.stringify(stored));
+  return 'set';
 })()`;
 
 /** What the print dialog does when the reader picks margins of their own. */
@@ -437,6 +459,9 @@ for (const view of VIEWS) {
     });
 
     for (const path of PAGES) {
+      await page.evaluate(
+        measureSprings(path === '/analyze/wippen-support-springs'),
+      );
       await page.send('Page.navigate', { url: `${ORIGIN}${path}` });
       await Bun.sleep(1800);
 
@@ -478,6 +503,7 @@ for (const view of VIEWS) {
       for (const sheet of SHEETS) {
         await page.evaluate(overrideMargins(sheet.margin));
         const pdf = (await page.send('Page.printToPDF', {
+          ...sheet.paper,
           preferCSSPageSize: true,
         })) as { data: string };
         await Bun.sleep(250);
@@ -527,7 +553,10 @@ for (const view of VIEWS) {
       // and the only one it can be told in time.
       await page.evaluate(overrideMargins(READERS_SHEET.margin));
       await page.evaluate('window.__firstSize = null');
-      await page.send('Page.printToPDF', { preferCSSPageSize: true });
+      await page.send('Page.printToPDF', {
+        ...READERS_SHEET.paper,
+        preferCSSPageSize: true,
+      });
       await Bun.sleep(250);
       const firstSize = await page.evaluate<number | null>(
         'window.__firstSize',

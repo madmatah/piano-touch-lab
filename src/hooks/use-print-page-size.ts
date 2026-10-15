@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import {
-  A4_LANDSCAPE,
+  LANDSCAPE_SHEET,
   setPrintSheet,
   type PrintSheet,
 } from '@/lib/print/print-session';
@@ -31,4 +31,4 @@ export const usePrintPageSize = (sheet: PrintSheet) => {
 };
 
 /** A figure of eighty-eight keys only fits across the sheet. */
-export const usePrintLandscape = () => usePrintPageSize(A4_LANDSCAPE);
+export const usePrintLandscape = () => usePrintPageSize(LANDSCAPE_SHEET);
