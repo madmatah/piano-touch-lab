@@ -361,6 +361,17 @@
     @apply text-ptl-brass underline-offset-4 transition-colors hover:text-foreground;
   }
 
+  /*
+   * A label written over a drawing. The paper colour is painted behind the
+   * glyphs as a thick stroke, so the text stays readable wherever it falls.
+   */
+  .ptl-halo {
+    paint-order: stroke;
+    stroke: var(--background);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+
   /* The hatched paper strip that marks the demo profile. */
   .ptl-demo-banner {
     background-image: repeating-linear-gradient(

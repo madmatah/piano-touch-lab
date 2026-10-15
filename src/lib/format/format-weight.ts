@@ -44,6 +44,15 @@ export const formatGrams = (
   return formatted === EMPTY_VALUE ? formatted : `${formatted} g`;
 };
 
+/** A weight a technician sets rather than reads, in whole grams: `39 g`. */
+export const formatWholeGrams = (
+  value: number | null | undefined,
+  locale: string,
+): string => {
+  const formatted = format(value, locale, { maximumFractionDigits: 0 });
+  return formatted === EMPTY_VALUE ? formatted : `${formatted} g`;
+};
+
 /** A weight to add or remove, with its sign always shown and no unit: `+15,1`. */
 export const formatSignedWeightValue = (
   value: number | null | undefined,
