@@ -437,7 +437,8 @@
  * tokens does that for every component at once.
  */
 @page {
-  size: A4 portrait;
+  /* An orientation, not a paper: the reader's printer keeps its own. */
+  size: portrait;
   margin: 14mm 15mm 12mm;
 
   /*
