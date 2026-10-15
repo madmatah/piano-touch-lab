@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
+import { useIsDesignCompleted } from '@/hooks/keyboard/use-design-completion';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -25,9 +26,6 @@ export interface NavigationStep {
   to: string;
 }
 
-/** A design is considered complete once most keys carry a down weight. */
-const DESIGN_COMPLETION_RATIO = 0.8;
-
 const firstOpenLink = (links: NavigationLink[]): string | undefined =>
   links.find((link) => !link.isHidden && !link.isDisabled)?.to;
 
@@ -44,14 +42,7 @@ export const useAppNavigation = (): NavigationStep[] => {
   const analyzedKeyboard = useAnalyzedKeyboard();
   const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
 
-  const isDesignCompleted = useMemo(() => {
-    return (
-      designedKeyboard
-        .mapToArray((key) => key.payload.downWeightWithoutSpringSupport)
-        .filter((weight) => weight !== undefined && weight !== null).length >=
-      Math.round(designedKeyboard.size * DESIGN_COMPLETION_RATIO)
-    );
-  }, [designedKeyboard]);
+  const isDesignCompleted = useIsDesignCompleted(designedKeyboard);
 
   return useMemo(() => {
     const analyzeLinks: NavigationLink[] = [
