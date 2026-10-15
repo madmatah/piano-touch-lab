@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
 import { useIsDesignCompleted } from '@/hooks/keyboard/use-design-completion';
 import {
@@ -63,8 +62,7 @@ const average = (values: (number | null)[]): number | null => {
  */
 export const useDesignSteps = (): DesignStep[] => {
   const { currentLanguage, t } = useTranslation();
-  const analyzedKeyboard = useAnalyzedKeyboard();
-  const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+  const designedKeyboard = useDesignedKeyboard();
   const isDesignCompleted = useIsDesignCompleted(designedKeyboard);
 
   const springs = useWippenSupportSpringsDesign();

@@ -28,7 +28,7 @@ export const DesignFrontWeightPage = () => {
       <DesignStepsBar currentStepId="front-weight" />
       <PageHeading
         title={
-          <Trans i18nKey="Front <1>Weight</1>">
+          <Trans t={t} i18nKey="Front <1>Weight</1>">
             Front <em className="ptl-accent">Weight</em>
           </Trans>
         }

@@ -19,7 +19,7 @@ import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
 import { useWippenSupportSpringsTargetSelector } from './hooks/use-wippen-support-springs-target-selector';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { WippenDesignSelector } from './wippen-design-selector/WippenDesignSelector';
-import { useTargetSeries } from '../hooks/use-target-series-generators';
+import { useTargetSeries } from '../hooks/use-target-series';
 import { useTargetReading } from '../hooks/use-target-reading';
 import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
 
@@ -41,7 +41,7 @@ export const WippenSupportSpringsDesign: React.FC<
     updateWippenSupportSpringsDesign,
   );
   const { supportSpringBalanceWeightTargetSerie: targetSerie } =
-    useTargetSeries(analyzedKeyboard);
+    useTargetSeries();
 
   const renderReading = useTargetReading({
     difference: benchAdjustment,

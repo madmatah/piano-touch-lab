@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 import type { Note } from '@/lib/music/theory/spn';
@@ -77,7 +77,8 @@ export const usePianoProfileStore = (): PianoProfileBoundStore => {
 };
 
 export const usePianoProfileState = () => {
-  return usePianoProfileStore()(
+  return useStore(
+    usePianoProfileStore(),
     useShallow((state: PianoProfileStore) => ({
       brand: state.brand,
       displayName: `${state.brand ?? ''} ${state.model ?? ''}`.trim(),
@@ -91,7 +92,8 @@ export const usePianoProfileState = () => {
 };
 
 export const usePianoProfileActions = () => {
-  return usePianoProfileStore()(
+  return useStore(
+    usePianoProfileStore(),
     useShallow((state: PianoProfileStore) => ({
       reset: state.reset,
       updateSingleState: state.updateSingleState,

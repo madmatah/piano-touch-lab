@@ -23,7 +23,7 @@ export const AnalyzeDataSheetPage = () => {
     >
       <PageHeading
         title={
-          <Trans i18nKey="Data <1>Sheet</1>">
+          <Trans t={t} i18nKey="Data <1>Sheet</1>">
             Data <em className="ptl-accent">Sheet</em>
           </Trans>
         }

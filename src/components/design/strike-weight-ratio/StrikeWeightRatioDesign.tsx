@@ -23,7 +23,7 @@ import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weig
 import { cn } from '@/lib/utils';
 import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
-import { useTargetSeries } from '../hooks/use-target-series-generators';
+import { useTargetSeries } from '../hooks/use-target-series';
 import { useStrikeWeightRatioRecommendation } from './hooks/use-strike-weight-ratio-recommendation';
 import { useStrikeWeightRatioTargetSelector } from './hooks/use-strike-weight-ratio-target-selector';
 import { useTargetReading } from '../hooks/use-target-reading';
@@ -120,8 +120,7 @@ export const StrikeWeightRatioDesign: React.FC<
     updateStrikeWeightRatioDesign,
   );
 
-  const { strikeWeightRatioTargetSerie: targetSerie } =
-    useTargetSeries(analyzedKeyboard);
+  const { strikeWeightRatioTargetSerie: targetSerie } = useTargetSeries();
 
   const renderReading = useTargetReading({
     format: formatRatio,

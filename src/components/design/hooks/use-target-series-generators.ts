@@ -17,14 +17,21 @@ import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useTranslation } from '@/hooks/use-translation';
 import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
 
-export const useTargetSeries = (
-  keyboard: TouchWeightAnalyzedKeyboard,
-): {
+export interface TargetSeries {
   frontWeightTargetSerie: TouchDesignSerie;
   strikeWeightTargetSerie: TouchDesignSerie;
   strikeWeightRatioTargetSerie: TouchDesignSerie;
   supportSpringBalanceWeightTargetSerie: TouchDesignSerie;
-} => {
+}
+
+/**
+ * The four target series of the design, from the stored modes and targets.
+ * Built once for the page by `KeyboardAnalysisProvider`; read them with
+ * `useTargetSeries`.
+ */
+export const useGenerateTargetSeries = (
+  keyboard: TouchWeightAnalyzedKeyboard,
+): TargetSeries => {
   const { t } = useTranslation();
   const { frontWeightDesignMode, frontWeightDesignTarget } =
     useFrontWeightDesign();
@@ -145,10 +152,18 @@ export const useTargetSeries = (
     supportSpringBalanceWeightTargetSerie,
   ]);
 
-  return {
-    frontWeightTargetSerie,
-    strikeWeightRatioTargetSerie,
-    strikeWeightTargetSerie,
-    supportSpringBalanceWeightTargetSerie,
-  };
+  return useMemo(
+    () => ({
+      frontWeightTargetSerie,
+      strikeWeightRatioTargetSerie,
+      strikeWeightTargetSerie,
+      supportSpringBalanceWeightTargetSerie,
+    }),
+    [
+      frontWeightTargetSerie,
+      strikeWeightRatioTargetSerie,
+      strikeWeightTargetSerie,
+      supportSpringBalanceWeightTargetSerie,
+    ],
+  );
 };

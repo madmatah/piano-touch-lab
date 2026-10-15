@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
 import { useMemo } from 'react';
@@ -13,7 +14,8 @@ export const useMeasuredKeyboard = (): KeyboardLike<
   KeyWith<MeasuredKeyRequirements>
 > => {
   const { computeKeyMeasurements } = useKeyMeasurementsHelpers();
-  const pianoMeasureState = useMeasuresStore()(
+  const pianoMeasureState = useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => ({
       keys: state.keys,
     })),

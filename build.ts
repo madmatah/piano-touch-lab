@@ -6,6 +6,7 @@ import { rm } from 'fs/promises';
 import path from 'path';
 
 import { externalFontsPlugin } from './config/external-fonts-plugin';
+import { reactCompilerPlugin } from './config/react-compiler-plugin';
 import { fontAssets } from './config/fonts';
 
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
@@ -137,7 +138,7 @@ const appEnv = process.env.APP_ENV ?? 'production';
 const result = await Bun.build({
   entrypoints,
   outdir,
-  plugins: [plugin, externalFontsPlugin],
+  plugins: [reactCompilerPlugin, plugin, externalFontsPlugin],
   minify: true,
   target: 'browser',
   sourcemap: 'linked',

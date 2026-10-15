@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 import { container } from './app-container';
+import { KeyboardAnalysisProvider } from './contexts/keyboard-analysis-context';
 import { KeyboardProvider } from './contexts/keyboard-context';
 import { NewProfileDialogProvider } from './contexts/new-profile-dialog-context';
 import { NewProfileDialog } from './components/new-profile/NewProfileDialog';
@@ -43,14 +44,16 @@ export const App = () => {
     <ThemeProvider>
       <Provider container={container}>
         <KeyboardProvider>
-          <NewProfileDialogProvider onOpenChange={setIsNewProfileDialogOpen}>
-            <BrowserRouter>
-              <AppContent
-                isNewProfileDialogOpen={isNewProfileDialogOpen}
-                setIsNewProfileDialogOpen={setIsNewProfileDialogOpen}
-              />
-            </BrowserRouter>
-          </NewProfileDialogProvider>
+          <KeyboardAnalysisProvider>
+            <NewProfileDialogProvider onOpenChange={setIsNewProfileDialogOpen}>
+              <BrowserRouter>
+                <AppContent
+                  isNewProfileDialogOpen={isNewProfileDialogOpen}
+                  setIsNewProfileDialogOpen={setIsNewProfileDialogOpen}
+                />
+              </BrowserRouter>
+            </NewProfileDialogProvider>
+          </KeyboardAnalysisProvider>
         </KeyboardProvider>
       </Provider>
     </ThemeProvider>

@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 
@@ -53,7 +54,8 @@ export const MeasureKeyboardPanel = ({
 
   useStickyHeight(panel, '--ptl-sticky-top');
 
-  const measuredKeys = useMeasuresStore()(
+  const measuredKeys = useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => state.keys),
   );
 

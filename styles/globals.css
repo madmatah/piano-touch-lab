@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 @import './fonts.css';
 
+/*
+ * Read from the files themselves: the React Compiler hands Bun its own
+ * version of each component, which the Tailwind plugin no longer gets to see.
+ */
+@source '../src';
+
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));

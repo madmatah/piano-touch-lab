@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { useMemo } from 'react';
 
 import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
@@ -88,7 +89,7 @@ export const useHomeState = (): HomeState => {
   const { keyboard } = useKeyboard();
   const { measured, total } = useMeasuredKeyCount();
   const analyzedKeyboard = useAnalyzedKeyboard();
-  const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+  const designedKeyboard = useDesignedKeyboard();
   const isDesignCompleted = useIsDesignCompleted(designedKeyboard);
   const { frontWeightDesignMode } = useFrontWeightDesign();
   const { strikeWeightDesignMode } = useStrikeWeightDesign();
@@ -103,7 +104,8 @@ export const useHomeState = (): HomeState => {
     strikeWeightDesignMode !== StrikeWeightDesignMode.AsMeasured ||
     strikeWeightRatioDesignMode !== StrikeWeightRatioDesignMode.AsMeasured ||
     wippenSupportSpringsDesignMode !== WippenSupportSpringsDesignMode.None;
-  const measures = useMeasuresStore()(
+  const measures = useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => state.keys),
   );
 

@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/shallow';
 
@@ -23,7 +24,8 @@ export interface MeasuredKeyCount {
  */
 export const useMeasuredKeyCount = (): MeasuredKeyCount => {
   const { keyboard } = useKeyboard();
-  const keys = useMeasuresStore()(
+  const keys = useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => state.keys),
   );
 

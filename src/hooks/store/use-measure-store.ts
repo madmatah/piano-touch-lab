@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 import { useEffect } from 'react';
@@ -131,7 +131,8 @@ export const useMeasuresStore = (): MeasuresBoundStore => {
 };
 
 export const useMeasuredKeyFromStore = (keyIndex: number) => {
-  return useMeasuresStore()(
+  return useStore(
+    useMeasuresStore(),
     useShallow(
       (state: MeasuresStore) => state.keys?.[keyIndex] ?? defaultKeySpec,
     ),
@@ -139,7 +140,8 @@ export const useMeasuredKeyFromStore = (keyIndex: number) => {
 };
 
 export const useGlobalMeasures = (): GlobalMeasures => {
-  return useMeasuresStore()(
+  return useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => ({
       keyWeightRatio: state.keyWeightRatio,
       wippenRadiusWeight: state.wippenRadiusWeight,
@@ -148,7 +150,8 @@ export const useGlobalMeasures = (): GlobalMeasures => {
 };
 
 export const useMeasureActions = () => {
-  return useMeasuresStore()(
+  return useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => ({
       reset: state.reset,
       updateGlobalMeasure: state.updateGlobalMeasure,

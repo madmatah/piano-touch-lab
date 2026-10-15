@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { useEffect, useRef } from 'react';
 import { useLoadDemoData } from './use-load-demo-data';
 import { useAppState, useAppStateActions } from '../store/use-app-state-store';
@@ -22,7 +23,8 @@ export const useAutoloadDemoData = () => {
   const { updateSingleState } = useAppStateActions();
   const { loadDemoData } = useLoadDemoData();
   const { brand, isDemoProfile, model, serialNumber } = usePianoProfileState();
-  const measures = useMeasuresStore()(
+  const measures = useStore(
+    useMeasuresStore(),
     useShallow((state: MeasuresStore) => state.keys),
   );
   const logger = useLogger();

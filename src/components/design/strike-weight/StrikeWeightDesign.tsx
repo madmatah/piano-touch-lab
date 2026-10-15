@@ -28,7 +28,7 @@ import { useStrikeWeightRecommendation } from './hooks/use-strike-weight-recomme
 import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
 import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
-import { useTargetSeries } from '../hooks/use-target-series-generators';
+import { useTargetSeries } from '../hooks/use-target-series';
 import { useTargetReading } from '../hooks/use-target-reading';
 import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
 import { NotEnoughData } from '../NotEnoughData';
@@ -58,8 +58,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     strikeWeightDesignTarget,
     updateStrikeWeightDesign,
   );
-  const { strikeWeightTargetSerie: targetSerie } =
-    useTargetSeries(analyzedKeyboard);
+  const { strikeWeightTargetSerie: targetSerie } = useTargetSeries();
 
   const renderReading = useTargetReading({
     difference: benchAdjustment,

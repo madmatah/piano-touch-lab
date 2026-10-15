@@ -27,7 +27,7 @@ export const DesignWippenSupportSpringsPage = () => {
       <DesignStepsBar currentStepId="springs" />
       <PageHeading
         title={
-          <Trans i18nKey="Wippen Support <1>Springs</1>">
+          <Trans t={t} i18nKey="Wippen Support <1>Springs</1>">
             Wippen Support <em className="ptl-accent">Springs</em>
           </Trans>
         }
