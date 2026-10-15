@@ -42,7 +42,15 @@ export const MainLayout = ({
       }
     >
       <AppSidebar steps={steps} />
-      <SidebarInset>
+      {/*
+       * `min-w-0`: beside the sidebar, the page is a flex item, and a flex
+       * item refuses by default to be narrower than the widest thing in it.
+       * A figure holds a plot that will not go under 640px — it scrolls
+       * sideways in its own frame instead — and without this that floor was
+       * pushing the whole page, sidebar and header and all, off the right of
+       * a window between 768 and 1010px wide.
+       */}
+      <SidebarInset className="min-w-0">
         {variant === 'app' ? (
           <PageHeader steps={steps} right={headerRight ?? <PianoIdentity />} />
         ) : (
