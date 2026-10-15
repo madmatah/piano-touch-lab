@@ -16,7 +16,6 @@ export const DesignFrontWeightPage = () => {
     <MainLayout>
       <DesignStepsBar currentStepId="front-weight" />
       <PageHeading
-        eyebrow={t('Design · parameter {{number}} of 4', { number: 2 })}
         title={
           <Trans i18nKey="Front <1>Weight</1>">
             Front <em className="ptl-accent">Weight</em>

@@ -21,7 +21,6 @@ export const MeasurePage = () => {
     >
       <Tabs defaultValue="measures" className="flex flex-col gap-6">
         <PageHeading
-          eyebrow={t('Step {{number}}', { number: '01' })}
           title={t('Measure')}
           actions={
             <TabsList>

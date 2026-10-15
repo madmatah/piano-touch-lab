@@ -17,7 +17,6 @@ export const DesignTouchWeightPreviewPage = () => {
     <MainLayout>
       <DesignStepsBar currentStepId="preview" />
       <PageHeading
-        eyebrow={t('Design · result')}
         title={
           <Trans i18nKey="Touch Weight <1>Preview</1>">
             Touch Weight <em className="ptl-accent">Preview</em>

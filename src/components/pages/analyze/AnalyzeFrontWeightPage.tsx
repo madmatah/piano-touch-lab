@@ -94,15 +94,11 @@ export const AnalyzeFrontWeightPage = () => {
       }
     >
       <PageHeading
-        eyebrow={t('Fig. {{number}} — Analyze', { number: FIGURE_NUMBER })}
         title={
           <Trans i18nKey="Front <1>Weight</1>">
             Front <em className="ptl-accent">Weight</em>
           </Trans>
         }
-        lede={t(
-          "The static weight the level key exerts at the measuring point, tipped on its balance pin. Compared here against David C. Stanwood's standard curves.",
-        )}
       />
       <FrontWeightChart
         keyboard={analyzedKeyboard}

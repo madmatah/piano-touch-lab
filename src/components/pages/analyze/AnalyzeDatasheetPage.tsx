@@ -22,7 +22,6 @@ export const AnalyzeDataSheetPage = () => {
       }
     >
       <PageHeading
-        eyebrow={t('Fig. {{number}} — Analyze', { number: '02.6' })}
         title={
           <Trans i18nKey="Data <1>Sheet</1>">
             Data <em className="ptl-accent">Sheet</em>

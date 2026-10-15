@@ -36,7 +36,7 @@ export const PageHeader = ({ right, steps }: PageHeaderProps) => {
     }
 
     return [
-      { text: step.number, tone: 'step' },
+      ...(step.number ? [{ text: step.number, tone: 'step' as const }] : []),
       { text: step.label, tone: link ? 'mid' : 'leaf' },
       ...(link ? [{ text: link.label, tone: 'leaf' as const }] : []),
     ];

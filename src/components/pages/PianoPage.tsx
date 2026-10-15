@@ -135,7 +135,6 @@ export const PianoPage = () => {
   return (
     <MainLayout headerRight={<SavedLocallyIndicator />}>
       <PageHeading
-        eyebrow={t('Step {{number}}', { number: '00' })}
         title={t('Piano')}
         lede={t(
           'This info will appear in the app and on your printed reports, helping you stay organized if you manage multiple instruments.',

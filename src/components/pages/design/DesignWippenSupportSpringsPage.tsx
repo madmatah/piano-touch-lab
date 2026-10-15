@@ -15,7 +15,6 @@ export const DesignWippenSupportSpringsPage = () => {
     <MainLayout>
       <DesignStepsBar currentStepId="springs" />
       <PageHeading
-        eyebrow={t('Design · parameter {{number}} of 4', { number: 1 })}
         title={
           <Trans i18nKey="Wippen Support <1>Springs</1>">
             Wippen Support <em className="ptl-accent">Springs</em>

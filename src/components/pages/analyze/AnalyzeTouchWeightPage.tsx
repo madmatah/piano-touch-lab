@@ -147,15 +147,12 @@ export const AnalyzeTouchWeightPage = () => {
       }
     >
       <PageHeading
-        eyebrow={t('Fig. {{number}} — Analyze', { number: FIGURE_NUMBER })}
         title={
           <Trans i18nKey="Static <1>Balance</1> & Friction">
             Static <em className="ptl-accent">Balance</em> & Friction
           </Trans>
         }
-        lede={t(
-          'Enter your measurements and explore the charts to spot irregularities in your action.',
-        )}
+        lede={t('Spot the irregularities in your action.')}
         ledeWidth="62ch"
       />
       <TouchWeightChart

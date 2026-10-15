@@ -17,8 +17,12 @@ export interface NavigationLink {
 export interface NavigationStep {
   label: string;
   links: NavigationLink[];
-  /** Two-digit step number, shown in brass in the sidebar and breadcrumb. */
-  number: string;
+  /**
+   * Two-digit step number, shown in brass in the sidebar and breadcrumb.
+   * The piano has none: it is the instrument the workflow is about, not a
+   * step of it, and numbering it would start the list at zero.
+   */
+  number?: string;
   /** URL prefix owning every page of the step. */
   section: string;
   /** Where the step itself leads: its own page, or its first open link. */
@@ -110,7 +114,6 @@ export const useAppNavigation = (): NavigationStep[] => {
       {
         label: t('Piano', { ns: 'navigation' }),
         links: [],
-        number: '00',
         section: '/piano',
         to: '/piano',
       },
