@@ -20,8 +20,8 @@ export const WipenDesignSpecificationItem: React.FC<
   WippenDesignSpecificationProps
 > = ({ name, selectorProps }) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
-      <span className="text-[13.5px] text-muted-foreground">{name}</span>
+    <div className="flex flex-col items-start gap-2">
+      <span className="text-sm font-semibold">{name}</span>
       <NumericSelector {...selectorProps} />
     </div>
   );

@@ -66,7 +66,8 @@ export interface SupportSpringBalanceWeightChartProps<T> {
   /**
    * The keys the designed springs are on, named on the plot and washed on
    * its keyboard, as the mockup does: where the target stops is the design,
-   * not a gap in it.
+   * not a gap in it. `null` is a design that fits none, said across the
+   * whole keyboard; left out, the chart is not drawing a design at all.
    */
   sprungKeys?: SprungKeys | null;
   targetSerie?: TouchDesignSerie;
@@ -117,9 +118,22 @@ export const SupportSpringBalanceWeightChart = <T,>({
   );
 
   const lastKey = keys[keys.length - 1]?.number;
+  const firstKey = keys[0]?.number;
   const rangeNotes = useMemo<KeyRangeNote[] | undefined>(() => {
-    if (!sprungKeys) {
+    if (sprungKeys === undefined) {
       return undefined;
+    }
+    if (sprungKeys === null) {
+      return firstKey === undefined || lastKey === undefined
+        ? undefined
+        : [
+            {
+              from: firstKey,
+              kind: 'label',
+              text: t('without springs'),
+              to: lastKey,
+            },
+          ];
     }
     const { count, first, last } = sprungKeys;
     return [
@@ -140,7 +154,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
           ]
         : []),
     ];
-  }, [lastKey, sprungKeys, t]);
+  }, [firstKey, lastKey, sprungKeys, t]);
   const markedKeys = useMemo(
     () =>
       sprungKeys

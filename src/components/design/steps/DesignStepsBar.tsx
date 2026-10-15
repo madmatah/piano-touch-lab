@@ -47,7 +47,12 @@ export const DesignStepsBar = ({
         const content = (
           <>
             <span className="ptl-label">{step.label}</span>
-            <span className="font-mono text-[12.5px] text-foreground">
+            {/*
+             * Two lines kept for the setting, however short: "None" after
+             * "Tapering · 48 · 9.5 g" would otherwise take a line off the bar,
+             * and move the curve under it with every choice.
+             */}
+            <span className="min-h-[2lh] font-mono text-[12.5px] text-foreground">
               {step.value}
             </span>
           </>

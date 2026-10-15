@@ -104,7 +104,7 @@ export const WippenDesignSelector: React.FC<WippenDesignSelectorProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-3.5">
+    <div className="flex flex-wrap gap-x-8 gap-y-3.5">
       <WipenDesignSpecificationItem
         name={t('Number of springs')}
         selectorProps={{
