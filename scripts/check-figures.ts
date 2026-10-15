@@ -30,10 +30,24 @@ const PORT = 9333;
  * at none. A figure that measured one against the other without noticing
  * came out a tenth short of its sheet for every tenth of zoom.
  */
-const VIEWS = [
-  { width: 1280, zoom: 1 },
-  { width: 1920, zoom: 1 },
-  { width: 1536, zoom: 1.1 },
+interface View {
+  height: number;
+  /** A window that prints nothing a wider one has not already proved. */
+  onPaper?: boolean;
+  width: number;
+  zoom: number;
+}
+
+const VIEWS: View[] = [
+  { height: 1100, width: 1280, zoom: 1 },
+  { height: 1100, width: 1920, zoom: 1 },
+  { height: 1100, width: 1536, zoom: 1.1 },
+  // A sheet is laid out against the paper, not against the window, so these
+  // only have to hold on screen: a phone, the width the sidebar opens at,
+  // and a window taller than it is wide.
+  { height: 844, onPaper: false, width: 390, zoom: 1 },
+  { height: 1024, onPaper: false, width: 768, zoom: 1 },
+  { height: 1203, onPaper: false, width: 706, zoom: 1 },
 ];
 
 const PAGES = [
@@ -67,6 +81,9 @@ const SHEETS = [STYLESHEET_SHEET, READERS_SHEET];
 
 /** Kept in step with `PLOT_INSET` in `chart-geometry.ts`. */
 const PLOT_INSET = { left: 48, right: 56 };
+/** And with `LANDSCAPE`, and the tallest plot the design draws unaided. */
+const LANDSCAPE = 2.5;
+const DESIGNED_PLOT = 384;
 /** Half a pixel of rounding on each side is not a misalignment. */
 const TOLERANCE = 1.5;
 /** What a figure may leave of its sheet unused, once it has filled it. */
@@ -87,6 +104,8 @@ interface Measurement {
   figureFoot: number | null;
   keyboard: Box | null;
   pageHeight: number;
+  /** How far the page runs off the side of the window, if it does. */
+  pageOverflow: number;
   pageWidth: number;
   /** What the reader's zoom turned out to be, read off the page itself. */
   zoom: number;
@@ -137,6 +156,7 @@ const MEASURE = `(() => {
       : null,
     keyboard: rect(plot?.querySelector('[data-slot="chart-keyboard"]')),
     pageHeight: root.clientHeight,
+    pageOverflow: root.scrollWidth - root.clientWidth,
     pageWidth: root.clientWidth,
     zoom: +scale.toFixed(3),
     shape: drawing && {
@@ -241,6 +261,8 @@ const sheetsIn = (pdf: string): number =>
 
 const failures: string[] = [];
 const skipped: string[] = [];
+/** One for every figure measured, on screen or on a sheet. */
+let measured = 0;
 
 const check = (where: string, claim: string, ok: boolean, detail: string) => {
   if (!ok) {
@@ -387,7 +409,7 @@ for (const view of VIEWS) {
     await Bun.sleep(2500);
     await page.send('Emulation.setDeviceMetricsOverride', {
       deviceScaleFactor: 1,
-      height: 1100,
+      height: view.height,
       mobile: false,
       width: view.width,
     });
@@ -396,17 +418,38 @@ for (const view of VIEWS) {
       await page.send('Page.navigate', { url: `${ORIGIN}${path}` });
       await Bun.sleep(1800);
 
+      const size = `${view.width}×${view.height}px`;
       const where =
         view.zoom === 1
-          ? `${path} at ${view.width}px`
-          : `${path} at ${view.width}px, zoomed to ${Math.round(view.zoom * 100)}%`;
+          ? `${path} at ${size}`
+          : `${path} at ${size}, zoomed to ${Math.round(view.zoom * 100)}%`;
       const screen = await page.evaluate<Measurement>(MEASURE);
       if (!screen.box || !screen.svg || !screen.keyboard) {
         // A page whose measurement option is off shows an empty state instead.
         skipped.push(where);
         continue;
       }
+      measured += 1;
       checkFigure(where, screen);
+      check(
+        where,
+        'the page keeps to the window',
+        screen.pageOverflow <= TOLERANCE,
+        `${screen.pageOverflow}px of it off the right`,
+      );
+      // A figure may be given the room a tall window leaves under it, but not
+      // to the point of drawing eighty-eight keys into a square.
+      check(
+        where,
+        'the plot is read across rather than down',
+        screen.box.height <=
+          Math.max(DESIGNED_PLOT, screen.box.width / LANDSCAPE) + TOLERANCE,
+        `${screen.box.height} tall in ${screen.box.width}`,
+      );
+
+      if (view.onPaper === false) {
+        continue;
+      }
 
       await page.evaluate(WATCH_PRINT);
       let readersSheetBox: number | null = null;
@@ -425,6 +468,7 @@ for (const view of VIEWS) {
           failures.push(`${onPaper}: the page never went to paper`);
           continue;
         }
+        measured += 1;
         checkFigure(onPaper, printed);
         check(
           onPaper,
@@ -529,6 +573,4 @@ if (failures.length > 0) {
 for (const where of skipped) {
   console.log(`  — ${where}: no figure on this profile, skipped`);
 }
-console.log(
-  `${(PAGES.length * VIEWS.length - skipped.length) * (1 + SHEETS.length)} figures measured, all in line.`,
-);
+console.log(`${measured} figures measured, all in line.`);

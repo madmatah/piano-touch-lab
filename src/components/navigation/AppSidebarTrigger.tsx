@@ -16,7 +16,7 @@ export const AppSidebarTrigger = ({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) => {
-  const { state, toggleSidebar } = useSidebar();
+  const { isMobile, state, toggleSidebar } = useSidebar();
 
   return (
     <Button
@@ -26,7 +26,9 @@ export const AppSidebarTrigger = ({
       size="icon"
       className={cn(
         'size-7 print:hidden',
-        state === 'expanded' && 'md:hidden',
+        // Asked of the sidebar rather than of a breakpoint: below `lg` it is
+        // a drawer, open or shut on its own, and the handle is the way back.
+        !isMobile && state === 'expanded' && 'hidden',
         className,
       )}
       onClick={(event) => {
