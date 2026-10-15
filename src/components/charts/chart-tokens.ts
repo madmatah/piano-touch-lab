@@ -32,7 +32,7 @@ const CHART_TOKEN_VARIABLES = {
 export type ChartTokens = Record<keyof typeof CHART_TOKEN_VARIABLES, string>;
 
 /** Used where there is no layout engine to resolve the properties, as in tests. */
-export const CHART_TOKEN_FALLBACKS: ChartTokens = {
+const CHART_TOKEN_FALLBACKS: ChartTokens = {
   axisStrong: '#b3a994',
   grid: '#e6e0d4',
   gridSoft: '#efeae0',

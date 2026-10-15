@@ -16,7 +16,7 @@ import {
 } from '@/lib/piano/touch-design/data/friction';
 
 import { MONO_FONT } from '../../echarts/build-base-option';
-import type { ChartTokens } from '../../hooks/use-chart-tokens';
+import type { ChartTokens } from '../../chart-tokens';
 
 /** The reference zones, from the top of the friction panel down. */
 export const FRICTION_ZONE_KINDS = ['high', 'medium', 'low'] as const;

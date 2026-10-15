@@ -1,4 +1,4 @@
-import type { EChartsOption } from 'echarts';
+import type { EChartsOption, EChartsType } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 
@@ -12,7 +12,7 @@ import {
   MONO_FONT,
   type AxisScale,
 } from './echarts/build-base-option';
-import type { ChartTokens } from './hooks/use-chart-tokens';
+import type { ChartTokens } from './chart-tokens';
 import { usePrintableChart } from './hooks/use-printable-chart';
 import { useScreenPlotHeight } from './hooks/use-screen-plot-height';
 import { PLOT_BOX_MARGIN } from './chart-geometry';
@@ -33,7 +33,7 @@ export interface KeyboardChartProps {
   /** Plot height in pixels, excluding the keyboard underneath. */
   height: number;
   /** Called with the chart instance, to follow the pointer. */
-  onChartReady?: (chart: unknown) => void;
+  onChartReady?: (chart: EChartsType) => void;
   /** Which frame it sits in, which sets how much of a sheet is left for it. */
   variant?: 'analyze' | 'design';
   /** Stretches of the keyboard named on the plot, e.g. the keys with springs. */
@@ -123,16 +123,15 @@ export const KeyboardChart = ({
   variant = 'analyze',
 }: KeyboardChartProps) => {
   const option = useRef<EChartsOption | null>(null);
+  const screenBoxHeight = useScreenPlotHeight(
+    height + PLOT_BOX_MARGIN,
+    variant,
+  );
   const {
     onChartReady: bindChart,
     plotHeight: boxHeight,
     tokens,
-  } = usePrintableChart(
-    variant,
-    useScreenPlotHeight(height + PLOT_BOX_MARGIN, variant),
-    option,
-    onChartReady,
-  );
+  } = usePrintableChart(variant, screenBoxHeight, option, onChartReady);
   const plotHeight = boxHeight - PLOT_BOX_MARGIN;
   const { currentLanguage } = useTranslation();
 
@@ -155,34 +154,39 @@ export const KeyboardChart = ({
       ...serieStyleByVariant(serie, tokens),
     }));
 
-    if (ruleAt !== undefined) {
-      echartsSeries.push({
-        data: [],
-        markLine: {
-          data: [{ yAxis: ruleAt }],
-          label: { show: false },
-          lineStyle: { color: tokens.axisStrong, type: 'solid', width: 1.2 },
-          silent: true,
-          symbol: 'none',
-        },
-        name: '',
-        showSymbol: false,
-        silent: true,
-        smooth: 0,
-        type: 'line',
-      } as unknown as (typeof echartsSeries)[number]);
-    }
+    const rule =
+      ruleAt === undefined
+        ? []
+        : [
+            {
+              data: [],
+              markLine: {
+                data: [{ yAxis: ruleAt }],
+                label: { show: false },
+                lineStyle: {
+                  color: tokens.axisStrong,
+                  type: 'solid',
+                  width: 1.2,
+                },
+                silent: true,
+                symbol: 'none',
+              },
+              name: '',
+              showSymbol: false,
+              silent: true,
+              smooth: 0,
+              type: 'line',
+            },
+          ];
+    const notes = rangeNotes?.length
+      ? [buildRangeNotes(rangeNotes, geometry, scale, tokens)]
+      : [];
 
     return {
       animation: false,
       grid: buildGrid(plotHeight),
       legend: { show: false },
-      series: rangeNotes?.length
-        ? [
-            ...echartsSeries,
-            buildRangeNotes(rangeNotes, geometry, scale, tokens),
-          ]
-        : echartsSeries,
+      series: [...echartsSeries, ...rule, ...notes],
       tooltip: { show: false },
       xAxis: buildKeyAxis(geometry),
       yAxis: buildValueAxis(tokens, scale, currentLanguage),

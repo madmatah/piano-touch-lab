@@ -8,7 +8,10 @@ import { KeyColor } from '@/lib/piano/keyboard';
 import { cn } from '@/lib/utils';
 
 import { KeyMeasurement } from './KeyMeasurement';
-import { useMeasurePasses, type MeasurePassId } from './measure-passes';
+import {
+  useMeasurePasses,
+  type MeasurePassId,
+} from './hooks/use-measure-passes';
 import { nextMeasureField } from './measure-tab-order';
 
 export interface KeyMeasureListProps {

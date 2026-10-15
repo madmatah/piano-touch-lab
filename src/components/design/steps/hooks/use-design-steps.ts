@@ -14,10 +14,10 @@ import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.en
 import { formatGrams, formatRatio } from '@/lib/format/format-weight';
 import { designedBalanceWeight } from '@/lib/piano/touch-design/designed-balance-weight';
 
-import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
-import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
-import { StrikeWeightRatioDesignMode } from '../strike-weight-ratio/StrikeWeightRatioDesign.types';
-import { WippenSupportSpringsDesignMode } from '../wippen-support-springs/WippenSupportSpringsDesign.types';
+import { FrontWeightDesignMode } from '../../front-weight/FrontWeightDesign.types';
+import { StrikeWeightDesignMode } from '../../strike-weight/StrikeWeightDesign.types';
+import { StrikeWeightRatioDesignMode } from '../../strike-weight-ratio/StrikeWeightRatioDesign.types';
+import { WippenSupportSpringsDesignMode } from '../../wippen-support-springs/WippenSupportSpringsDesign.types';
 
 /**
  * Between two parts of a step's summary. The space before the dot is one a

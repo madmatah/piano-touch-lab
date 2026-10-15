@@ -98,9 +98,13 @@ export const TouchWeightChart = ({
   // Two grids: the pointer has to be followed over the friction panel too.
   const { geometry, hover, keys } = useChartFigure(analyzedKeyboard, 2);
   const option = useRef<EChartsOption | null>(null);
+  const screenPlotHeight = useScreenPlotHeight(
+    touchWeightPlotHeight(),
+    variant,
+  );
   const { onChartReady, plotHeight, tokens } = usePrintableChart(
     variant,
-    useScreenPlotHeight(touchWeightPlotHeight(), variant),
+    screenPlotHeight,
     option,
     hover.bindChart,
   );

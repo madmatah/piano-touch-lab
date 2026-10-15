@@ -9,7 +9,7 @@ import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry'
 import { useTextScale } from '@/hooks/use-text-scale';
 import { useTranslation } from '@/hooks/use-translation';
 
-import type { HomeState } from './use-home-state';
+import type { HomeState } from './hooks/use-home-state';
 
 /** The drawing is laid out in white-key widths of 20, as the charts are. */
 const WHITE_KEY_WIDTH = 20;

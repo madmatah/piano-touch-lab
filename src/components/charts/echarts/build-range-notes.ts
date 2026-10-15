@@ -2,7 +2,7 @@ import type { CustomSeriesOption } from 'echarts';
 
 import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 
-import type { ChartTokens } from '../hooks/use-chart-tokens';
+import type { ChartTokens } from '../chart-tokens';
 import type { KeyRangeNote } from '../interfaces';
 import { MONO_FONT, type AxisScale } from './build-base-option';
 
@@ -10,10 +10,10 @@ import { MONO_FONT, type AxisScale } from './build-base-option';
  * Where a bracket stands, in pixels from the top rule, as the springs mockup
  * draws it: its rule, the ticks it drops at each end, and its label above.
  */
-export const BRACKET = { gap: 4, rule: 20, tick: 8 } as const;
+const BRACKET = { gap: 4, rule: 20, tick: 8 } as const;
 
 /** How far above the axis a bare label stands. */
-export const LABEL_LIFT = 30;
+const LABEL_LIFT = 30;
 
 /** The slice of the ECharts custom series API the notes are placed with. */
 interface CoordinateApi {

@@ -13,7 +13,6 @@ export interface MeasureInputFieldProps {
   name?: string;
   onUpdate: (value: OptionalNumber) => void;
   placeholder?: string;
-  tooltip?: string | React.ReactNode;
   validator?: Joi.Schema;
 }
 
@@ -31,7 +30,6 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   name,
   onUpdate,
   placeholder,
-  tooltip: tooltipContent,
   validator,
 }) => {
   const { error, inputValue, onInputChange } = useValidatedNumericInputField(
@@ -56,7 +54,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   );
 
   return (
-    <Tooltip open={isFocused && (!!error || !!tooltipContent)}>
+    <Tooltip open={isFocused && !!error}>
       <TooltipTrigger asChild>
         <input
           type="text"
@@ -80,9 +78,6 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
         />
       </TooltipTrigger>
       {error && <TooltipContent variant="destructive">{error}</TooltipContent>}
-      {isFocused && !error && !!tooltipContent && (
-        <TooltipContent>{tooltipContent}</TooltipContent>
-      )}
     </Tooltip>
   );
 };

@@ -7,7 +7,7 @@ import {
   useDesignSteps,
   type DesignStep,
   type DesignStepId,
-} from './use-design-steps';
+} from './hooks/use-design-steps';
 
 const tileClassName = (step: DesignStep, isCurrent: boolean) =>
   cn(

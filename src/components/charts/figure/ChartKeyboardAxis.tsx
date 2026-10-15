@@ -24,6 +24,9 @@ export interface ChartKeyboardAxisProps {
   onKeyHover?: (keyNumber: number | null) => void;
 }
 
+/** Hoisted: a fresh object would re-cut all 88 keys on every render. */
+const KEYBOARD_GEOMETRY = { leverHeight: 46 };
+
 /**
  * The keyboard standing in for the x axis.
  *
@@ -33,9 +36,6 @@ export interface ChartKeyboardAxisProps {
  * out from there to the front — which is what a grand does, and why the
  * sticks are drawn here rather than a bare keyboard.
  */
-/** Hoisted: a fresh object would re-cut all 88 keys on every render. */
-const KEYBOARD_GEOMETRY = { leverHeight: 46 };
-
 export const ChartKeyboardAxis = ({
   description,
   highlightedKey,
