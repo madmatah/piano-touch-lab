@@ -42,7 +42,7 @@ export const AppSidebar = ({ steps }: { steps: NavigationStep[] }) => {
             const isActive =
               pathname === step.section ||
               pathname.startsWith(`${step.section}/`);
-            const hasLinks = step.links.some((link) => !link.isHidden);
+            const hasLinks = step.links.length > 0;
 
             return (
               <div key={step.section} className="flex flex-col gap-0.5">
@@ -66,18 +66,16 @@ export const AppSidebar = ({ steps }: { steps: NavigationStep[] }) => {
                   }
                 />
                 {isActive && hasLinks
-                  ? step.links
-                      .filter((link) => !link.isHidden)
-                      .map((link) => (
-                        <SidebarSubItem
-                          key={link.to}
-                          isActive={pathname === link.to}
-                          isDisabled={link.isDisabled}
-                          label={link.label}
-                          tag={link.tag}
-                          to={link.to}
-                        />
-                      ))
+                  ? step.links.map((link) => (
+                      <SidebarSubItem
+                        key={link.to}
+                        isActive={pathname === link.to}
+                        isDisabled={link.isDisabled}
+                        label={link.label}
+                        tag={link.tag}
+                        to={link.to}
+                      />
+                    ))
                   : null}
               </div>
             );

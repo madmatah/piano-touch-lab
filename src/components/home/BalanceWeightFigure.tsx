@@ -4,6 +4,7 @@ import {
   formatGrams,
   formatSignedWeightValue,
 } from '@/lib/format/format-weight';
+import { designedBalanceWeight } from '@/lib/piano/touch-design/designed-balance-weight';
 import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -80,8 +81,9 @@ export const BalanceWeightFigure = ({
     const targetByNumber = new Map<number, number>();
     if (home.stage === 'demo' || home.stage === 'designed') {
       for (const key of home.designedKeyboard.getKeys()) {
-        if (key.payload.balanceWeight !== null) {
-          targetByNumber.set(key.number, key.payload.balanceWeight);
+        const aim = designedBalanceWeight(key.payload);
+        if (aim !== null) {
+          targetByNumber.set(key.number, aim);
         }
       }
     }

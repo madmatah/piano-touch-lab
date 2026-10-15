@@ -107,8 +107,12 @@ export const MeasureKeyboardPanel = ({
       className="sticky top-0 z-10 flex flex-col gap-3 rounded-md border border-ptl-rule-strong bg-card px-4 pt-3.5 pb-3 shadow-[0_14px_28px_-18px_rgb(0_0_0/0.45)]"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
+        {/*
+         * A group of toggles, not tabs: these buttons open no panel, they
+         * change which columns of the table below are in hand.
+         */}
         <div
-          role="tablist"
+          role="group"
           aria-label={t('Measuring pass')}
           className="inline-flex flex-wrap overflow-hidden rounded-md border border-ptl-rule-strong"
         >
@@ -118,8 +122,7 @@ export const MeasureKeyboardPanel = ({
               <button
                 key={pass.id}
                 type="button"
-                role="tab"
-                aria-selected={isSelected}
+                aria-pressed={isSelected}
                 onClick={() => onPassChange(pass.id)}
                 className={cn(
                   'inline-flex h-9 cursor-pointer items-center gap-2 px-3 text-[13px] font-medium transition-colors',

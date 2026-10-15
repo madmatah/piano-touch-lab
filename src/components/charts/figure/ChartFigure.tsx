@@ -1,5 +1,6 @@
 import { CHART_HEIGHTS, MIN_PLOT_WIDTH, PLOT_INSET } from '../chart-geometry';
 import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
 export interface ChartFigureProps {
@@ -13,6 +14,8 @@ export interface ChartFigureProps {
   geometry?: KeyboardGeometry;
   /** The key being read, marked by a brass band across the plot. */
   highlightedKey?: number | null;
+  /** Names the plot for a reader who arrives on it with the keyboard. */
+  label?: string;
   /** The drawn keyboard that serves as the x axis. */
   keyboard?: React.ReactNode;
   /** Arrow keys move the reading along the keyboard. */
@@ -33,19 +36,18 @@ export const ChartFigure = ({
   header,
   highlightedKey,
   keyboard,
+  label,
   onKeyDown,
   tabIndex,
   variant = 'analyze',
 }: ChartFigureProps) => {
+  const { t } = useTranslation();
   const isAnalyze = variant === 'analyze';
 
   return (
     <figure
-      onKeyDown={onKeyDown}
-      tabIndex={tabIndex}
       className={cn(
         'm-0 min-w-0 rounded-md border border-ptl-rule-strong bg-card',
-        'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
         isAnalyze ? 'flex-[999_1_560px]' : 'flex-[999_1_480px]',
         className,
       )}
@@ -60,9 +62,19 @@ export const ChartFigure = ({
           {header}
         </div>
       ) : null}
+      {/*
+       * The focus stop is the box that scrolls, so the same element both
+       * reaches the far end of the keyboard and moves the reading with the
+       * arrow keys.
+       */}
       <div
+        role="group"
+        aria-label={label ?? t('Figure: hover a key, or use the arrow keys')}
+        onKeyDown={onKeyDown}
+        tabIndex={tabIndex}
         className={cn(
           'overflow-x-auto pb-1.5',
+          'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
           isAnalyze ? 'px-3 pt-4' : 'px-2.5 pt-3.5',
         )}
       >

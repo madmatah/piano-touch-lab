@@ -8,7 +8,6 @@ import { useTranslation } from '@/hooks/use-translation';
 
 export interface NavigationLink {
   isDisabled?: boolean;
-  isHidden?: boolean;
   label: string;
   /** Short mono tag shown after the label, e.g. OPTION. */
   tag?: string;
@@ -27,7 +26,7 @@ export interface NavigationStep {
 }
 
 const firstOpenLink = (links: NavigationLink[]): string | undefined =>
-  links.find((link) => !link.isHidden && !link.isDisabled)?.to;
+  links.find((link) => !link.isDisabled)?.to;
 
 /**
  * The four steps of the workflow, in order.

@@ -43,7 +43,12 @@ export const AnalyzeDataSheet: React.FC<{
        * frame is the sheet, so the height cap and the sticky header go, and
        * the browser repeats the header on every page instead.
        */}
-      <div className="max-h-[70vh] overflow-auto print:max-h-none print:overflow-visible">
+      <div
+        role="region"
+        aria-label={t('Every value of the instrument, key by key')}
+        tabIndex={0}
+        className="max-h-[70vh] overflow-auto focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none print:max-h-none print:overflow-visible"
+      >
         <table className="w-full border-collapse text-[13px]">
           <thead className="sticky top-0 z-10 bg-card print:static">
             <tr>

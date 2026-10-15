@@ -134,7 +134,10 @@ export const SupportSpringBalanceWeightChart = <T,>({
         </div>
         <div className="absolute inset-0 flex items-center justify-center bg-ptl-veil p-6">
           <div className="flex max-w-[520px] flex-col items-center gap-3.5 text-center">
-            <CoilSpring className="size-[34px] text-ptl-brass" />
+            <CoilSpring
+              aria-hidden="true"
+              className="size-[34px] text-ptl-brass"
+            />
             <h2 className="ptl-display m-0 text-[30px] leading-[1.15]">
               {t('No wippen support spring measurement')}
             </h2>

@@ -3,11 +3,15 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { TouchWeightChart } from '../charts/touch-weight-chart/TouchWeightChart';
-import { useTouchWeightSeries } from '../charts/touch-weight-chart/hooks/use-touch-weight-series';
+import {
+  DESIGN_INCLUDES_SPRING_SUPPORT,
+  useTouchWeightPreviewSeries,
+} from './hooks/use-touch-weight-preview-series';
 import type { TouchDesignSerie } from '../charts/interfaces';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
+import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
 import { formatGrams } from '@/lib/format/format-weight';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
@@ -69,14 +73,12 @@ export const TouchWeightPreview = ({
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { useSupportSpringMeasurements } = useMeasureOptions();
 
-  const designedSeries = useTouchWeightSeries(
-    designedKeyboard,
-    useSupportSpringMeasurements,
-  );
-  const currentSeries = useTouchWeightSeries(
-    analyzedKeyboard,
-    useSupportSpringMeasurements,
-  );
+  const { current: currentSeries, designed: designedSeries } =
+    useTouchWeightPreviewSeries(
+      designedKeyboard,
+      analyzedKeyboard,
+      useSupportSpringMeasurements,
+    );
 
   const ghostSerie = useMemo<TouchDesignSerie>(
     () => ({ ...currentSeries.balance, name: t('Balance, as it stands') }),
@@ -103,7 +105,9 @@ export const TouchWeightPreview = ({
       return {
         before: formatGrams(before, currentLanguage),
         isUnchanged:
-          before !== null && after !== null && Math.abs(after - before) < 0.1,
+          before !== null &&
+          after !== null &&
+          Math.abs(after - before) < ADJUSTMENT_THRESHOLD,
         label: entry.label,
         value: formatGrams(after, currentLanguage),
       };
@@ -127,7 +131,7 @@ export const TouchWeightPreview = ({
       <TouchWeightChart
         analyzedKeyboard={designedKeyboard}
         ghostSerie={ghostSerie}
-        useSupportSpringMeasurements={useSupportSpringMeasurements}
+        useSupportSpringMeasurements={DESIGN_INCLUDES_SPRING_SUPPORT}
         caption={
           <figcaption className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border px-[18px] pt-3 pb-4 text-[13px] text-muted-foreground">
             <span>

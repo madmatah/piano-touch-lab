@@ -3,8 +3,9 @@
  *
  * The plot and the keyboard below it share one horizontal coordinate space —
  * the x axis runs from 0 to the number of white keys — so a measurement sits
- * exactly above the key it was taken on. That only holds if the two use the
- * same insets, hence these constants rather than per-chart numbers.
+ * above the balance rail slot of the key it was taken on, and the wood of the
+ * key leads the eye from there to the key itself. That only holds if the two
+ * use the same insets, hence these constants rather than per-chart numbers.
  */
 export const PLOT_INSET = {
   left: 48,

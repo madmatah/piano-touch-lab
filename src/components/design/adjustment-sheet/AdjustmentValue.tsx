@@ -1,4 +1,5 @@
 import { useTranslation } from '@/hooks/use-translation';
+import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
 import { cn } from '@/lib/utils';
 import {
   formatSignedWeightValue,
@@ -8,8 +9,6 @@ import {
 export interface AdjustmentValueProps {
   actualValue: number | null;
   targetValue: number | null;
-  /** Below this, the change is not worth a trip to the bench. */
-  threshold?: number;
 }
 
 /**
@@ -23,7 +22,6 @@ export interface AdjustmentValueProps {
 export const AdjustmentValue: React.FC<AdjustmentValueProps> = ({
   actualValue,
   targetValue,
-  threshold = 0.1,
 }) => {
   const { currentLanguage, t } = useTranslation();
 
@@ -33,7 +31,7 @@ export const AdjustmentValue: React.FC<AdjustmentValueProps> = ({
 
   const difference = targetValue - actualValue;
 
-  if (Math.abs(difference) < threshold) {
+  if (Math.abs(difference) < ADJUSTMENT_THRESHOLD) {
     return (
       <>
         <span className="text-muted-foreground">

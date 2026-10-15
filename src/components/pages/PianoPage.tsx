@@ -194,13 +194,8 @@ export const PianoPage = () => {
               value="standard"
               label={t('Standard 88 keys')}
               description={t('From A0 to C8.')}
-              onClick={handleLayoutChange}
             />
-            <RadioItem
-              value="custom"
-              label={t('Custom')}
-              onClick={handleLayoutChange}
-            >
+            <RadioItem value="custom" label={t('Custom')}>
               {/*
                * Dimmed and inert while the layout is standard: the mockup
                * shows the fields, but a stepper clicked here would raise the

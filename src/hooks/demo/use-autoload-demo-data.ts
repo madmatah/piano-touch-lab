@@ -1,8 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useLoadDemoData } from './use-load-demo-data';
 import { useAppState, useAppStateActions } from '../store/use-app-state-store';
-import { useMeasuredKeyCount } from '../keyboard/use-measured-key-count';
 import { usePianoProfileState } from '../store/use-piano-profile-store';
+import {
+  useMeasuresStore,
+  type MeasuresStore,
+} from '../store/use-measure-store';
+import { useShallow } from 'zustand/shallow';
 import { useLogger } from '../use-logger';
 
 /**
@@ -17,12 +21,23 @@ export const useAutoloadDemoData = () => {
   const { hasLoadedDemoData } = useAppState();
   const { updateSingleState } = useAppStateActions();
   const { loadDemoData } = useLoadDemoData();
-  const { brand, isDemoProfile, model } = usePianoProfileState();
-  const { measured } = useMeasuredKeyCount();
+  const { brand, isDemoProfile, model, serialNumber } = usePianoProfileState();
+  const measures = useMeasuresStore()(
+    useShallow((state: MeasuresStore) => state.keys),
+  );
   const logger = useLogger();
   const hasExecuted = useRef<boolean>(false);
+  // Any reading at all, on any quantity: the measuring passes are filled
+  // independently, so counting only the keys that carry a down and an up
+  // weight would miss someone who weighed eighty-eight hammers first.
   const hasOwnProfile =
-    !isDemoProfile && (brand !== null || model !== null || measured > 0);
+    !isDemoProfile &&
+    (brand !== null ||
+      model !== null ||
+      serialNumber !== null ||
+      measures.some((key) =>
+        Object.values(key).some((value) => value !== null),
+      ));
 
   useEffect(() => {
     if (!hasLoadedDemoData && !hasOwnProfile && !hasExecuted.current) {

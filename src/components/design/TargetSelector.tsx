@@ -212,7 +212,11 @@ export const TargetSelector = <Mode extends string, Target>(
         {title}
       </h2>
       {shouldDisplayModeSelector ? (
-        <RadioGroup value={selectedMode?.value} className="gap-2.5">
+        <RadioGroup
+          onValueChange={onModeChangeHandler}
+          value={selectedMode?.value}
+          className="gap-2.5"
+        >
           {modes.map((mode) => (
             <RadioItem
               isDisabled={mode.isDisabled}
@@ -221,7 +225,6 @@ export const TargetSelector = <Mode extends string, Target>(
               label={mode.label}
               description={mode.description ?? ''}
               value={mode.value}
-              onClick={onModeChangeHandler}
             >
               {mode.value === selectedMode?.value &&
               mode.options.selectorUi !==

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -66,11 +67,11 @@ export const LoadDemoDialog = ({
           <span className="ptl-label">{t('Demonstration piano')}</span>
           <DialogTitle>{t('Replace your profile with the demo?')}</DialogTitle>
         </DialogHeader>
-        <p className="m-0 text-[15px] leading-[1.6] text-muted-foreground">
+        <DialogDescription className="text-[15px] leading-[1.6]">
           {t(
             'Piano Touch Lab keeps one profile at a time. The demonstration piano will replace yours: export it first and you will be able to import it again from File › Import.',
           )}
-        </p>
+        </DialogDescription>
         <Alert variant="default">
           <TriangleAlert />
           <AlertDescription className="gap-1">
