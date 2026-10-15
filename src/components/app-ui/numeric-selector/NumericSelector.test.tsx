@@ -43,9 +43,9 @@ describe('The NumericSelector component', () => {
         expect(screen.getByText('10')).toBeDefined();
       });
 
-      it('should render two buttons', () => {
-        const buttons = screen.getAllByRole('button');
-        expect(buttons).toHaveLength(2);
+      it('should render a decrease and an increase button', () => {
+        expect(screen.getByRole('button', { name: 'Decrease' })).toBeDefined();
+        expect(screen.getByRole('button', { name: 'Increase' })).toBeDefined();
       });
     });
 
@@ -90,8 +90,7 @@ describe('The NumericSelector component', () => {
     describe('When plus button is clicked', () => {
       beforeEach(() => {
         renderComponent();
-        const buttons = screen.getAllByRole('button');
-        plusButton = buttons[1]! as HTMLButtonElement;
+        plusButton = screen.getByRole('button', { name: 'Increase' });
         fireEvent.click(plusButton);
       });
 
@@ -105,8 +104,7 @@ describe('The NumericSelector component', () => {
         renderComponent({
           labelFormatter: (value) => `$${value}`,
         });
-        const buttons = screen.getAllByRole('button');
-        plusButton = buttons[1]! as HTMLButtonElement;
+        plusButton = screen.getByRole('button', { name: 'Increase' });
         fireEvent.click(plusButton);
       });
 
@@ -118,8 +116,7 @@ describe('The NumericSelector component', () => {
     describe('When plus button is clicked with custom step', () => {
       beforeEach(() => {
         renderComponent({ step: 0.5 });
-        const buttons = screen.getAllByRole('button');
-        plusButton = buttons[1]! as HTMLButtonElement;
+        plusButton = screen.getByRole('button', { name: 'Increase' });
         fireEvent.click(plusButton);
       });
 
@@ -131,8 +128,7 @@ describe('The NumericSelector component', () => {
     describe('When value is at maxValue', () => {
       beforeEach(() => {
         renderComponent({ maxValue: 15, value: 15 });
-        const buttons = screen.getAllByRole('button');
-        plusButton = buttons[1]! as HTMLButtonElement;
+        plusButton = screen.getByRole('button', { name: 'Increase' });
       });
 
       it('should disable the plus button', () => {
@@ -143,8 +139,7 @@ describe('The NumericSelector component', () => {
     describe('When plus button is disabled and clicked', () => {
       beforeEach(() => {
         renderComponent({ maxValue: 15, value: 15 });
-        const buttons = screen.getAllByRole('button');
-        plusButton = buttons[1]! as HTMLButtonElement;
+        plusButton = screen.getByRole('button', { name: 'Increase' });
         fireEvent.click(plusButton);
       });
 
@@ -158,8 +153,7 @@ describe('The NumericSelector component', () => {
     describe('When minus button is clicked', () => {
       beforeEach(() => {
         renderComponent();
-        const buttons = screen.getAllByRole('button');
-        minusButton = buttons[0]! as HTMLButtonElement;
+        minusButton = screen.getByRole('button', { name: 'Decrease' });
         fireEvent.click(minusButton);
       });
 
@@ -173,8 +167,7 @@ describe('The NumericSelector component', () => {
         renderComponent({
           labelFormatter: (value) => `${value}%`,
         });
-        const buttons = screen.getAllByRole('button');
-        minusButton = buttons[0]! as HTMLButtonElement;
+        minusButton = screen.getByRole('button', { name: 'Decrease' });
         fireEvent.click(minusButton);
       });
 
@@ -186,8 +179,7 @@ describe('The NumericSelector component', () => {
     describe('When minus button is clicked with custom step', () => {
       beforeEach(() => {
         renderComponent({ step: 0.5 });
-        const buttons = screen.getAllByRole('button');
-        minusButton = buttons[0]! as HTMLButtonElement;
+        minusButton = screen.getByRole('button', { name: 'Decrease' });
         fireEvent.click(minusButton);
       });
 
@@ -199,8 +191,7 @@ describe('The NumericSelector component', () => {
     describe('When value is at minValue', () => {
       beforeEach(() => {
         renderComponent({ minValue: 5, value: 5 });
-        const buttons = screen.getAllByRole('button');
-        minusButton = buttons[0]! as HTMLButtonElement;
+        minusButton = screen.getByRole('button', { name: 'Decrease' });
       });
 
       it('should disable the minus button', () => {
@@ -211,8 +202,7 @@ describe('The NumericSelector component', () => {
     describe('When minus button is disabled and clicked', () => {
       beforeEach(() => {
         renderComponent({ minValue: 5, value: 5 });
-        const buttons = screen.getAllByRole('button');
-        minusButton = buttons[0]! as HTMLButtonElement;
+        minusButton = screen.getByRole('button', { name: 'Decrease' });
         fireEvent.click(minusButton);
       });
 
@@ -464,8 +454,7 @@ describe('The NumericSelector component', () => {
       });
 
       it('should apply width style to display div', () => {
-        const displayDiv = valueDisplay.parentElement;
-        expect(displayDiv?.getAttribute('style')).toContain(
+        expect(valueDisplay.getAttribute('style')).toContain(
           'width: calc(5ch + 2.5rem)',
         );
       });
@@ -486,8 +475,7 @@ describe('The NumericSelector component', () => {
       });
 
       it('should calculate and apply width from maxValue', () => {
-        const displayDiv = valueDisplay.parentElement;
-        expect(displayDiv?.getAttribute('style')).toContain(
+        expect(valueDisplay.getAttribute('style')).toContain(
           'width: calc(5ch + 2.5rem)',
         );
       });
@@ -507,10 +495,9 @@ describe('The NumericSelector component', () => {
         valueDisplay = screen.getByText('10');
       });
 
-      it('should not apply width style to display div', () => {
-        const displayDiv = valueDisplay.parentElement;
-        const style = displayDiv?.getAttribute('style');
-        expect(style === null || !style?.includes('width')).toBe(true);
+      it('should not apply width style to the value button', () => {
+        const style = valueDisplay.getAttribute('style');
+        expect(style?.includes('width') ?? false).toBe(false);
       });
 
       it('should not apply width style to input when editing', () => {
@@ -528,8 +515,7 @@ describe('The NumericSelector component', () => {
       });
 
       it('should use maxCharacters over calculated value', () => {
-        const displayDiv = valueDisplay.parentElement;
-        expect(displayDiv?.getAttribute('style')).toContain(
+        expect(valueDisplay.getAttribute('style')).toContain(
           'width: calc(6ch + 2.5rem)',
         );
       });

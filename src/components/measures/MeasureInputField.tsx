@@ -60,19 +60,9 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
           className={inputClassName}
         />
       </TooltipTrigger>
-      {error && (
-        <TooltipContent
-          backgroundColor="bg-red-100"
-          textColor="text-red-900"
-          arrowClassName="bg-red-100 fill-red-100"
-        >
-          {error}
-        </TooltipContent>
-      )}
+      {error && <TooltipContent variant="destructive">{error}</TooltipContent>}
       {isFocused && !error && !!tooltipContent && (
-        <TooltipContent textColor="text-background">
-          {tooltipContent}
-        </TooltipContent>
+        <TooltipContent>{tooltipContent}</TooltipContent>
       )}
     </Tooltip>
   );

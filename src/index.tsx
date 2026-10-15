@@ -1,5 +1,18 @@
 import { serve } from 'bun';
 import index from './index.html';
+import { fontAssets } from '../config/fonts';
+
+/**
+ * In production the webfonts are copied to `dist/fonts/` by the build; in
+ * development they are served straight out of `node_modules`, so that
+ * `styles/fonts.css` can point at the same `/fonts/…` URLs either way.
+ */
+const fontRoutes = Object.fromEntries(
+  fontAssets().map((font) => [
+    font.publicPath,
+    new Response(Bun.file(font.sourcePath)),
+  ]),
+);
 
 const server = serve({
   development: process.env.NODE_ENV !== 'production' && {
@@ -9,6 +22,7 @@ const server = serve({
     hmr: true,
   },
   routes: {
+    ...fontRoutes,
     // Serve index.html for all unmatched routes.
     '/*': index,
   },

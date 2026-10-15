@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { Info } from 'lucide-react';
 
 export interface RadioGroupItemProps<T extends string> {
+  children?: React.ReactNode;
   description?: string;
   disabledReason?: string;
   isDisabled?: boolean;
@@ -13,7 +14,16 @@ export interface RadioGroupItemProps<T extends string> {
   value: T;
 }
 
+/**
+ * A choice presented as a card: the control, a title and a description, with
+ * the selected card ringed in full-strength ink.
+ *
+ * `children` are rendered inside the card, under the description — the design
+ * tucks the controls belonging to a choice (a target weight, a curve) into the
+ * card itself rather than beside it.
+ */
 export const RadioItem = <T extends string>({
+  children,
   description,
   disabledReason,
   isDisabled,
@@ -31,33 +41,36 @@ export const RadioItem = <T extends string>({
 
   const labelClassName = useMemo(() => {
     return cn(
-      'text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-input/20 flex items-start gap-3 rounded-lg border p-3 cursor-pointer hover:bg-input/10 transition-colors',
-      isDisabled
-        ? 'cursor-not-allowed opacity-70 bg-input/20 hover:bg-input/20'
-        : '',
+      'flex cursor-pointer select-none flex-col gap-3.5 rounded-md border border-border bg-card px-4 py-3.5 transition-colors',
+      'hover:bg-accent/60',
+      'has-[[data-state=checked]]:border-ptl-rule-strong has-[[data-state=checked]]:shadow-[inset_0_0_0_1px_var(--ptl-rule-strong)]',
+      isDisabled && 'cursor-not-allowed opacity-70 hover:bg-card',
     );
   }, [isDisabled]);
 
   const itemContent = useMemo(
     () => (
       <>
-        <RadioGroupItem
-          value={value}
-          className="mt-1"
-          onClick={onClickHandler}
-          disabled={!!isDisabled}
-        />
-        <div className="grid gap-1 font-normal">
-          <div className="font-medium">{label}</div>
-          {description ? (
-            <div className="text-muted-foreground text-xs leading-snug text-balance">
-              {description}
-            </div>
-          ) : null}
+        <div className="flex items-start gap-3">
+          <RadioGroupItem
+            value={value}
+            className="mt-0.5"
+            onClick={onClickHandler}
+            disabled={!!isDisabled}
+          />
+          <div className="flex flex-col gap-[3px]">
+            <span className="text-[14.5px] font-semibold">{label}</span>
+            {description ? (
+              <span className="text-[13px] leading-[1.5] text-muted-foreground">
+                {description}
+              </span>
+            ) : null}
+          </div>
         </div>
+        {children ? <div className="pl-7">{children}</div> : null}
       </>
     ),
-    [value, onClickHandler, isDisabled, label, description],
+    [children, value, onClickHandler, isDisabled, label, description],
   );
 
   return shouldDisplayTooltip ? (
@@ -66,15 +79,10 @@ export const RadioItem = <T extends string>({
         <TooltipTrigger asChild>
           <label className={labelClassName}>{itemContent}</label>
         </TooltipTrigger>
-        <TooltipContent
-          backgroundColor="bg-blue-100"
-          textColor="text-blue-900"
-          arrowClassName="bg-blue-100 fill-blue-100"
-          className="font-semibold"
-        >
+        <TooltipContent className="font-semibold">
           <div className="inline-flex items-center gap-2">
             <span>
-              <Info className="w-4 h-4" />
+              <Info className="h-4 w-4" />
             </span>
             <span>{disabledReason}</span>
           </div>

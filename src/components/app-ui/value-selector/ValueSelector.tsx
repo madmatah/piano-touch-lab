@@ -1,6 +1,8 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '../../ui/button';
 import { useCallback, useMemo } from 'react';
+
+import { useTranslation } from '@/hooks/use-translation';
+import { Stepper } from '../stepper/Stepper';
 
 export interface ValueSelectorProps<T> {
   currentValue?: T;
@@ -13,6 +15,7 @@ export const ValueSelector = <T,>({
   onChange,
   values,
 }: ValueSelectorProps<T>) => {
+  const { t } = useTranslation();
   const currentValueIndex = useMemo(() => {
     if (!currentValue) return 0;
     const index = values.findIndex((value) => value.value === currentValue);
@@ -29,7 +32,7 @@ export const ValueSelector = <T,>({
   );
 
   const estimatedWidth = useMemo(() => {
-    return maxValueLength * 0.6;
+    return Math.max(maxValueLength * 0.7, 4);
   }, [maxValueLength]);
 
   const canGoNext = currentValueIndex < values.length - 1;
@@ -47,37 +50,22 @@ export const ValueSelector = <T,>({
   }, [canGoPrevious, onChange, values, currentValueIndex]);
 
   return (
-    <div className="inline-flex flex-row items-center gap-3 px-5 py-3">
-      <div>
-        <Button
-          className="hover:cursor-pointer"
-          disabled={!canGoPrevious}
-          onClick={handleGoPrevious}
-          size="icon"
-          variant="secondary"
-        >
-          <ChevronLeft />
-        </Button>
-      </div>
-      <div>
-        <div
-          className="h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded transition-colors py-1"
-          style={{ width: `${estimatedWidth}rem` }}
-        >
-          <span className="font-bold">{currentLabel}</span>
-        </div>
-      </div>
-      <div>
-        <Button
-          className="hover:cursor-pointer"
-          disabled={!canGoNext}
-          onClick={handleGoNext}
-          size="icon"
-          variant="secondary"
-        >
-          <ChevronRight />
-        </Button>
-      </div>
-    </div>
+    <Stepper
+      canGoNext={canGoNext}
+      canGoPrevious={canGoPrevious}
+      nextIcon={<ChevronRight className="size-[17px]" />}
+      nextLabel={t('Next value')}
+      onNext={handleGoNext}
+      onPrevious={handleGoPrevious}
+      previousIcon={<ChevronLeft className="size-[17px]" />}
+      previousLabel={t('Previous value')}
+    >
+      <span
+        className="flex h-10 items-center justify-center px-2 font-mono text-base font-medium"
+        style={{ width: `${estimatedWidth}rem` }}
+      >
+        {currentLabel}
+      </span>
+    </Stepper>
   );
 };

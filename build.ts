@@ -5,6 +5,9 @@ import { cp } from 'fs/promises';
 import { rm } from 'fs/promises';
 import path from 'path';
 
+import { externalFontsPlugin } from './config/external-fonts-plugin';
+import { fontAssets } from './config/fonts';
+
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
   console.log(`
 🏗️  Bun Build Script
@@ -134,7 +137,7 @@ const appEnv = process.env.APP_ENV ?? 'production';
 const result = await Bun.build({
   entrypoints,
   outdir,
-  plugins: [plugin],
+  plugins: [plugin, externalFontsPlugin],
   minify: true,
   target: 'browser',
   sourcemap: 'linked',
@@ -145,6 +148,13 @@ const result = await Bun.build({
   },
   ...cliConfig,
 });
+
+console.log('🔤 Copying webfonts...');
+await Promise.all(
+  fontAssets().map((font) =>
+    cp(font.sourcePath, path.join(outdir, font.publicPath)),
+  ),
+);
 
 if (appEnv === 'demo') {
   console.log('📦 Copying demo-specific files...');
