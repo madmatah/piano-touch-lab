@@ -91,9 +91,15 @@
   --ptl-series-balance: #1a1612;
   --ptl-series-friction: #857c6e;
   --ptl-series-target: #8c6a2c;
-  --ptl-series-standard: #b3a994;
+  /*
+   * The standard curves and the ghost of today's balance are what a reading
+   * is compared with: graphics that carry meaning, held to 3:1 on the card
+   * (#b3a994 and #b9af9e, the mockup's, gave 2.2 and 2.1). The intermediate
+   * curves are a texture between them and keep their pale tone.
+   */
+  --ptl-series-standard: #948c7a;
   --ptl-series-standard-soft: #d3caba;
-  --ptl-series-ghost: #b9af9e;
+  --ptl-series-ghost: #91897b;
   --ptl-series-target-area: #b07f2529;
 
   /*
@@ -187,9 +193,9 @@
     --ptl-series-balance: #eee6d5;
     --ptl-series-friction: #8c8273;
     --ptl-series-target: #c9a35f;
-    --ptl-series-standard: #6a5b45;
+    --ptl-series-standard: #786a54;
     --ptl-series-standard-soft: #3a322b;
-    --ptl-series-ghost: #5a5046;
+    --ptl-series-ghost: #796f65;
     --ptl-series-target-area: #c9a35f29;
 
     --ptl-chart-grid: #2a241f;
@@ -322,6 +328,16 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  /*
+   * One focus ring for everything that draws none of its own: solid brass,
+   * 2 px, clear of the element. The browser's own outline, in brass at half
+   * strength, fell to 2:1 on a card — under the 3:1 a focus indicator needs —
+   * beside buttons that drew a ring of their own.
+   */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
   body {
     @apply bg-background text-foreground;

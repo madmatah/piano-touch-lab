@@ -232,7 +232,13 @@ export const TargetSelector = <Mode extends string, Target>(
               {mode.value === selectedMode?.value &&
               mode.options.selectorUi !==
                 TargetSelectorUi.UniqueTargetSelector ? (
-                <div className="flex flex-col gap-2.5 border-t border-border pt-3.5">
+                // `items-start`: the stepper keeps its own width rather than
+                // running the width of the card with an empty field after +.
+                <div
+                  role="group"
+                  aria-label={mode.options.placeholder ?? mode.label}
+                  className="flex flex-col items-start gap-2.5 border-t border-border pt-3.5"
+                >
                   {mode.options.placeholder ? (
                     <span className="text-sm font-semibold">
                       {mode.options.placeholder}

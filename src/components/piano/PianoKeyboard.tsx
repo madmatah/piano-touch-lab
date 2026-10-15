@@ -193,7 +193,10 @@ export const PianoKeyboard = ({
             y="0"
             width={geometry.width}
             height={geometry.leverHeight}
-            className="fill-ptl-key-white"
+            // The colour of the card it lies on, in both themes: painted as
+            // a white key it vanished on paper-white and stood out as an
+            // ivory band in the dark, where the keys are the ivory.
+            className="fill-card"
           />
         )}
         {paths.readLever && (

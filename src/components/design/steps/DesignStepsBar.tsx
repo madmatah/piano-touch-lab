@@ -11,7 +11,7 @@ import {
 
 const tileClassName = (step: DesignStep, isCurrent: boolean) =>
   cn(
-    'flex flex-[1_1_140px] flex-col gap-1 rounded-md border border-border bg-card px-3 py-2.5 text-foreground no-underline transition-colors',
+    'flex flex-[1_1_140px] flex-col gap-1 rounded-md border border-border bg-card px-3 py-2.5 text-foreground no-underline transition-colors max-md:flex-[0_0_150px]',
     step.kind === 'result' && 'border-dashed',
     isCurrent &&
       'border-solid border-ptl-rule-strong bg-accent shadow-[inset_0_0_0_1px_var(--ptl-rule-strong)]',
@@ -38,7 +38,9 @@ export const DesignStepsBar = ({
   return (
     <nav
       aria-label={t('Your design')}
-      className="flex flex-wrap items-stretch gap-2 print:hidden"
+      // One row on a phone, scrolled sideways: wrapped in three rows it put
+      // the page title some 570 px down an 844 px screen.
+      className="flex flex-wrap items-stretch gap-2 max-md:-mx-4 max-md:flex-nowrap max-md:overflow-x-auto max-md:px-4 max-md:pb-1 print:hidden"
     >
       {steps.map((step) => {
         const isCurrent = step.id === currentStepId;

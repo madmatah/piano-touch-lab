@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/hooks/use-translation';
@@ -49,16 +50,18 @@ export const ThemeToggle = ({ className }: { className?: string }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {options.map((option) => (
-          <DropdownMenuItem
-            key={option.value}
-            onClick={() => setTheme(option.value)}
-            className={cn(theme === option.value && 'font-semibold')}
-          >
-            <option.icon className="size-4" />
-            {option.label}
-          </DropdownMenuItem>
-        ))}
+        {/*
+         * Radio items: the chosen theme is marked, and announced as checked,
+         * where bold type alone said it to no screen reader.
+         */}
+        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+          {options.map((option) => (
+            <DropdownMenuRadioItem key={option.value} value={option.value}>
+              <option.icon className="size-4" />
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
