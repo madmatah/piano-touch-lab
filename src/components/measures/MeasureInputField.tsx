@@ -1,6 +1,7 @@
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import Joi from 'joi';
-import { useState } from 'react';
+import { TriangleAlert } from 'lucide-react';
+import { useId, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useValidatedNumericInputField } from '@/hooks/use-validated-numeric-input-field';
 import { cn } from '@/lib/utils';
@@ -14,6 +15,13 @@ export interface MeasureInputFieldProps {
   onUpdate: (value: OptionalNumber) => void;
   placeholder?: string;
   validator?: Joi.Schema;
+  /**
+   * A reading that is a number but cannot be right, such as an up weight
+   * above the down weight. The value is kept; the field is ringed in red and
+   * says why: at once to a screen reader, and in a tooltip on focus — which
+   * a tap gives, where a hover does not exist.
+   */
+  warning?: string;
 }
 
 /**
@@ -31,7 +39,9 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   onUpdate,
   placeholder,
   validator,
+  warning,
 }) => {
+  const warningId = useId();
   const { error, inputValue, onInputChange } = useValidatedNumericInputField(
     defaultValue,
     onUpdate,
@@ -41,6 +51,7 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
 
   const shouldShowErrorState = !!error && isFocused;
   const shouldShowFilledState = !error && !['', '-'].includes(inputValue);
+  const shouldShowWarningState = !error && !!warning;
 
   const inputClassName = cn(
     // 16px on a phone: Safari zooms the page into any field set smaller.
@@ -50,34 +61,53 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
     shouldShowFilledState && 'border-ptl-rule-strong',
     shouldShowErrorState &&
       'border-destructive bg-destructive/10 text-destructive',
+    shouldShowWarningState && 'border-destructive text-destructive',
     className,
   );
 
   return (
-    <Tooltip open={isFocused && !!error}>
-      <TooltipTrigger asChild>
-        <input
-          type="text"
-          // A decimal keypad on a phone, with a key that goes on to the next
-          // field; text rather than number, which would refuse a comma.
-          inputMode="decimal"
-          enterKeyHint="next"
-          aria-label={ariaLabel}
-          name={name}
-          placeholder={placeholder}
-          value={inputValue ?? undefined}
-          onChange={onInputChange}
-          onFocus={() => {
-            setIsFocused(true);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            onInputChange(e);
-          }}
-          className={inputClassName}
-        />
-      </TooltipTrigger>
-      {error && <TooltipContent variant="destructive">{error}</TooltipContent>}
-    </Tooltip>
+    <span className="inline-flex items-center gap-1.5">
+      <Tooltip open={isFocused && (!!error || shouldShowWarningState)}>
+        <TooltipTrigger asChild>
+          <input
+            type="text"
+            // A decimal keypad on a phone, with a key that goes on to the next
+            // field; text rather than number, which would refuse a comma.
+            inputMode="decimal"
+            enterKeyHint="next"
+            aria-label={ariaLabel}
+            aria-describedby={shouldShowWarningState ? warningId : undefined}
+            name={name}
+            placeholder={placeholder}
+            value={inputValue ?? undefined}
+            onChange={onInputChange}
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              onInputChange(e);
+            }}
+            className={inputClassName}
+          />
+        </TooltipTrigger>
+        {error || shouldShowWarningState ? (
+          <TooltipContent variant="destructive">
+            {error ?? warning}
+          </TooltipContent>
+        ) : null}
+      </Tooltip>
+      {shouldShowWarningState ? (
+        <>
+          <TriangleAlert
+            aria-hidden="true"
+            className="size-3.5 shrink-0 text-destructive"
+          />
+          <span id={warningId} className="sr-only">
+            {warning}
+          </span>
+        </>
+      ) : null}
+    </span>
   );
 };
