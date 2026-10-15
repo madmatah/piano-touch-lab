@@ -1,6 +1,8 @@
 import { Minus, Plus } from 'lucide-react';
-import { Button } from '../../ui/button';
 import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
+
+import { useTranslation } from '@/hooks/use-translation';
+import { Stepper } from '../stepper/Stepper';
 
 export interface NumericSelectorProps {
   value: number;
@@ -41,6 +43,7 @@ export const NumericSelector = ({
   labelFormatter,
   maxCharacters,
 }: NumericSelectorProps) => {
+  const { t } = useTranslation();
   const valueString = useMemo(() => value?.toString() ?? '', [value]);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(valueString);
@@ -142,65 +145,45 @@ export const NumericSelector = ({
     setIsEditing(false);
   }, [inputValue, validateAndApplyValue]);
 
+  const valueWidth = effectiveMaxCharacters
+    ? `calc(${effectiveMaxCharacters}ch + 2.5rem)`
+    : undefined;
+
   return (
-    <div className="inline-flex flex-row items-center gap-3 px-5 py-3">
-      <div>
-        <Button
-          className="hover:cursor-pointer"
-          disabled={!canDecrement}
-          onClick={handleDecrement}
-          size="icon"
-          variant="outline"
+    <Stepper
+      canGoNext={canIncrement}
+      canGoPrevious={canDecrement}
+      nextIcon={<Plus className="size-[17px]" />}
+      nextLabel={t('Increase')}
+      onNext={handleIncrement}
+      onPrevious={handleDecrement}
+      previousIcon={<Minus className="size-[17px]" />}
+      previousLabel={t('Decrease')}
+    >
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleInputKeyDown}
+          onBlur={handleInputBlur}
+          className="h-10 min-w-16 bg-transparent px-2 text-center font-mono text-base font-medium outline-none"
+          min={minValue}
+          max={maxValue}
+          step={step}
+          size={inputValue.length || 1}
+          style={{ width: valueWidth }}
+        />
+      ) : (
+        <button
+          type="button"
+          className="h-10 min-w-16 cursor-text px-2 font-mono text-base font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset focus-visible:outline-none"
+          onClick={handleValueClick}
+          style={{ width: valueWidth }}
         >
-          <Minus />
-        </Button>
-      </div>
-      <div>
-        {isEditing ? (
-          <input
-            ref={inputRef}
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown}
-            onBlur={handleInputBlur}
-            className="h-8 w-auto text-center font-bold border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-primary"
-            min={minValue}
-            max={maxValue}
-            step={step}
-            size={inputValue.length || 1}
-            style={{
-              width: effectiveMaxCharacters
-                ? `calc(${effectiveMaxCharacters}ch + 2.5rem)`
-                : undefined,
-            }}
-          />
-        ) : (
-          <div
-            className="h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded transition-colors px-5 py-1"
-            onClick={handleValueClick}
-            style={{
-              width: effectiveMaxCharacters
-                ? `calc(${effectiveMaxCharacters}ch + 2.5rem)`
-                : undefined,
-            }}
-          >
-            <strong className="font-bold user-select-none">
-              {formatLabel(value)}
-            </strong>
-          </div>
-        )}
-      </div>
-      <div>
-        <Button
-          className="hover:cursor-pointer"
-          disabled={!canIncrement}
-          onClick={handleIncrement}
-          size="icon"
-          variant="outline"
-        >
-          <Plus />
-        </Button>
-      </div>
-    </div>
+          {formatLabel(value)}
+        </button>
+      )}
+    </Stepper>
   );
 };

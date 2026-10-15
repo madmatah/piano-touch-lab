@@ -15,7 +15,7 @@ export const DemoProfileInformationCard = () => {
 
   return isDemoProfile ? (
     <div className="max-w-full p-0 pb-2 print:hidden">
-      <Alert variant="info" className="rounded-none border-none">
+      <Alert variant="warn" className="rounded-none border-none">
         <Info />
         <AlertDescription>
           <p>

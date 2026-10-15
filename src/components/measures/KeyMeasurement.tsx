@@ -150,12 +150,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
                   <TooltipTrigger>
                     <MessageCircleWarning className="w-4 h-4" />
                   </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    arrowClassName="bg-red-100 fill-red-100"
-                    backgroundColor="bg-red-100"
-                    textColor="text-red-900"
-                  >
+                  <TooltipContent side="right" variant="destructive">
                     <p className="whitespace-pre-line">
                       {t(
                         'The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.',

@@ -52,10 +52,6 @@ export const AppSidebarItem: React.FC<AppSidebarItemProps> = (
             side="right"
             align="center"
             sideOffset={2}
-            backgroundColor="bg-purple-100"
-            textColor="text-purple-900"
-            arrowClassName="bg-purple-100 fill-purple-100"
-            className="border-0 border-purple-900"
             avoidCollisions={true}
           >
             {badge.tooltipContent}
