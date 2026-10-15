@@ -57,11 +57,11 @@ const headerClassName =
 const headClassName = 'xl:sticky xl:top-[var(--ptl-sticky-top,0px)] xl:z-[1]';
 
 /**
- * The measure table.
+ * The measure table: the readings, and nothing worked out from them.
  *
- * Measured columns first, then the two the tool derives from them — so a
- * technician entering a down weight and an up weight watches the balance
- * weight and the friction appear on the same line.
+ * The balance weight and the friction are read in Analyze, where the springs
+ * are counted in or not, and named so. Here they were a second figure under
+ * the same name, beside the readings it came from.
  */
 export const KeyMeasureList = memo(function KeyMeasureList({
   currentKeyNumber,
@@ -224,13 +224,6 @@ export const KeyMeasureList = memo(function KeyMeasureList({
                   </th>
                 );
               })}
-              <th
-                colSpan={2}
-                scope="colgroup"
-                className={cn(groupClassName, 'text-right')}
-              >
-                {t('Computed')}
-              </th>
             </tr>
             <tr>
               <th
@@ -263,22 +256,6 @@ export const KeyMeasureList = memo(function KeyMeasureList({
                   {column.name}
                 </th>
               ))}
-              <th
-                className={cn(headerClassName, 'w-[88px] text-right')}
-                scope="col"
-              >
-                <span className="font-mono text-[11.5px] font-medium text-ptl-brass">
-                  BW
-                </span>
-              </th>
-              <th
-                className={cn(headerClassName, 'w-[88px] text-right')}
-                scope="col"
-              >
-                <span className="font-mono text-[11.5px] font-medium text-ptl-brass">
-                  F
-                </span>
-              </th>
             </tr>
           </thead>
           <tbody onFocus={onFocus} onKeyDown={onKeyDown}>
@@ -295,7 +272,7 @@ export const KeyMeasureList = memo(function KeyMeasureList({
           </tbody>
         </table>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border px-4 py-3 text-[12.5px] text-muted-foreground print:hidden">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border px-4 py-3 text-[12.5px] text-muted-foreground print:hidden">
         <span className="inline-flex flex-wrap items-center gap-1.5">
           <kbd className={keyClassName}>Tab</kbd>
           {[
@@ -310,9 +287,6 @@ export const KeyMeasureList = memo(function KeyMeasureList({
           <kbd className={keyClassName}>{t('Shift')}</kbd>
           <kbd className={keyClassName}>Tab</kbd>
           {t('back')}
-        </span>
-        <span className="font-mono text-[11.5px] text-ptl-ink-3">
-          BW = (D + U) / 2 · F = (D − U) / 2
         </span>
       </div>
     </section>

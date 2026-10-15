@@ -1,4 +1,4 @@
-import { MessageCircleWarning, TriangleAlert } from 'lucide-react';
+import { MessageCircleWarning } from 'lucide-react';
 import { memo, useCallback } from 'react';
 
 import {
@@ -7,7 +7,7 @@ import {
 } from '@/hooks/store/use-measure-store';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
-import { formatRatio, formatWeightValue } from '@/lib/format/format-weight';
+import { formatRatio } from '@/lib/format/format-weight';
 import type {
   MeasuredKeyRequirements,
   OptionalNumber,
@@ -20,9 +20,6 @@ import {
 } from './hooks/use-measure-passes';
 import { MeasureInputField } from './MeasureInputField';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { useAnalyzedKey } from '@/hooks/keyboard/use-analyzed-key';
-import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
-import { frictionZoneAt } from '@/components/charts/touch-weight-chart/hooks/use-friction-zones-series';
 import { useKeyMeasurementInconsistency } from './hooks/use-key-measurement-inconsistency';
 
 type MeasuredProperty = keyof Pick<
@@ -47,31 +44,15 @@ export interface KeyMeasurementProps {
 
 const cellClassName = 'h-[42px] border-b border-border px-3 align-middle';
 
-const FRICTION_ZONE_DOTS = {
-  high: 'bg-ptl-current',
-  low: 'bg-ptl-brass',
-  medium: 'bg-ptl-ink-3',
-} as const;
-
-const FRICTION_ZONE_LABELS = {
-  high: 'High',
-  low: 'Low',
-  medium: 'Medium',
-} as const;
-
 /*
  * Below 1280px the table scrolls sideways in its frame, and once it has, the
  * front weight of which key? The number and the note stay put, on the row's
  * own background so the fields slide under them.
  */
 const keyCellClassName = 'max-xl:sticky max-xl:z-[1] max-xl:bg-[inherit]';
-const computedCellClassName = cn(
-  cellClassName,
-  'text-right font-mono text-sm text-muted-foreground',
-);
 
 /**
- * One key of the measure table: the fields to fill, then what they give.
+ * One key of the measure table: the fields to fill.
  *
  * Memoised: a Tab moves the focus, and with it the key the panel above
  * follows, but nothing a row shows — eighty-eight rows of four or six fields
@@ -90,16 +71,12 @@ export const KeyMeasurement = memo(function KeyMeasurement({
   const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
   const { currentLanguage, t } = useTranslation();
-  const { keyboard } = useKeyboard();
 
   const {
     allowedDifference,
     computedStrikeWeightRatio,
     isKeyMeasurementInconsistent,
   } = useKeyMeasurementInconsistency(keyNumber);
-  // Read here rather than taken as a prop: the row then depends on its own
-  // key alone, and the table does not rebuild the keyboard to fill them in.
-  const { analyzedKey } = useAnalyzedKey(keyNumber);
 
   const onUpdateKeyProperty = useCallback(
     (keyProperty: keyof MeasuredKeyRequirements) => (value: OptionalNumber) => {
@@ -131,16 +108,17 @@ export const KeyMeasurement = memo(function KeyMeasurement({
   const activeFields =
     passes.find((pass) => pass.id === currentPassId)?.fields ?? [];
 
-  const frictionWeight = analyzedKey?.frictionWeight ?? null;
-  const isFrictionNegative = frictionWeight !== null && frictionWeight < 0;
-  // The zone the static balance figure puts the key in, as the mockup marks
-  // it beside the value: a dot by colour, and its name for whoever cannot
-  // tell the colours apart.
-  const frictionZone = frictionZoneAt(frictionWeight, keyNumber, keyboard.size);
-
   if (!keySpec) {
     return null;
   }
+
+  // A key cannot come up under more weight than it goes down under: an up
+  // weight above the down weight is two readings typed the wrong way round,
+  // and it would throw the balance weight and the friction out with it.
+  const isUpAboveDown =
+    keySpec.upWeight !== null &&
+    keySpec.downWeightWithoutSpringSupport !== null &&
+    keySpec.upWeight > keySpec.downWeightWithoutSpringSupport;
 
   return (
     <tr
@@ -222,51 +200,14 @@ export const KeyMeasurement = memo(function KeyMeasurement({
             name={column.property}
             onUpdate={onUpdateKeyProperty(column.property)}
             placeholder={column.label}
+            warning={
+              column.property === 'upWeight' && isUpAboveDown
+                ? t('Up weight above down weight: probably swapped')
+                : undefined
+            }
           />
         </td>
       ))}
-      <td className={computedCellClassName}>
-        {formatWeightValue(analyzedKey?.balanceWeight ?? null, currentLanguage)}
-      </td>
-      <td className={computedCellClassName}>
-        {/*
-         * A key cannot come up under more weight than it goes down under: a
-         * negative friction is two readings typed the wrong way round, and
-         * it throws the balance weight out with it. Said in the cell rather
-         * than in a tooltip, which no touch screen opens.
-         */}
-        {isFrictionNegative ? (
-          <span
-            title={t('Up weight above down weight: probably swapped')}
-            className="inline-flex items-center gap-1.5 font-semibold text-destructive"
-          >
-            <TriangleAlert aria-hidden="true" className="size-3.5" />
-            {formatWeightValue(frictionWeight, currentLanguage)}
-            <span className="sr-only">
-              {t('Up weight above down weight: probably swapped')}
-            </span>
-          </span>
-        ) : frictionZone ? (
-          <span
-            title={t(FRICTION_ZONE_LABELS[frictionZone])}
-            className="inline-flex items-center gap-2"
-          >
-            <span
-              aria-hidden="true"
-              className={cn(
-                'size-1.5 rounded-full',
-                FRICTION_ZONE_DOTS[frictionZone],
-              )}
-            />
-            {formatWeightValue(frictionWeight, currentLanguage)}
-            <span className="sr-only">
-              {t(FRICTION_ZONE_LABELS[frictionZone])}
-            </span>
-          </span>
-        ) : (
-          formatWeightValue(frictionWeight, currentLanguage)
-        )}
-      </td>
     </tr>
   );
 });
