@@ -358,6 +358,7 @@ export const StrikeWeightRatioChart = <T,>({
         />
         <div className="relative z-10">
           <KeyboardChart
+            variant={variant}
             geometry={geometry}
             height={plotHeight}
             onChartReady={hover.bindChart}

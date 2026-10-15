@@ -41,7 +41,7 @@ export const useTouchWeightSeries = (
       const supported = useSupportSpringMeasurements
         ? (supportSpringBalanceWeight ?? 0)
         : 0;
-      return weight ? weight - supported : null;
+      return weight === null ? null : weight - supported;
     },
     [useSupportSpringMeasurements],
   );

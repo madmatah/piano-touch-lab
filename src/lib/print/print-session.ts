@@ -140,7 +140,7 @@ export const printablePlotWidth = (chrome: number): number =>
 /**
  * How tall a figure's plot may be on paper, in CSS pixels, by the same
  * reckoning: a sheet carries one figure, so the figure may have what is left
- * of it once the title, the frame and the caption have taken theirs.
+ * of it once the page title and the frame have taken theirs.
  */
 export const printablePlotHeight = (furniture: number): number =>
   toPixels(sheet.contentHeight) - furniture;

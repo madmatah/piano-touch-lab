@@ -94,14 +94,14 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
         ) : null}
       </div>
 
-      <section className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card print:overflow-visible">
+      <section className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card print:overflow-visible print:rounded-none print:border-0">
         <div className="overflow-x-auto print:overflow-visible">
           {/*
            * The table scrolls sideways on screen rather than cram eight
            * columns into a narrow window; on paper there is nowhere to
            * scroll, so it gives up its floor width and fits the sheet.
            */}
-          <table className="w-full min-w-[820px] table-fixed border-collapse print:table-auto print:min-w-0 print:text-[12px]">
+          <table className="w-full min-w-[820px] table-fixed border-collapse print:table-auto print:min-w-0">
             <colgroup>
               <col className="w-[52px]" />
               <col className="w-[64px]" />
@@ -141,7 +141,7 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
                 <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-center align-middle text-[13px] font-semibold">
                   {t('Done')}
                 </th>
-                <th className="ptl-print-only h-12 border-b border-ptl-rule-strong border-l px-3 text-left align-middle text-[13px] font-semibold">
+                <th className="ptl-print-only h-12 border-b border-b-ptl-rule-strong border-l border-l-border px-3 text-left align-middle text-[13px] font-semibold">
                   {t('Notes')}
                 </th>
               </tr>

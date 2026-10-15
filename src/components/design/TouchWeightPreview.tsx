@@ -117,8 +117,9 @@ export const TouchWeightPreview = ({
   const designedBalance = averageOf(designedSeries.balance);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-3">
+    <div data-slot="page-wide" className="flex flex-col gap-4">
+      {/* The tiles are read, so they keep the measure the prose keeps. */}
+      <div className="flex max-w-[var(--ptl-text-measure)] flex-wrap gap-3">
         {tiles.map((tile) => (
           <ComparisonTile
             key={tile.label}
@@ -129,6 +130,7 @@ export const TouchWeightPreview = ({
       </div>
 
       <TouchWeightChart
+        variant="design"
         analyzedKeyboard={designedKeyboard}
         ghostSerie={ghostSerie}
         useSupportSpringMeasurements={DESIGN_INCLUDES_SPRING_SUPPORT}

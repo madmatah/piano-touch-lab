@@ -11,6 +11,7 @@ import { ChartLegend, type ChartLegendItem } from '../figure/ChartLegend';
 import type { ChartLegendMarkKind } from '../figure/ChartLegendMark';
 import { useChartFigure } from '../hooks/use-chart-figure';
 import { usePrintableChart } from '../hooks/use-printable-chart';
+import { useScreenPlotHeight } from '../hooks/use-screen-plot-height';
 import { SVG_RENDERER } from '../renderer';
 import { serieValueAt, type TouchDesignSerie } from '../interfaces';
 import {
@@ -92,8 +93,8 @@ export const TouchWeightChart = ({
   const { geometry, hover, keys } = useChartFigure(analyzedKeyboard, 2);
   const option = useRef<EChartsOption | null>(null);
   const { onChartReady, plotHeight, tokens } = usePrintableChart(
-    'analyze',
-    touchWeightPlotHeight(),
+    variant,
+    useScreenPlotHeight(touchWeightPlotHeight(), variant),
     option,
     hover.bindChart,
   );

@@ -8,7 +8,6 @@ import { PrintButton } from '../../layout/PrintButton';
 import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
 import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-keyboard-stats';
-import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
   serieValueAt,
   type ChartReadingContext,
@@ -26,10 +25,7 @@ import {
   formatRatio,
   formatSignedRatio,
 } from '@/lib/format/format-weight';
-import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
-
-const FIGURE_NUMBER = ANALYZE_FIGURE_NUMBERS['/analyze/strike-weight-ratio']!;
 
 export const AnalyzeStrikeWeightRatioPage = () => {
   usePrintLandscape();
@@ -102,13 +98,6 @@ export const AnalyzeStrikeWeightRatioPage = () => {
         keyboard={analyzedKeyboard}
         displayBothManualAndComputed={useManualSWRMeasurements}
         renderReading={renderReading}
-        caption={
-          <FigureCaption number={FIGURE_NUMBER}>
-            {t(
-              'The ratio computed for each key; the vertical line ties each point to the median. Turn on the manual measurement option to compare measured against computed.',
-            )}
-          </FigureCaption>
-        }
       />
       <AnalysisFooter
         action={{

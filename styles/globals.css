@@ -18,6 +18,8 @@
 
 :root {
   --ptl-sidebar-width: 250px;
+  /* How wide a line of prose may run on this page. */
+  --ptl-text-measure: 1160px;
 
   --radius: 0.25rem;
 
@@ -408,6 +410,24 @@
 @media screen {
   .ptl-print-only {
     display: none !important;
+  }
+
+  /*
+   * A page reads as a column, and a column of text has a width past which it
+   * is tiring — so the page keeps one, whatever the screen is worth.
+   *
+   * A figure has the opposite need. Eighty-eight keys drawn across a column
+   * sized for prose leave the marks of a bass note and its neighbour a pixel
+   * apart, and the room a wide screen offers goes to a band of white beside
+   * them. So a figure is let out of the measure, and takes the page.
+   */
+  [data-slot='page-content'] > * {
+    max-width: var(--ptl-text-measure);
+  }
+
+  [data-slot='page-content'] > [data-slot='chart-figure'],
+  [data-slot='page-content'] > [data-slot='page-wide'] {
+    max-width: none;
   }
 }
 

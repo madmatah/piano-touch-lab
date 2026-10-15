@@ -239,7 +239,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
       }
       chart={
         shouldDisplayComputeModeWaitingMessage ? (
-          <Alert variant="default" className="flex-[999_1_480px]">
+          <Alert variant="default">
             <HourglassIcon />
             <AlertTitle>
               {t('Waiting for remaining design targets to be specified.')}

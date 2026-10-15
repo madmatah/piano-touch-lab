@@ -42,6 +42,13 @@ const PAGES = [
   '/analyze/strike-weight',
   '/analyze/strike-weight-ratio',
   '/analyze/wippen-support-springs',
+  // The Design pages carry the same figure under a recap of the four
+  // parameters, which is room the figure does not have.
+  '/design/wippen-support-springs',
+  '/design/front-weight',
+  '/design/strike-weight',
+  '/design/strike-weight-ratio',
+  '/design/touch-weight-preview',
 ];
 
 /**
