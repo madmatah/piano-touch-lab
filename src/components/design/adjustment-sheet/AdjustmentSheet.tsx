@@ -148,7 +148,7 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
                     {t('Wippen Support Springs', { ns: 'navigation' })}
                   </th>
                 ) : null}
-                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-center align-middle text-[13px] font-semibold">
+                <th className="ptl-print-only h-12 border-b border-ptl-rule-strong bg-card px-3 text-center align-middle text-[13px] font-semibold">
                   {t('Done')}
                 </th>
                 <th className="ptl-print-only h-12 border-b border-b-ptl-rule-strong border-l border-l-border px-3 text-left align-middle text-[13px] font-semibold">

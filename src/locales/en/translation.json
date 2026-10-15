@@ -26,6 +26,7 @@
   "+{{weight}} g": "+{{weight}}\u00a0g",
   "1 g at the hammer weighs {{value}} at the key measuring point.": "1\u00a0g at the hammer weighs {{value}} at the key measuring point.",
   "A toolkit for grand piano action balancing": "A toolkit for grand piano action balancing",
+  "About “{{label}}”": "About “{{label}}”",
   "About <1>this project</1>": "About <1>this project</1>",
   "account to create": "account to create",
   "across the {{count}} keys_one": "across the {{count}} key",

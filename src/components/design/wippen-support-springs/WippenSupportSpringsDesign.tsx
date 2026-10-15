@@ -146,7 +146,7 @@ export const WippenSupportSpringsDesign: React.FC<
 
   const summaryEntries = useMemo(() => {
     if (sprungPoints.length === 0) {
-      return [];
+      return [{ label: t('Springs'), value: '0' }];
     }
     const first = sprungPoints[0]!;
     const last = sprungPoints[sprungPoints.length - 1]!;
@@ -188,26 +188,26 @@ export const WippenSupportSpringsDesign: React.FC<
           onTargetChange={onTargetChange}
         />
       }
+      // Drawn even with no spring designed: the figure keeps its place, and
+      // the cards under it do not leap up the page the moment "none" is
+      // picked.
       chart={
-        wippenSupportSpringsDesignMode ===
-        WippenSupportSpringsDesignMode.None ? null : (
-          <SupportSpringBalanceWeightChart
-            renderReading={renderReading}
-            variant="design"
-            keyboard={analyzedKeyboard}
-            sprungKeys={sprungKeys}
-            targetSerie={targetSerie}
-            extraLegendItems={[
-              {
-                colorClassName: 'text-ptl-series-target',
-                id: 'target',
-                label: t('Target'),
-                mark: 'line-thick' as const,
-              },
-            ]}
-            caption={<DesignChartSummary entries={summaryEntries} />}
-          />
-        )
+        <SupportSpringBalanceWeightChart
+          renderReading={renderReading}
+          variant="design"
+          keyboard={analyzedKeyboard}
+          sprungKeys={sprungKeys}
+          targetSerie={targetSerie}
+          extraLegendItems={[
+            {
+              colorClassName: 'text-ptl-series-target',
+              id: 'target',
+              label: t('Target'),
+              mark: 'line-thick' as const,
+            },
+          ]}
+          caption={<DesignChartSummary entries={summaryEntries} />}
+        />
       }
     />
   );

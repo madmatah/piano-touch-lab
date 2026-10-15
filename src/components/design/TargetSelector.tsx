@@ -215,54 +215,62 @@ export const TargetSelector = <Mode extends string, Target>(
         <RadioGroup
           onValueChange={onModeChangeHandler}
           value={selectedMode?.value}
-          // As many cards to the row as fit, each keeping its own height:
-          // the one that is chosen carries its control and is taller, and
-          // the others have no reason to be stretched to match it.
-          className="grid-cols-[repeat(auto-fit,minmax(260px,1fr))] items-start gap-2.5"
+          // As many cards to the row as fit, all of one height: they hold a
+          // title each, and the controls of the one chosen sit under the row.
+          className="grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-2.5"
         >
           {modes.map((mode) => (
             <RadioItem
               isDisabled={mode.isDisabled}
               disabledReason={mode.disabledReason}
+              hasDescriptionOnDemand
               key={mode.value}
               label={mode.label}
               description={mode.description ?? ''}
               value={mode.value}
-            >
-              {mode.value === selectedMode?.value &&
-              mode.options.selectorUi !==
-                TargetSelectorUi.UniqueTargetSelector ? (
-                // `items-start`: the stepper keeps its own width rather than
-                // running the width of the card with an empty field after +.
-                <div
-                  role="group"
-                  aria-label={mode.options.placeholder ?? mode.label}
-                  className="flex flex-col items-start gap-2.5 border-t border-border pt-3.5"
-                >
-                  {mode.options.placeholder ? (
-                    <span className="text-sm font-semibold">
-                      {mode.options.placeholder}
-                    </span>
-                  ) : null}
-                  {control}
-                  {mode.formula ? (
-                    <span className="font-mono text-[13px] text-foreground">
-                      {mode.formula}
-                    </span>
-                  ) : null}
-                  {mode.hint ? (
-                    <span className="text-[13px] leading-[1.5] text-muted-foreground">
-                      {mode.hint}
-                    </span>
-                  ) : null}
-                </div>
-              ) : null}
-            </RadioItem>
+            />
           ))}
         </RadioGroup>
-      ) : (
-        control
-      )}
+      ) : null}
+      {/*
+       * One strip for the controls of the choice in hand, laid out across:
+       * inside its card they made that card three times as tall as its
+       * neighbours, and pushed the curve they act on off the screen.
+       */}
+      {selectedMode &&
+      selectedMode.options.selectorUi !==
+        TargetSelectorUi.UniqueTargetSelector ? (
+        <div
+          role="group"
+          aria-label={selectedMode.options.placeholder ?? selectedMode.label}
+          data-slot="target-controls"
+          className="flex flex-wrap items-end gap-x-8 gap-y-3 rounded-md border border-ptl-rule-strong bg-card px-4 py-3.5"
+        >
+          {/* `items-start`: the stepper keeps its own width. */}
+          <div className="flex flex-col items-start gap-2">
+            {selectedMode.options.placeholder ? (
+              <span className="text-sm font-semibold">
+                {selectedMode.options.placeholder}
+              </span>
+            ) : null}
+            {control}
+          </div>
+          {selectedMode.formula || selectedMode.hint ? (
+            <div className="flex max-w-[60ch] flex-col gap-1 pb-1">
+              {selectedMode.formula ? (
+                <span className="font-mono text-[13px] text-foreground">
+                  {selectedMode.formula}
+                </span>
+              ) : null}
+              {selectedMode.hint ? (
+                <span className="text-[13px] leading-[1.5] text-muted-foreground">
+                  {selectedMode.hint}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 };

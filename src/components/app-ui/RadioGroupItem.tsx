@@ -1,12 +1,22 @@
 import { useId } from 'react';
-import { RadioGroupItem } from '../ui/radio-group';
+import { CircleHelp, Info } from 'lucide-react';
+
+import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
-import { Info } from 'lucide-react';
+
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { RadioGroupItem } from '../ui/radio-group';
 
 export interface RadioGroupItemProps<T extends string> {
   children?: React.ReactNode;
   description?: string;
   disabledReason?: string;
+  /**
+   * The description on demand, behind a "?" that a tap opens as well as a
+   * click: the card keeps its title alone, so that a row of cards stays one
+   * line of choices rather than a column of paragraphs.
+   */
+  hasDescriptionOnDemand?: boolean;
   isDisabled?: boolean;
   label: string;
   value: T;
@@ -30,10 +40,12 @@ export const RadioItem = <T extends string>({
   children,
   description,
   disabledReason,
+  hasDescriptionOnDemand = false,
   isDisabled,
   label,
   value,
 }: RadioGroupItemProps<T>) => {
+  const { t } = useTranslation();
   const id = useId();
   const titleId = `${id}-title`;
   const descriptionId = description ? `${id}-description` : null;
@@ -47,42 +59,71 @@ export const RadioItem = <T extends string>({
         !isDisabled && 'hover:bg-accent/60',
       )}
     >
-      <label
-        className={cn(
-          'flex cursor-pointer items-start gap-3 select-none',
-          isDisabled && 'cursor-not-allowed',
-        )}
-      >
-        {/*
-         * Selection is reported by the group's `onValueChange`, which the
-         * keyboard raises too; an `onClick` here would report a mouse click
-         * twice and leave the arrow keys reporting nothing.
-         */}
-        <RadioGroupItem
-          value={value}
-          className="mt-0.5"
-          disabled={!!isDisabled}
-          aria-labelledby={titleId}
-          aria-describedby={
-            [descriptionId, reasonId].filter(Boolean).join(' ') || undefined
-          }
-        />
-        <span
-          className={cn('flex flex-col gap-[3px]', isDisabled && 'opacity-70')}
+      <div className="flex items-start gap-2">
+        <label
+          className={cn(
+            'flex flex-1 cursor-pointer items-start gap-3 select-none',
+            isDisabled && 'cursor-not-allowed',
+          )}
         >
-          <span id={titleId} className="text-[14.5px] font-semibold">
-            {label}
+          {/*
+           * Selection is reported by the group's `onValueChange`, which the
+           * keyboard raises too; an `onClick` here would report a mouse click
+           * twice and leave the arrow keys reporting nothing.
+           */}
+          <RadioGroupItem
+            value={value}
+            className="mt-0.5"
+            disabled={!!isDisabled}
+            aria-labelledby={titleId}
+            aria-describedby={
+              [descriptionId, reasonId].filter(Boolean).join(' ') || undefined
+            }
+          />
+          <span
+            className={cn(
+              'flex flex-col gap-[3px]',
+              isDisabled && 'opacity-70',
+            )}
+          >
+            <span id={titleId} className="text-[14.5px] font-semibold">
+              {label}
+            </span>
+            {description ? (
+              <span
+                id={descriptionId ?? undefined}
+                className={cn(
+                  'text-[13px] leading-[1.5] text-muted-foreground',
+                  // Still read out with the radio, only no longer shown.
+                  hasDescriptionOnDemand && 'sr-only',
+                )}
+              >
+                {description}
+              </span>
+            ) : null}
           </span>
-          {description ? (
-            <span
-              id={descriptionId ?? undefined}
+        </label>
+        {/*
+         * Beside the label rather than in it: inside, a tap on the "?" would
+         * also pick the choice.
+         */}
+        {description && hasDescriptionOnDemand ? (
+          <Popover>
+            <PopoverTrigger
+              aria-label={t('About “{{label}}”', { label })}
+              className="-mt-1 -mr-1.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-ptl-ink-3 transition-colors hover:bg-accent hover:text-foreground"
+            >
+              <CircleHelp aria-hidden="true" className="size-4" />
+            </PopoverTrigger>
+            <PopoverContent
+              align="end"
               className="text-[13px] leading-[1.5] text-muted-foreground"
             >
               {description}
-            </span>
-          ) : null}
-        </span>
-      </label>
+            </PopoverContent>
+          </Popover>
+        ) : null}
+      </div>
       {reasonId ? (
         <p
           id={reasonId}

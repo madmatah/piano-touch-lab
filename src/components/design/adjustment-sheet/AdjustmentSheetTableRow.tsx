@@ -76,9 +76,13 @@ export const AdjustmentSheetTableRow: React.FC<
         targetValue={item.payload?.targetSupportSpringBalanceWeight ?? null}
       />
     )}
-    <td className={`${cellClassName} text-center`}>
-      {/* In ink on paper: a pale box vanishes from a black and white laser. */}
-      <span className="inline-block size-[18px] rounded-[3px] border-[1.5px] border-input align-middle print:size-[15px] print:rounded-[2px] print:border-foreground" />
+    {/*
+     * A box to tick in pencil at the bench, so on paper only: on screen it
+     * looked like a checkbox, and a click on it did nothing. In ink, for a
+     * pale box vanishes from a black and white laser.
+     */}
+    <td className={`${cellClassName} ptl-print-only text-center`}>
+      <span className="inline-block size-[15px] rounded-[2px] border-[1.5px] border-foreground align-middle" />
     </td>
     {/* Room to write on the printed sheet; nothing to show on screen. */}
     <td className={`${cellClassName} ptl-print-only border-l`} />
