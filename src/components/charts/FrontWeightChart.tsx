@@ -6,6 +6,7 @@ import { FrontWeightLevel } from '@/lib/piano/touch-design/front-weight-level';
 import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
 
 import { CHART_HEIGHTS } from './chart-geometry';
+import { scaleOver } from './echarts/build-base-option';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
@@ -13,7 +14,11 @@ import { useChartFigure } from './hooks/use-chart-figure';
 import { useFrontWeightStandardSeries } from './hooks/use-front-weight-standard-series';
 import { useGenerateSerie } from './hooks/use-generate-serie';
 import { KeyboardChart, TouchDesignSerieVariant } from './KeyboardChart';
-import { type ChartReadingContext, type TouchDesignSerie } from './interfaces';
+import {
+  serieValues,
+  type ChartReadingContext,
+  type TouchDesignSerie,
+} from './interfaces';
 
 /** The scale of the mockups: −10 g to 45 g, ruled every 10 g. */
 const FRONT_WEIGHT_SCALE = { interval: 10, max: 45, min: -10, unit: 'g' };
@@ -89,6 +94,11 @@ export const FrontWeightChart = <T,>({
     [standardSeries, targetSerie, isEmpty, measuredSerie],
   );
 
+  const scale = useMemo(
+    () => scaleOver(FRONT_WEIGHT_SCALE, serieValues(series)),
+    [series],
+  );
+
   const legendItems = useMemo<ChartLegendItem[]>(
     () => [
       ...(extraLegendItems ?? []),
@@ -142,7 +152,7 @@ export const FrontWeightChart = <T,>({
         }
         onChartReady={hover.bindChart}
         ruleAt={0}
-        scale={FRONT_WEIGHT_SCALE}
+        scale={scale}
         series={series}
       />
     </ChartFigure>

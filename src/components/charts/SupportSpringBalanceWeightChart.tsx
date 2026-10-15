@@ -7,13 +7,18 @@ import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
 import { CHART_HEIGHTS } from './chart-geometry';
+import { scaleOver } from './echarts/build-base-option';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
 import { useChartFigure } from './hooks/use-chart-figure';
 import { useGenerateSerie } from './hooks/use-generate-serie';
 import { KeyboardChart, TouchDesignSerieVariant } from './KeyboardChart';
-import { type ChartReadingContext, type TouchDesignSerie } from './interfaces';
+import {
+  serieValues,
+  type ChartReadingContext,
+  type TouchDesignSerie,
+} from './interfaces';
 
 /** The scale of the mockups: 0 g to 30 g, ruled every 10 g. */
 const SPRING_WEIGHT_SCALE = { interval: 10, max: 30, min: 0, unit: 'g' };
@@ -81,6 +86,11 @@ export const SupportSpringBalanceWeightChart = <T,>({
       ...(isEmpty ? [] : [measuredSerie]),
     ],
     [isEmpty, measuredSerie, targetSerie],
+  );
+
+  const scale = useMemo(
+    () => scaleOver(SPRING_WEIGHT_SCALE, serieValues(series)),
+    [series],
   );
 
   const legendItems = useMemo<ChartLegendItem[]>(
@@ -170,7 +180,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
         geometry={geometry}
         height={plotHeight}
         onChartReady={hover.bindChart}
-        scale={SPRING_WEIGHT_SCALE}
+        scale={scale}
         series={series}
       />
     </ChartFigure>

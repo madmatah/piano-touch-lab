@@ -16,7 +16,6 @@ interface HoverableChart {
     value: [number, number],
   ) => number[];
   getZr: () => {
-    off: (event: string, handler?: (...args: never[]) => void) => void;
     on: (event: string, handler: (payload: never) => void) => void;
   };
 }
@@ -59,10 +58,7 @@ export const useHoveredKey = (
       const hoverable = chart as HoverableChart;
       const zr = hoverable.getZr();
 
-      zr.off('mousemove');
-      zr.off('globalout');
-
-      zr.on('mousemove', ((event: { offsetX: number; offsetY: number }) => {
+      const onMove = (event: { offsetX: number; offsetY: number }) => {
         const point: [number, number] = [event.offsetX, event.offsetY];
         const gridIndex = Array.from({ length: gridCount }, (_, i) => i).find(
           (index) => hoverable.containPixel({ gridIndex: index }, point),
@@ -77,11 +73,14 @@ export const useHoveredKey = (
             ? null
             : findKeyAtPosition(geometryRef.current, position),
         );
-      }) as (payload: never) => void);
+      };
+      const onOut = () => setHoveredKey(null);
 
-      zr.on('globalout', (() => setHoveredKey(null)) as (
-        payload: never,
-      ) => void);
+      // Nothing is unbound first: `onChartReady` fires once per instance, and
+      // zrender shares these two events with ECharts itself, whose listeners
+      // an argument-less `off` would take down with ours.
+      zr.on('mousemove', onMove as (payload: never) => void);
+      zr.on('globalout', onOut as (payload: never) => void);
     },
     [gridCount],
   );

@@ -31,7 +31,9 @@ const PLOT_SPAN = 1000;
 type KeyWithStrikeWeightRatio<T> = T &
   Pick<
     TouchWeightKeyAnalysis,
-    'computedStrikeWeightRatio' | 'measuredStrikeWeightRatio'
+    | 'computedStrikeWeightRatio'
+    | 'measuredStrikeWeightRatio'
+    | 'strikeWeightRatio'
   >;
 
 /**
@@ -43,6 +45,18 @@ type KeyWithStrikeWeightRatio<T> = T &
 export const selectComputedStrikeWeightRatio = (
   key: KeyWith<Pick<TouchWeightKeyAnalysis, 'computedStrikeWeightRatio'>>,
 ): OptionalNumber => key.payload.computedStrikeWeightRatio;
+
+/**
+ * The ratio the rest of the application works from: what was measured where
+ * it was measured, and what the analysis derives everywhere else.
+ *
+ * The data sheet prints it, the design smooths it and the preview computes
+ * from it, so it is what a single plotted curve has to be — otherwise the
+ * figure and the sheet state two different numbers for one quantity.
+ */
+export const selectStrikeWeightRatio = (
+  key: KeyWith<Pick<TouchWeightKeyAnalysis, 'strikeWeightRatio'>>,
+): OptionalNumber => key.payload.strikeWeightRatio;
 
 /**
  * The mockup band, widened to whatever the instrument actually reads.
@@ -191,16 +205,29 @@ export const StrikeWeightRatioChart = <T,>({
   const { currentLanguage, t } = useTranslation();
   const { geometry, hover, keys } = useChartFigure(keyboard);
   const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
-  const stats = useKeyboardStats(keyboard, selectComputedStrikeWeightRatio);
+  const stats = useKeyboardStats(
+    keyboard,
+    displayBothManualAndComputed
+      ? selectComputedStrikeWeightRatio
+      : selectStrikeWeightRatio,
+  );
+
+  // Two curves when the reader measures ratios by hand and wants to see both,
+  // one otherwise — and that one is the effective ratio, measured or derived.
+  const computedSerieLabel = displayBothManualAndComputed
+    ? t('Computed Strike Weight Ratio')
+    : t('Strike Weight Ratio');
 
   const computedSerie = useMemo(
     () =>
       generateSerie(
-        selectComputedStrikeWeightRatio,
-        t('Computed Strike Weight Ratio'),
+        displayBothManualAndComputed
+          ? selectComputedStrikeWeightRatio
+          : selectStrikeWeightRatio,
+        computedSerieLabel,
         TouchDesignSerieVariant.Measured,
       ),
-    [generateSerie, t],
+    [computedSerieLabel, displayBothManualAndComputed, generateSerie],
   );
   const isEmpty = useMemo(
     () => isSerieEmpty(computedSerie),
@@ -263,7 +290,7 @@ export const StrikeWeightRatioChart = <T,>({
             {
               colorClassName: 'text-foreground',
               id: 'computed',
-              label: t('Computed Strike Weight Ratio'),
+              label: computedSerieLabel,
               mark: 'dot' as const,
             },
           ]),
@@ -288,7 +315,7 @@ export const StrikeWeightRatioChart = <T,>({
             },
           ]),
     ],
-    [extraLegendItems, isEmpty, medianRule, showsManual, t],
+    [computedSerieLabel, extraLegendItems, isEmpty, medianRule, showsManual, t],
   );
 
   const plotHeight =

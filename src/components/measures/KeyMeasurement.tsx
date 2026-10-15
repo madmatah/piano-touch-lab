@@ -15,7 +15,7 @@ import type {
 } from '@/lib/piano/touch-design/measured-key.requirements';
 import { cn } from '@/lib/utils';
 
-import { MEASURE_PASSES, type MeasurePassId } from './measure-passes';
+import { useMeasurePasses, type MeasurePassId } from './measure-passes';
 import { MeasureInputField } from './MeasureInputField';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useKeyMeasurementInconsistency } from './hooks/use-key-measurement-inconsistency';
@@ -109,13 +109,15 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     useManualSWRMeasurements ? ['measuredStrikeWeightRatio'] : [],
   ].filter((group): group is MeasuredProperty[] => group.length > 0);
 
+  const passes = useMeasurePasses();
+
   const { getTabIndexFor } = useKeyTabIndex<MeasuredProperty>(
     keyIndex,
     tabGroups,
   );
 
   const activeFields =
-    MEASURE_PASSES.find((pass) => pass.id === currentPassId)?.fields ?? [];
+    passes.find((pass) => pass.id === currentPassId)?.fields ?? [];
 
   if (!keySpec) {
     return null;

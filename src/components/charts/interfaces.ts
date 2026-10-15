@@ -33,6 +33,16 @@ export interface ChartReadingContext {
   referenceSeries: TouchDesignSerie[];
 }
 
+/** Every value the given series actually carry, in no particular order. */
+export const serieValues = (
+  series: readonly (TouchDesignSerie | undefined)[],
+): number[] =>
+  series.flatMap((serie) =>
+    (serie?.data ?? []).flatMap((point) =>
+      point.payload === undefined ? [] : [point.payload],
+    ),
+  );
+
 /** The value a series carries on one key, or null when it carries none. */
 export const serieValueAt = (
   serie: TouchDesignSerie | undefined,

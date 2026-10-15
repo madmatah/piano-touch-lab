@@ -6,6 +6,7 @@ import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level'
 import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
 
 import { CHART_HEIGHTS } from './chart-geometry';
+import { scaleOver } from './echarts/build-base-option';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
@@ -13,7 +14,11 @@ import { useChartFigure } from './hooks/use-chart-figure';
 import { useGenerateSerie } from './hooks/use-generate-serie';
 import { useStrikeWeightStandardSeries } from './hooks/use-strike-weight-standard-series';
 import { KeyboardChart, TouchDesignSerieVariant } from './KeyboardChart';
-import { type ChartReadingContext, type TouchDesignSerie } from './interfaces';
+import {
+  serieValues,
+  type ChartReadingContext,
+  type TouchDesignSerie,
+} from './interfaces';
 
 /** The scale of the mockups: 2 g to 16 g, ruled every 2 g. */
 const STRIKE_WEIGHT_SCALE = { interval: 2, max: 16, min: 2, unit: 'g' };
@@ -99,6 +104,11 @@ export const StrikeWeightChart = <T,>({
     [orderedStandardSeries, targetSerie, isEmpty, measuredSerie],
   );
 
+  const scale = useMemo(
+    () => scaleOver(STRIKE_WEIGHT_SCALE, serieValues(series)),
+    [series],
+  );
+
   const legendItems = useMemo<ChartLegendItem[]>(
     () => [
       ...(extraLegendItems ?? []),
@@ -151,7 +161,7 @@ export const StrikeWeightChart = <T,>({
           variant === 'analyze' ? CHART_HEIGHTS.plot : CHART_HEIGHTS.plotCompact
         }
         onChartReady={hover.bindChart}
-        scale={STRIKE_WEIGHT_SCALE}
+        scale={scale}
         series={series}
       />
     </ChartFigure>

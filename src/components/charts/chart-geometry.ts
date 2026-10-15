@@ -7,8 +7,6 @@
  * same insets, hence these constants rather than per-chart numbers.
  */
 export const PLOT_INSET = {
-  /** The keybed reaches a little past the first and last key. */
-  bedBleed: 4,
   left: 48,
   right: 56,
 } as const;

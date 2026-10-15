@@ -17,12 +17,11 @@ import { SidebarFileGroup } from './SidebarFileGroup';
 import { SidebarPianoCard } from './SidebarPianoCard';
 import { SidebarStepItem } from './SidebarStepItem';
 import { SidebarSubItem } from './SidebarSubItem';
-import { useAppNavigation } from './app-navigation';
+import type { NavigationStep } from './app-navigation';
 
-export const AppSidebar = () => {
+export const AppSidebar = ({ steps }: { steps: NavigationStep[] }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const steps = useAppNavigation();
   const { measured, total } = useMeasuredKeyCount();
 
   const [pianoStep, ...workflowSteps] = steps;

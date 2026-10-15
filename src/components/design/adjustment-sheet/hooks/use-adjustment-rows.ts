@@ -77,7 +77,9 @@ export const useAdjustmentRows = (
   );
 
   const summary = useMemo<AdjustmentSummary>(() => {
-    const rows = keyboard.getKeys();
+    // A key only has a row once both of its weights are known; the figures
+    // below count those, never the keys that are still blank.
+    const rows = keyboard.getKeys().filter((row) => row.payload !== null);
 
     const frontWeightDifferences = rows
       .map((row) =>
@@ -97,9 +99,14 @@ export const useAdjustmentRows = (
       )
       .filter(moved) as number[];
 
-    const springKeys = rows.filter(
-      (row) => (row.payload?.targetSupportSpringBalanceWeight ?? null) !== null,
-    );
+    // Read off the design, not off the rows: a sprung key whose front weight
+    // is still unmeasured has no row, and the bench sheet would lose the
+    // whole spring column with it.
+    const springKeys = designedKeyboard
+      .getKeys()
+      .filter(
+        (key) => (key.payload.supportSpringBalanceWeight ?? null) !== null,
+      );
 
     return {
       frontWeightCount: frontWeightDifferences.length,
@@ -123,7 +130,7 @@ export const useAdjustmentRows = (
           : Math.min(...strikeWeightDifferences),
       strikeWeightUnchanged: rows.length - strikeWeightDifferences.length,
     };
-  }, [keyboard]);
+  }, [designedKeyboard, keyboard]);
 
   return { keyboard, summary };
 };

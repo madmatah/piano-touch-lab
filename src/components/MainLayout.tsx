@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { AppSidebar } from '@/components/navigation/AppSidebar';
+import { AppSidebarTrigger } from '@/components/navigation/AppSidebarTrigger';
+import { useAppNavigation } from '@/components/navigation/app-navigation';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +29,10 @@ export const MainLayout = ({
   shouldDisplayDemoBanner = true,
   variant = 'app',
 }: MainLayoutProps) => {
+  // Built here and handed down: deciding which pages are open means designing
+  // the whole keyboard, and the sidebar and the breadcrumb both read it.
+  const steps = useAppNavigation();
+
   return (
     <SidebarProvider
       style={
@@ -35,11 +41,16 @@ export const MainLayout = ({
         } as React.CSSProperties
       }
     >
-      <AppSidebar />
+      <AppSidebar steps={steps} />
       <SidebarInset>
         {variant === 'app' ? (
-          <PageHeader right={headerRight ?? <PianoIdentity />} />
-        ) : null}
+          <PageHeader steps={steps} right={headerRight ?? <PianoIdentity />} />
+        ) : (
+          // The bare pages have no header bar to hold it, and the drawer
+          // would otherwise have no handle at all on a phone. No wrapper:
+          // the handle takes no room on the pages that do not show it.
+          <AppSidebarTrigger className="mt-4 ml-4" />
+        )}
         {shouldDisplayDemoBanner ? <DemoProfileBanner /> : null}
         <main
           className={cn(

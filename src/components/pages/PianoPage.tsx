@@ -22,6 +22,7 @@ import { getNoteName } from '@/lib/music/theory/spn';
 import type { Note } from '@/lib/music/theory/spn';
 import { Standard88Layout } from '@/lib/piano/keyboard';
 import { KeyColor } from '@/lib/piano/keyboard/key-color.enum';
+import { cn } from '@/lib/utils';
 
 type LayoutMode = 'standard' | 'custom';
 
@@ -200,12 +201,17 @@ export const PianoPage = () => {
               label={t('Custom')}
               onClick={handleLayoutChange}
             >
+              {/*
+               * Dimmed and inert while the layout is standard: the mockup
+               * shows the fields, but a stepper clicked here would raise the
+               * key count of a keyboard still labelled "Standard 88 keys".
+               */}
               <div
-                className={
-                  isCustomLayout
-                    ? 'flex flex-wrap gap-[18px]'
-                    : 'flex flex-wrap gap-[18px] opacity-50'
-                }
+                inert={!isCustomLayout}
+                className={cn(
+                  'flex flex-wrap gap-[18px]',
+                  !isCustomLayout && 'opacity-50',
+                )}
               >
                 <div className="flex flex-col gap-1.5">
                   <span className="ptl-label">{t('Number of keys')}</span>
