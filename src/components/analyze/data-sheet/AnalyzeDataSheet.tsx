@@ -35,8 +35,16 @@ export const AnalyzeDataSheet: React.FC<{
       ? [{ abbreviation: 'SWR', name: t('Ratio') }]
       : []),
   ];
+  // With the springs measured there are two balance weights, and the sheet
+  // gives both, each named: the one weighed with no spring helping, which
+  // Measure's readings give, and the one a hand feels, which Analyze draws.
   const computedColumns = [
-    { abbreviation: 'BW', name: t('Balance') },
+    ...(useSupportSpringMeasurements
+      ? [
+          { abbreviation: 'BW', name: t('Balance (without spring)') },
+          { abbreviation: 'BW − BWS', name: t('Balance (with spring)') },
+        ]
+      : [{ abbreviation: 'BW', name: t('Balance') }]),
     { abbreviation: 'F', name: t('Friction') },
     { abbreviation: 'R', name: t('Ratio') },
     ...(useSupportSpringMeasurements
@@ -95,7 +103,8 @@ export const AnalyzeDataSheet: React.FC<{
                   scope="col"
                   className="px-2 pt-2.5 pb-2 text-right align-bottom"
                 >
-                  <span className="block font-mono text-[12px] font-semibold text-ptl-brass">
+                  {/* "BW − BWS" is a formula: it is read whole or not at all. */}
+                  <span className="block font-mono text-[12px] font-semibold whitespace-nowrap text-ptl-brass">
                     {column.abbreviation}
                   </span>
                   <span className="block text-[11px] font-normal text-ptl-ink-3">

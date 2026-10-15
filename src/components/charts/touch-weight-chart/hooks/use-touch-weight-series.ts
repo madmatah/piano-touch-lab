@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useTranslation } from '@/hooks/use-translation';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
+import { feltWeight } from '@/lib/piano/touch-design/felt-balance-weight';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
 import { useGenerateSerie } from '../../hooks/use-generate-serie';
@@ -38,12 +39,11 @@ export const useTouchWeightSeries = (
   // What a support spring already carries is taken off the weight the
   // technician feels at the key, so the figure reads as the action behaves.
   const withoutSpringSupport = useCallback(
-    (weight: OptionalNumber, supportSpringBalanceWeight: OptionalNumber) => {
-      const supported = useSupportSpringMeasurements
-        ? (supportSpringBalanceWeight ?? 0)
-        : 0;
-      return weight === null ? null : weight - supported;
-    },
+    (weight: OptionalNumber, supportSpringBalanceWeight: OptionalNumber) =>
+      feltWeight(
+        weight,
+        useSupportSpringMeasurements ? supportSpringBalanceWeight : null,
+      ),
     [useSupportSpringMeasurements],
   );
 

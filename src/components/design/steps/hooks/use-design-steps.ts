@@ -12,7 +12,7 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { formatGrams, formatRatio } from '@/lib/format/format-weight';
-import { designedBalanceWeight } from '@/lib/piano/touch-design/designed-balance-weight';
+import { feltBalanceWeight } from '@/lib/piano/touch-design/felt-balance-weight';
 
 import { FrontWeightDesignMode } from '../../front-weight/FrontWeightDesign.types';
 import { StrikeWeightDesignMode } from '../../strike-weight/StrikeWeightDesign.types';
@@ -158,7 +158,7 @@ export const useDesignSteps = (): DesignStep[] => {
       .filter((key) => key.payload.downWeightWithoutSpringSupport !== null);
     const designedCount = designedKeys.length;
     const designedBalanceWeights = designedKeys.map((key) =>
-      designedBalanceWeight(key.payload),
+      feltBalanceWeight(key.payload),
     );
 
     return [

@@ -1,4 +1,5 @@
 import type { KeyWith } from '@/lib/piano/keyboard';
+import { feltBalanceWeight } from '@/lib/piano/touch-design/felt-balance-weight';
 import { isOctaveStart } from '@/lib/piano/keyboard/keyboard-geometry';
 import { cn } from '@/lib/utils';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
@@ -78,6 +79,12 @@ export const AnalyzeDataSheetTableRow: React.FC<
       locale={locale}
       value={item.payload.balanceWeight}
     />
+    {shouldUseSupportSpringMeasurements && (
+      <AnalyzeDataSheetTableCell
+        locale={locale}
+        value={feltBalanceWeight(item.payload)}
+      />
+    )}
     <AnalyzeDataSheetTableCell
       locale={locale}
       value={item.payload.frictionWeight}
