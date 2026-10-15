@@ -2,6 +2,7 @@ import { Trans } from 'react-i18next';
 
 import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
+import { DesignStepsBar } from '@/components/design/steps/DesignStepsBar';
 import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { FrontWeightDesign } from '@/components/design/front-weight/FrontWeightDesign';
@@ -13,6 +14,7 @@ export const DesignFrontWeightPage = () => {
 
   return (
     <MainLayout>
+      <DesignStepsBar currentStepId="front-weight" />
       <PageHeading
         eyebrow={t('Design · parameter {{number}} of 4', { number: 2 })}
         title={

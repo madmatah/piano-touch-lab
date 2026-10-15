@@ -3,15 +3,14 @@ import { KeyColor } from '@/lib/piano/keyboard';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import type { TouchDesignSerie } from './interfaces';
+import { TouchDesignSerieVariant } from './KeyboardChart';
 import { useTranslation } from '@/hooks/use-translation';
 
-export enum TouchDesignSerieVariant {
-  DefaultBold = 1,
-  Default = 2,
-  Target = 3,
-  Measured = 4,
-  Computed = 5,
-}
+/**
+ * Kept while the remaining charts are moved over to `KeyboardChart`; the
+ * variants themselves now live there.
+ */
+export { TouchDesignSerieVariant } from './KeyboardChart';
 
 export interface TouchDesignChartProps {
   title: string;

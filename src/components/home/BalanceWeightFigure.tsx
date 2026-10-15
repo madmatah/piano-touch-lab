@@ -4,6 +4,8 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 
 const PLOT_HEIGHT = 160;
+/** The keybed shows a sliver of itself below the front of the keys. */
+const KEYBED_OVERHANG = 3;
 const PLOT_TOP = 10;
 /** The curve is drawn between these two weights, in grams. */
 const WEIGHT_FLOOR = 40;
@@ -61,7 +63,7 @@ export const BalanceWeightFigure = ({
         )
         .join(''),
       geometry,
-      height: keyboardTop + geometry.height,
+      height: keyboardTop + geometry.height + KEYBED_OVERHANG,
       keyboardTop,
       line: points
         .map(
@@ -111,7 +113,8 @@ export const BalanceWeightFigure = ({
             x="0"
             y="0"
             width={figure.geometry.width}
-            height={figure.geometry.height}
+            height={figure.geometry.height + KEYBED_OVERHANG}
+            rx="3"
             className="fill-ptl-keybed"
           />
           <rect

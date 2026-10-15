@@ -2,6 +2,7 @@ import { Trans } from 'react-i18next';
 
 import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
+import { DesignStepsBar } from '@/components/design/steps/DesignStepsBar';
 import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { StrikeWeightDesign } from '@/components/design/strike-weight/StrikeWeightDesign';
@@ -13,6 +14,7 @@ export const DesignStrikeWeightPage = () => {
 
   return (
     <MainLayout>
+      <DesignStepsBar currentStepId="strike-weight" />
       <PageHeading
         eyebrow={t('Design · parameter {{number}} of 4', { number: 3 })}
         title={

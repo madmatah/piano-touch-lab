@@ -2,6 +2,7 @@ import { Trans } from 'react-i18next';
 
 import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
+import { DesignStepsBar } from '@/components/design/steps/DesignStepsBar';
 import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '../../../hooks/keyboard/use-designed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
@@ -14,6 +15,7 @@ export const DesignTouchWeightPreviewPage = () => {
 
   return (
     <MainLayout>
+      <DesignStepsBar currentStepId="preview" />
       <PageHeading
         eyebrow={t('Design · result')}
         title={

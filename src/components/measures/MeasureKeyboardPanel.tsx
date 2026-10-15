@@ -1,0 +1,178 @@
+import { useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
+
+import {
+  PianoKeyboard,
+  type PianoKeyTone,
+} from '@/components/piano/PianoKeyboard';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
+import {
+  useMeasuresStore,
+  type MeasuresStore,
+} from '@/hooks/store/use-measure-store';
+import { useTranslation } from '@/hooks/use-translation';
+import { octaveMarks } from '@/lib/piano/keyboard/keyboard-geometry';
+import { cn } from '@/lib/utils';
+
+import { MEASURE_PASSES, type MeasurePassId } from './measure-passes';
+
+export interface MeasureKeyboardPanelProps {
+  currentKeyNumber: number | null;
+  currentPassId: MeasurePassId;
+  onKeySelect: (keyNumber: number) => void;
+  onPassChange: (passId: MeasurePassId) => void;
+}
+
+/**
+ * Where the session stands: which pass is in hand, how far down the keyboard
+ * it has got, and which key is being filled.
+ *
+ * It sticks to the top of the page, because the answer to "where am I?" is
+ * needed exactly when the table has scrolled it out of sight.
+ */
+export const MeasureKeyboardPanel = ({
+  currentKeyNumber,
+  currentPassId,
+  onKeySelect,
+  onPassChange,
+}: MeasureKeyboardPanelProps) => {
+  const { t } = useTranslation();
+  const { keyboard } = useKeyboard();
+  const measuredKeys = useMeasuresStore()(
+    useShallow((state: MeasuresStore) => state.keys),
+  );
+
+  const keys = useMemo(() => keyboard.getKeys(), [keyboard]);
+
+  const passLabels: Record<MeasurePassId, string> = {
+    'down-up': t('Down & up weight'),
+    'front-weight': t('Front Weight', { ns: 'navigation' }),
+    'strike-weight': t('Strike Weight', { ns: 'navigation' }),
+  };
+
+  const progress = useMemo(
+    () =>
+      Object.fromEntries(
+        MEASURE_PASSES.map((pass) => [
+          pass.id,
+          measuredKeys
+            .slice(0, keyboard.size)
+            .filter((key) => pass.fields.every((field) => key[field] !== null))
+            .length,
+        ]),
+      ) as Record<MeasurePassId, number>,
+    [keyboard.size, measuredKeys],
+  );
+
+  const tones = useMemo(() => {
+    const pass = MEASURE_PASSES.find((item) => item.id === currentPassId);
+    const map = new Map<number, PianoKeyTone>();
+    if (!pass) {
+      return map;
+    }
+    keys.forEach((key) => {
+      const measured = measuredKeys[key.number - 1];
+      if (measured && pass.fields.every((field) => measured[field] !== null)) {
+        map.set(key.number, 'marked');
+      }
+    });
+    if (currentKeyNumber !== null) {
+      map.set(currentKeyNumber, 'current');
+    }
+    return map;
+  }, [currentKeyNumber, currentPassId, keys, measuredKeys]);
+
+  const currentKey =
+    currentKeyNumber === null
+      ? null
+      : keyboard.getKeyByNumber(currentKeyNumber);
+
+  const labels = useMemo(
+    () =>
+      octaveMarks(keys).map((mark) => ({
+        at: mark.number,
+        isMuted: true,
+        text: mark.label,
+      })),
+    [keys],
+  );
+
+  return (
+    <section
+      aria-label={t('Keyboard and measuring pass')}
+      className="sticky top-0 z-10 flex flex-col gap-3 rounded-md border border-ptl-rule-strong bg-card px-4 pt-3.5 pb-3 shadow-[0_14px_28px_-18px_rgb(0_0_0/0.45)]"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div
+          role="tablist"
+          aria-label={t('Measuring pass')}
+          className="inline-flex flex-wrap overflow-hidden rounded-md border border-ptl-rule-strong"
+        >
+          {MEASURE_PASSES.map((pass, index) => {
+            const isSelected = pass.id === currentPassId;
+            return (
+              <button
+                key={pass.id}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                onClick={() => onPassChange(pass.id)}
+                className={cn(
+                  'inline-flex h-9 cursor-pointer items-center gap-2 px-3 text-[13px] font-medium transition-colors',
+                  index > 0 && 'border-l border-input',
+                  isSelected
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-transparent text-muted-foreground hover:bg-accent',
+                )}
+              >
+                <span className="font-mono font-semibold">{pass.number}</span>
+                {passLabels[pass.id]}
+                <span className="font-mono text-[11px] opacity-80">
+                  {progress[pass.id]}/{keyboard.size}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {currentKey ? (
+          <div className="flex items-baseline gap-2.5">
+            <span className="ptl-label">{t('Current key')}</span>
+            <span className="font-serif text-[28px] leading-none">
+              {currentKey.name}
+            </span>
+            <span className="font-mono text-[13px] font-semibold text-ptl-current">
+              #{currentKey.number}
+            </span>
+          </div>
+        ) : null}
+      </div>
+
+      <PianoKeyboard
+        keys={keys}
+        description={t('Keyboard: click a key to jump to it')}
+        geometry={{ keyHeight: 72 }}
+        labels={labels}
+        onKeySelect={onKeySelect}
+        toneByKeyNumber={tones}
+      />
+
+      <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 text-[12.5px] text-muted-foreground">
+        <div className="flex flex-wrap gap-4">
+          <span className="inline-flex items-center gap-[7px]">
+            <span className="size-3 rounded-sm bg-ptl-key-white-done shadow-[inset_0_0_0_1px_var(--input)]" />
+            {t('Measured in this pass')}
+          </span>
+          <span className="inline-flex items-center gap-[7px]">
+            <span className="size-3 rounded-sm bg-ptl-current" />
+            {t('Current')}
+          </span>
+          <span className="inline-flex items-center gap-[7px]">
+            <span className="size-3 rounded-sm bg-ptl-key-white shadow-[inset_0_0_0_1px_var(--input)]" />
+            {t('Still to measure')}
+          </span>
+        </div>
+        <span className="text-ptl-ink-3">{t('Click a key to jump to it')}</span>
+      </div>
+    </section>
+  );
+};

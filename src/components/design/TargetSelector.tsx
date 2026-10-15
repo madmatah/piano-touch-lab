@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { RadioGroup } from '../ui/radio-group';
 import {
   Select,
@@ -66,6 +65,10 @@ interface TargetSelectorModeBase<Mode extends string> {
   description?: string;
   isDisabled?: boolean;
   disabledReason?: string;
+  /** The equation the mode solves, shown in mono under its control. */
+  formula?: string;
+  /** One line on what the mode depends on elsewhere in the design. */
+  hint?: string;
   value: Mode;
 }
 
@@ -146,108 +149,108 @@ export const TargetSelector = <Mode extends string, Target>(
     [onModeChange],
   );
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {shouldDisplayModeSelector && (
-          <div>
-            <RadioGroup
-              value={selectedMode?.value}
-              className="grid gap-3 md:grid-cols-2"
-            >
-              {modes.map((mode, index) => (
-                <RadioItem
-                  isDisabled={mode.isDisabled}
-                  disabledReason={mode.disabledReason}
-                  key={index}
-                  label={mode.label}
-                  description={mode.description ?? ''}
-                  value={mode.value}
-                  onClick={onModeChangeHandler}
-                />
-              ))}
-            </RadioGroup>
-          </div>
-        )}
-        {selectedMode && (
-          <div className="mt-4 flex justify-center">
-            {selectedMode.options.selectorUi ===
-              TargetSelectorUi.HtmlSelect && (
-              <Select
-                value={(selectedTarget?.value as unknown as string) || ''}
-                onValueChange={
-                  onTargetChange as unknown as (value: string) => void
-                }
+  const control = selectedMode ? (
+    <>
+      {selectedMode.options.selectorUi === TargetSelectorUi.HtmlSelect && (
+        <Select
+          value={(selectedTarget?.value as unknown as string) || ''}
+          onValueChange={onTargetChange as unknown as (value: string) => void}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={selectedMode.options.placeholder}>
+              {selectedTarget?.label}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {selectedMode.options.targets.map((target) => (
+              <SelectItem
+                key={target.value as unknown as string}
+                value={target.value as unknown as string}
               >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={selectedMode.options.placeholder}>
-                    {selectedTarget?.label}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {selectedMode.options.targets.map((target) => (
-                    <SelectItem
-                      key={target.value as unknown as string}
-                      value={target.value as unknown as string}
-                    >
-                      {target.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-            {selectedMode.options.selectorUi ===
-              TargetSelectorUi.ValueSelector && (
-              <ValueSelector<string>
-                currentValue={selectedTarget?.value as unknown as string}
-                onChange={onTargetChange as unknown as (value: string) => void}
-                values={selectedMode.options.targets.map((target) => ({
-                  label: target.label,
-                  value: target.value as unknown as string,
-                }))}
-              />
-            )}
-            {selectedMode.options.selectorUi ===
-            TargetSelectorUi.NumericSelector ? (
-              <div className="flex flex-col gap-1">
-                {selectedMode.options.placeholder ? (
-                  <div className="text-center text-sm font-bold">
-                    {selectedMode.options.placeholder}
-                  </div>
-                ) : null}
-                <div>
-                  <NumericSelector
-                    value={
-                      (selectedTargetValue as unknown as number) ??
-                      selectedMode.options.minValue
-                    }
-                    onChange={
-                      onTargetChange as unknown as (value: number) => void
-                    }
-                    maxCharacters={selectedMode.options.maxCharacters}
-                    minValue={selectedMode.options.minValue}
-                    maxValue={selectedMode.options.maxValue}
-                    step={selectedMode.options.step}
-                    labelFormatter={selectedMode.options.labelFormatter}
-                  />
-                </div>
-              </div>
-            ) : null}
-            {selectedMode.options.selectorUi ===
-              TargetSelectorUi.CustomComponentTargetSelector && (
-              <div>
-                {selectedMode.options.componentFactory(
-                  selectedTargetValue,
-                  onTargetChange,
-                )}
-              </div>
-            )}
-          </div>
+                {target.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+      {selectedMode.options.selectorUi === TargetSelectorUi.ValueSelector && (
+        <ValueSelector<string>
+          currentValue={selectedTarget?.value as unknown as string}
+          onChange={onTargetChange as unknown as (value: string) => void}
+          values={selectedMode.options.targets.map((target) => ({
+            label: target.label,
+            value: target.value as unknown as string,
+          }))}
+        />
+      )}
+      {selectedMode.options.selectorUi === TargetSelectorUi.NumericSelector ? (
+        <NumericSelector
+          value={
+            (selectedTargetValue as unknown as number) ??
+            selectedMode.options.minValue
+          }
+          onChange={onTargetChange as unknown as (value: number) => void}
+          maxCharacters={selectedMode.options.maxCharacters}
+          minValue={selectedMode.options.minValue}
+          maxValue={selectedMode.options.maxValue}
+          step={selectedMode.options.step}
+          labelFormatter={selectedMode.options.labelFormatter}
+        />
+      ) : null}
+      {selectedMode.options.selectorUi ===
+        TargetSelectorUi.CustomComponentTargetSelector &&
+        selectedMode.options.componentFactory(
+          selectedTargetValue,
+          onTargetChange,
         )}
-      </CardContent>
-    </Card>
+    </>
+  ) : null;
+
+  return (
+    <section className="flex flex-col gap-4">
+      <h2 className="m-0 font-serif text-[30px] leading-none font-medium">
+        {title}
+      </h2>
+      {shouldDisplayModeSelector ? (
+        <RadioGroup value={selectedMode?.value} className="gap-2.5">
+          {modes.map((mode) => (
+            <RadioItem
+              isDisabled={mode.isDisabled}
+              disabledReason={mode.disabledReason}
+              key={mode.value}
+              label={mode.label}
+              description={mode.description ?? ''}
+              value={mode.value}
+              onClick={onModeChangeHandler}
+            >
+              {mode.value === selectedMode?.value &&
+              mode.options.selectorUi !==
+                TargetSelectorUi.UniqueTargetSelector ? (
+                <div className="flex flex-col gap-2.5 border-t border-border pt-3.5">
+                  {mode.options.placeholder ? (
+                    <span className="text-sm font-semibold">
+                      {mode.options.placeholder}
+                    </span>
+                  ) : null}
+                  {control}
+                  {mode.formula ? (
+                    <span className="font-mono text-[13px] text-foreground">
+                      {mode.formula}
+                    </span>
+                  ) : null}
+                  {mode.hint ? (
+                    <span className="text-[13px] leading-[1.5] text-muted-foreground">
+                      {mode.hint}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+            </RadioItem>
+          ))}
+        </RadioGroup>
+      ) : (
+        control
+      )}
+    </section>
   );
 };

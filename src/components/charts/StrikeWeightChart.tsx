@@ -1,85 +1,174 @@
-import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
-
-import { TouchDesignChart, TouchDesignSerieVariant } from './TouchDesignChart';
-import { type TouchDesignSerie } from './interfaces';
-import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
-import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
-import { useStrikeWeightStandardSeries } from './hooks/use-strike-weight-standard-series';
 import { useMemo } from 'react';
-import { useGenerateSerie } from './hooks/use-generate-serie';
+
 import { useTranslation } from '@/hooks/use-translation';
+import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
+import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
+import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-key.requirements';
+
+import { CHART_HEIGHTS } from './chart-geometry';
+import { ChartFigure } from './figure/ChartFigure';
+import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
+import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
+import { useChartFigure } from './hooks/use-chart-figure';
+import { useGenerateSerie } from './hooks/use-generate-serie';
+import { useStrikeWeightStandardSeries } from './hooks/use-strike-weight-standard-series';
+import { KeyboardChart, TouchDesignSerieVariant } from './KeyboardChart';
+import { type ChartReadingContext, type TouchDesignSerie } from './interfaces';
+
+/** The scale of the mockups: 2 g to 16 g, ruled every 2 g. */
+const STRIKE_WEIGHT_SCALE = { interval: 2, max: 16, min: 2, unit: 'g' };
+
+/** The thirteen standard curves, drawn unless the page asks for fewer. */
+const ALL_STRIKE_WEIGHT_LEVELS = Object.values(StrikeWeightLevel);
 
 type KeyWithStrikeWeight<T> = T & Pick<MeasuredKeyRequirements, 'strikeWeight'>;
 
 export interface StrikeWeightChartProps<T> {
-  keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeight<T>>>;
+  caption?: React.ReactNode;
   defaultHammerWeightLevelsToInclude?: StrikeWeightLevel[];
+  /** Legend entries contributed by the page, e.g. the design target. */
+  extraLegendItems?: ChartLegendItem[];
+  keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeight<T>>>;
+  /**
+   * The rail to the right of the figure. It is a function so that the panel
+   * reads the very series the chart draws, rather than computing them again.
+   */
+  renderSidePanel?: (context: ChartReadingContext) => React.ReactNode;
   targetSerie?: TouchDesignSerie;
+  variant?: 'analyze' | 'design';
 }
 
-export const StrikeWeightChart = <T,>(props: StrikeWeightChartProps<T>) => {
-  const { keyboard } = props;
+export const StrikeWeightChart = <T,>({
+  caption,
+  defaultHammerWeightLevelsToInclude,
+  extraLegendItems,
+  keyboard,
+  renderSidePanel,
+  targetSerie,
+  variant = 'analyze',
+}: StrikeWeightChartProps<T>) => {
   const { t } = useTranslation();
+  const { geometry, hover, keys } = useChartFigure(keyboard);
   const { isSerieEmpty, generateSerie } = useGenerateSerie(keyboard);
+
   const measuredSerie = useMemo(
     () =>
       generateSerie(
         (key) => key.payload.strikeWeight,
-        t('Measured Strike Weight'),
+        t('Measured strike weight'),
         TouchDesignSerieVariant.Measured,
-        {
-          sharpItemStyle: {
-            color: '#333',
-          },
-        },
       ),
     [generateSerie, t],
   );
-
   const isEmpty = useMemo(
     () => isSerieEmpty(measuredSerie),
     [isSerieEmpty, measuredSerie],
   );
 
   const defaultSeriesToInclude = useMemo(
-    () =>
-      props.defaultHammerWeightLevelsToInclude ?? [
-        StrikeWeightLevel.Level1,
-        StrikeWeightLevel.Level2,
-        StrikeWeightLevel.Level3,
-        StrikeWeightLevel.Level4,
-        StrikeWeightLevel.Level5,
-        StrikeWeightLevel.Level6,
-        StrikeWeightLevel.Level7,
-        StrikeWeightLevel.Level8,
-        StrikeWeightLevel.Level9,
-        StrikeWeightLevel.Level10,
-        StrikeWeightLevel.Level11,
-        StrikeWeightLevel.Level12,
-        StrikeWeightLevel.Level13,
-      ],
-    [props.defaultHammerWeightLevelsToInclude],
+    () => defaultHammerWeightLevelsToInclude ?? ALL_STRIKE_WEIGHT_LEVELS,
+    [defaultHammerWeightLevelsToInclude],
   );
 
-  const defaultSeries: TouchDesignSerie[] = useStrikeWeightStandardSeries(
+  const standardSeries = useStrikeWeightStandardSeries(
     keyboard,
     defaultSeriesToInclude,
   );
 
-  const series: TouchDesignSerie[] = useMemo(
+  // Thirteen curves run close together: the four landmarks are drawn last so
+  // that the intermediate ones never cross over them.
+  const orderedStandardSeries = useMemo(
     () => [
-      ...defaultSeries,
-      ...(props.targetSerie ? [props.targetSerie] : []),
-      ...(!isEmpty ? [measuredSerie] : []),
+      ...standardSeries.filter(
+        (serie) => serie.variant !== TouchDesignSerieVariant.DefaultBold,
+      ),
+      ...standardSeries.filter(
+        (serie) => serie.variant === TouchDesignSerieVariant.DefaultBold,
+      ),
     ],
-    [defaultSeries, props.targetSerie, isEmpty, measuredSerie],
+    [standardSeries],
   );
 
+  const series = useMemo(
+    () =>
+      [
+        ...orderedStandardSeries,
+        ...(targetSerie ? [targetSerie] : []),
+        ...(isEmpty ? [] : [measuredSerie]),
+      ].filter((serie): serie is TouchDesignSerie => serie !== undefined),
+    [orderedStandardSeries, targetSerie, isEmpty, measuredSerie],
+  );
+
+  const legendItems = useMemo<ChartLegendItem[]>(
+    () => [
+      ...(extraLegendItems ?? []),
+      ...(isEmpty
+        ? []
+        : [
+            {
+              colorClassName: 'text-foreground',
+              id: 'measured',
+              label: t('Measured strike weight'),
+              mark: 'dot' as const,
+            },
+          ]),
+      {
+        colorClassName: 'text-ptl-series-standard',
+        id: 'standard-bold',
+        label: t('SW#1, SW#5, SW#9, SW#13'),
+        mark: 'line' as const,
+      },
+      {
+        colorClassName: 'text-ptl-series-standard-soft',
+        id: 'standard-soft',
+        label: t('Intermediate curves'),
+        mark: 'line-soft' as const,
+      },
+    ],
+    [extraLegendItems, isEmpty, t],
+  );
+
+  const figure = (
+    <ChartFigure
+      variant={variant}
+      geometry={geometry}
+      highlightedKey={hover.hoveredKey}
+      header={<ChartLegend items={legendItems} />}
+      caption={caption}
+      keyboard={
+        <ChartKeyboardAxis
+          keys={keys}
+          highlightedKey={hover.hoveredKey}
+          onKeyHover={hover.setHoveredKey}
+          description={t('Keyboard: hover a key to read its measurement')}
+        />
+      }
+      {...hover.figureProps}
+    >
+      <KeyboardChart
+        geometry={geometry}
+        height={
+          variant === 'analyze' ? CHART_HEIGHTS.plot : CHART_HEIGHTS.plotCompact
+        }
+        onChartReady={hover.bindChart}
+        scale={STRIKE_WEIGHT_SCALE}
+        series={series}
+      />
+    </ChartFigure>
+  );
+
+  if (!renderSidePanel) {
+    return figure;
+  }
+
   return (
-    <TouchDesignChart
-      title={t('Strike Weight')}
-      series={series}
-      yAxisName={t('Strike Weight')}
-    />
+    <div className="flex flex-wrap items-start gap-6">
+      {figure}
+      {renderSidePanel({
+        hoveredKey: hover.hoveredKey,
+        measuredSerie,
+        referenceSeries: standardSeries,
+      })}
+    </div>
   );
 };

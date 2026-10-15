@@ -1,13 +1,3 @@
-import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
-import type { XYCoordinates } from '@/lib/geometry/coordinates';
-import { computePolygonCentroid } from '@/lib/geometry/polygon/compute-polygon-centroid';
-import type { Polygon } from '@/lib/geometry/polygon/polygon';
-import type { KeyboardRequirements } from '@/lib/piano/keyboard';
-import {
-  getKeyboardFrictionThresholds,
-  type FrictionZone,
-  type KeyFrictionThresholds,
-} from '@/lib/piano/touch-design/data/friction';
 import type {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
@@ -15,131 +5,202 @@ import type {
 } from 'echarts';
 import { useMemo } from 'react';
 
-export interface FrictionZonePolygons {
-  high: Polygon;
-  medium: Polygon;
-  low: Polygon;
+import type { XYCoordinates } from '@/lib/geometry/coordinates';
+import type { Polygon } from '@/lib/geometry/polygon/polygon';
+import type { Key } from '@/lib/piano/keyboard';
+import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import {
+  getKeyFrictionThresholds,
+  type FrictionZone,
+  type KeyFrictionThresholds,
+} from '@/lib/piano/touch-design/data/friction';
+
+import { MONO_FONT } from '../../echarts/build-base-option';
+import type { ChartTokens } from '../../hooks/use-chart-tokens';
+
+/** The reference zones, from the top of the friction panel down. */
+export const FRICTION_ZONE_KINDS = ['high', 'medium', 'low'] as const;
+
+export type FrictionZoneKind = (typeof FRICTION_ZONE_KINDS)[number];
+
+export type FrictionZoneLabels = Record<FrictionZoneKind, string>;
+
+export interface FrictionZonesInput {
+  /** Index of the grid the friction panel is drawn in. */
+  axisIndex: number;
+  geometry: KeyboardGeometry;
+  keys: readonly Key[];
+  labels: FrictionZoneLabels;
+  tokens: ChartTokens;
 }
 
-export const FRICTION_ZONE_COLORS = {
-  highFill: 'rgba(237, 203, 145, 0.4)',
-  highLabel: 'rgba(139, 69, 19, 0.5)',
-  lowFill: 'rgba(145, 237, 227, 0.4)',
-  lowLabel: 'rgba(0, 100, 100, 0.5)',
-  mediumFill: 'rgba(144, 238, 144, 0.4)',
-  mediumLabel: 'rgba(34, 139, 34, 0.5)',
+/** Air between a zone label and the right edge of the plot. */
+const LABEL_INSET = 4;
+
+/** A zone boundary above one key, in the coordinates of the plot. */
+interface ZoneEdge {
+  position: number;
+  zone: FrictionZone;
+}
+
+const zoneOf = (
+  thresholds: KeyFrictionThresholds,
+  kind: FrictionZoneKind,
+): FrictionZone => {
+  switch (kind) {
+    case 'high':
+      return thresholds.highZone;
+    case 'low':
+      return thresholds.lowZone;
+    default:
+      return thresholds.mediumZone;
+  }
 };
 
-export const FRICTION_LABEL_ROTATION_RAD = -0.05;
+/**
+ * Which reference zone a friction reading falls in.
+ *
+ * The zones only span a few grams either side of the ideal, so a reading past
+ * the drawn band still belongs to the zone it sits beyond.
+ */
+export const frictionZoneAt = (
+  friction: number | null | undefined,
+  keyNumber: number,
+  keyboardSize: number,
+): FrictionZoneKind | null => {
+  if (friction === null || friction === undefined || Number.isNaN(friction)) {
+    return null;
+  }
+  const { mediumZone } = getKeyFrictionThresholds(keyNumber, keyboardSize);
+  if (friction > mediumZone.higher) {
+    return 'high';
+  }
+  if (friction < mediumZone.lower) {
+    return 'low';
+  }
+  return 'medium';
+};
 
+/**
+ * The band of one zone, as a closed polygon.
+ *
+ * The ideal friction drifts from bass to treble, so every key contributes a
+ * point to both edges of the band; the band then runs out to the sides of the
+ * plot, as the design draws it, rather than stopping at the outer keys.
+ */
 export const buildFrictionZonePolygon = (
-  frictionThresholds: KeyFrictionThresholds[],
-  zoneSelector: (threshold: KeyFrictionThresholds) => FrictionZone,
+  edges: readonly ZoneEdge[],
+  plotWidth: number,
 ): Polygon => {
-  const upper = frictionThresholds.map<XYCoordinates>((threshold, i) => [
-    i + 1,
-    zoneSelector(threshold).higher,
+  const first = edges[0];
+  const last = edges[edges.length - 1];
+  if (!first || !last) {
+    return [];
+  }
+
+  const upper = edges.map<XYCoordinates>((edge) => [
+    edge.position,
+    edge.zone.higher,
   ]);
-  const lower = frictionThresholds
-    .map<XYCoordinates>((threshold, i) => [
-      i + 1,
-      zoneSelector(threshold).lower,
-    ])
-    .reverse();
-  return upper.concat(lower);
-};
-
-export const buildFrictionZoneSeries = (
-  keyboard: KeyboardRequirements,
-  rotationRad: number = FRICTION_LABEL_ROTATION_RAD,
-): SeriesOption[] => {
-  const thresholds = getKeyboardFrictionThresholds(keyboard);
-
-  const highZonePolygon = buildFrictionZonePolygon(
-    thresholds,
-    (t) => t.highZone,
-  );
-  const mediumZonePolygon = buildFrictionZonePolygon(
-    thresholds,
-    (t) => t.mediumZone,
-  );
-  const lowZonePolygon = buildFrictionZonePolygon(thresholds, (t) => t.lowZone);
-
-  const buildSerie = (
-    zonePolygon: Polygon,
-    zoneColor: string,
-    zoneName: string,
-    zoneLabelColor: string,
-  ): SeriesOption => ({
-    color: zoneColor,
-    data: [0],
-    name: zoneName,
-    renderItem: (
-      _params: CustomSeriesRenderItemParams,
-      api: CustomSeriesRenderItemAPI,
-    ) => {
-      const polygonPointsPx = zonePolygon.map((pt) => api.coord(pt));
-      const [cxData, cyData] = computePolygonCentroid(zonePolygon);
-      const [cxPx, cyPx] = api.coord([cxData, cyData]);
-      return {
-        children: [
-          {
-            shape: { points: polygonPointsPx },
-            style: { fill: zoneColor, stroke: 'transparent' },
-            type: 'polygon',
-          },
-          {
-            children: [
-              {
-                style: {
-                  fill: zoneLabelColor,
-                  font: 'bold 16px sans-serif',
-                  text: zoneName,
-                  textAlign: 'center',
-                  textVerticalAlign: 'middle',
-                  x: 0,
-                  y: 0,
-                },
-                type: 'text',
-                z2: 10,
-              },
-            ],
-            position: [cxPx, cyPx],
-            rotation: rotationRad,
-            type: 'group',
-          },
-        ],
-        type: 'group',
-      };
-    },
-    silent: true,
-    type: 'custom' as const,
-    z: 0,
-  });
+  const lower = [...edges]
+    .reverse()
+    .map<XYCoordinates>((edge) => [edge.position, edge.zone.lower]);
 
   return [
-    buildSerie(
-      highZonePolygon,
-      FRICTION_ZONE_COLORS.highFill,
-      'High friction',
-      FRICTION_ZONE_COLORS.highLabel,
-    ),
-    buildSerie(
-      mediumZonePolygon,
-      FRICTION_ZONE_COLORS.mediumFill,
-      'Medium friction',
-      FRICTION_ZONE_COLORS.mediumLabel,
-    ),
-    buildSerie(
-      lowZonePolygon,
-      FRICTION_ZONE_COLORS.lowFill,
-      'Low friction',
-      FRICTION_ZONE_COLORS.lowLabel,
-    ),
+    [0, first.zone.higher],
+    ...upper,
+    [plotWidth, last.zone.higher],
+    [plotWidth, last.zone.lower],
+    ...lower,
+    [0, first.zone.lower],
   ];
 };
 
-export const useFrictionZonesSeries = () => {
-  const { keyboard } = useKeyboard();
-  return useMemo(() => buildFrictionZoneSeries(keyboard), [keyboard]);
+/**
+ * The friction zones, painted behind the friction readings.
+ *
+ * They are a `custom` series rather than a background image because they
+ * follow the value axis: the band is the same two grams wide whatever the
+ * scale ends up being.
+ */
+export const buildFrictionZoneSeries = ({
+  axisIndex,
+  geometry,
+  keys,
+  labels,
+  tokens,
+}: FrictionZonesInput): SeriesOption[] => {
+  const fillByKind: Record<FrictionZoneKind, string> = {
+    high: tokens.zoneHigh,
+    low: tokens.zoneLow,
+    medium: tokens.zoneMedium,
+  };
+
+  const buildSerie = (kind: FrictionZoneKind): SeriesOption => {
+    const edges = keys.map<ZoneEdge>((key) => ({
+      position: geometry.keysByNumber.get(key.number)?.center ?? 0,
+      zone: zoneOf(getKeyFrictionThresholds(key.number, keys.length), kind),
+    }));
+    const polygon = buildFrictionZonePolygon(edges, geometry.width);
+    const lastEdge = edges[edges.length - 1];
+    // The label sits against the right edge of the plot, level with the band
+    // it names — the design states the zones once, in the treble.
+    const labelValue = lastEdge
+      ? (lastEdge.zone.higher + lastEdge.zone.lower) / 2
+      : 0;
+
+    return {
+      coordinateSystem: 'cartesian2d',
+      data: [0],
+      name: labels[kind],
+      renderItem: (
+        _params: CustomSeriesRenderItemParams,
+        api: CustomSeriesRenderItemAPI,
+      ) => {
+        const label = api.coord([geometry.width, labelValue]);
+        return {
+          children: [
+            {
+              shape: { points: polygon.map((point) => api.coord(point)) },
+              style: { fill: fillByKind[kind], stroke: 'transparent' },
+              type: 'polygon',
+            },
+            {
+              style: {
+                // zrender's own names: `textAlign` would be read as a legacy
+                // style and the rest of this block converted with it.
+                align: 'right',
+                fill: tokens.inkSubtle,
+                font: `10px ${MONO_FONT}`,
+                text: labels[kind],
+                verticalAlign: 'middle',
+                x: (label[0] ?? 0) - LABEL_INSET,
+                y: label[1] ?? 0,
+              },
+              type: 'text',
+            },
+          ],
+          type: 'group',
+        };
+      },
+      silent: true,
+      type: 'custom' as const,
+      xAxisIndex: axisIndex,
+      yAxisIndex: axisIndex,
+      z: 0,
+    };
+  };
+
+  return FRICTION_ZONE_KINDS.map(buildSerie);
+};
+
+export const useFrictionZonesSeries = (
+  input: FrictionZonesInput,
+): SeriesOption[] => {
+  const { axisIndex, geometry, keys, labels, tokens } = input;
+  return useMemo(
+    () =>
+      buildFrictionZoneSeries({ axisIndex, geometry, keys, labels, tokens }),
+    [axisIndex, geometry, keys, labels, tokens],
+  );
 };

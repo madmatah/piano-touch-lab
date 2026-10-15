@@ -1,86 +1,180 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { PrintHeader } from '@/components/print/PrintHeader';
+import { PrintFooter } from '@/components/print/PrintFooter';
 import { useTranslation } from '@/hooks/use-translation';
-import { useMemo } from 'react';
 import {
-  type AdjustmentSheetProps,
-  type KeyAdjustmentPayload,
-} from './AdjustmentSheet.types';
-import { AdjustmentSheetTableRow } from './AdjustmentSheetTableRow';
+  formatSignedWeightValue,
+  formatWeightValue,
+} from '@/lib/format/format-weight';
+import { KeyColor } from '@/lib/piano/keyboard';
 
+import { type AdjustmentSheetProps } from './AdjustmentSheet.types';
+import { AdjustmentSheetTableRow } from './AdjustmentSheetTableRow';
+import { useAdjustmentRows } from './hooks/use-adjustment-rows';
+
+const SummaryTile = ({
+  detail,
+  figure,
+  label,
+}: {
+  detail: string;
+  figure: string;
+  label: string;
+}) => (
+  <div className="flex flex-[1_1_220px] flex-col gap-1.5 rounded-md border border-border bg-card px-[18px] py-4">
+    <span className="text-[13px] text-muted-foreground">{label}</span>
+    <span className="font-serif text-[26px] leading-[1.1] font-medium">
+      {figure}
+    </span>
+    <span className="font-mono text-[12.5px] text-muted-foreground">
+      {detail}
+    </span>
+  </div>
+);
+
+/**
+ * The sheet that goes to the bench: for every key, what it reads now, what it
+ * should read, and the weight to add or take off.
+ */
 export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
   analyzedKeyboard,
   designedKeyboard,
 }) => {
-  const { t } = useTranslation();
-  const hasWippenAssistSpringDesign = useMemo(() => {
-    return designedKeyboard
-      .mapToArray((key) => !!key.payload.supportSpringBalanceWeight)
-      .some((v) => v);
-  }, [designedKeyboard]);
-
-  const adjustedKeyboard = useMemo(() => {
-    return analyzedKeyboard.map((analyzedKey): KeyAdjustmentPayload | null => {
-      const designedKey = designedKeyboard.getKeyByNumber(analyzedKey.number);
-      const actualFrontWeight = analyzedKey.payload.frontWeight ?? null;
-      const actualStrikeWeight = analyzedKey.payload.strikeWeight ?? null;
-      const targetFrontWeight = designedKey?.payload.frontWeight ?? null;
-      const targetStrikeWeight = designedKey?.payload.strikeWeight ?? null;
-      const supportSpringBalanceWeight =
-        analyzedKey.payload.supportSpringBalanceWeight ?? null;
-      const targetSupportSpringBalanceWeight =
-        designedKey?.payload.supportSpringBalanceWeight ?? null;
-
-      if (
-        actualFrontWeight === null ||
-        actualStrikeWeight === null ||
-        targetFrontWeight === null ||
-        targetStrikeWeight === null
-      ) {
-        return null;
-      }
-
-      return {
-        actualFrontWeight,
-        actualStrikeWeight,
-        actualSupportSpringBalanceWeight: supportSpringBalanceWeight,
-        targetFrontWeight,
-        targetStrikeWeight,
-        targetSupportSpringBalanceWeight,
-      };
-    });
-  }, [analyzedKeyboard, designedKeyboard]);
+  const { currentLanguage, t } = useTranslation();
+  const { keyboard, summary } = useAdjustmentRows(
+    analyzedKeyboard,
+    designedKeyboard,
+  );
 
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[5em]">Note</TableHead>
-            <TableHead className="w-[13em]">{t('Front Weight')}</TableHead>
-            <TableHead className="w-[13em]">{t('Strike Weight')}</TableHead>
-            {hasWippenAssistSpringDesign && (
-              <TableHead className="w-[13em]">
-                {t('Spring Balance Weight')}
-              </TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {adjustedKeyboard.mapToArray((key) => (
-            <AdjustmentSheetTableRow
-              key={key.number}
-              item={key}
-              hasWippenAssistSpringDesign={hasWippenAssistSpringDesign}
-            />
-          ))}
-        </TableBody>
-      </Table>
+    <div className="flex flex-col gap-6">
+      <PrintHeader title={t('Adjustment Sheet', { ns: 'navigation' })} />
+
+      <div className="flex flex-wrap gap-3">
+        <SummaryTile
+          label={t('Front Weight', { ns: 'navigation' })}
+          figure={t('{{count}} keys', {
+            count: summary.frontWeightCount,
+            ns: 'navigation',
+          })}
+          detail={t('{{weight}} g on average', {
+            weight: formatSignedWeightValue(
+              summary.frontWeightMean,
+              currentLanguage,
+            ),
+          })}
+        />
+        <SummaryTile
+          label={t('Strike Weight', { ns: 'navigation' })}
+          figure={t('{{count}} hammers', { count: summary.strikeWeightCount })}
+          detail={`${t('from {{min}} to {{max}} g', {
+            max: formatSignedWeightValue(
+              summary.strikeWeightMax,
+              currentLanguage,
+            ),
+            min: formatSignedWeightValue(
+              summary.strikeWeightMin,
+              currentLanguage,
+            ),
+          })} · ${t('{{count}} unchanged', {
+            count: summary.strikeWeightUnchanged,
+          })}`}
+        />
+        {summary.hasSprings ? (
+          <SummaryTile
+            label={t('Wippen Support Springs', { ns: 'navigation' })}
+            figure={t('{{count}} springs', { count: summary.springCount })}
+            detail={t('keys {{first}} to {{last}}', {
+              first: summary.springFirstKey ?? 0,
+              last: summary.springLastKey ?? 0,
+            })}
+          />
+        ) : null}
+      </div>
+
+      <section className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[820px] table-fixed border-collapse">
+            <colgroup>
+              <col className="w-[52px]" />
+              <col className="w-[64px]" />
+              <col />
+              <col />
+              {summary.hasSprings ? <col /> : null}
+              <col className="w-[64px]" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold text-ptl-ink-3">
+                  {t('No.')}
+                </th>
+                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold text-ptl-ink-3">
+                  {t('Note')}
+                </th>
+                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold">
+                  <span className="mr-2 font-mono text-[11.5px] font-medium text-ptl-brass">
+                    FW
+                  </span>
+                  {t('Front Weight', { ns: 'navigation' })}
+                </th>
+                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold">
+                  <span className="mr-2 font-mono text-[11.5px] font-medium text-ptl-brass">
+                    SW
+                  </span>
+                  {t('Strike Weight', { ns: 'navigation' })}
+                </th>
+                {summary.hasSprings ? (
+                  <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold">
+                    <span className="mr-2 font-mono text-[11.5px] font-medium text-ptl-brass">
+                      BWS
+                    </span>
+                    {t('Wippen Support Springs', { ns: 'navigation' })}
+                  </th>
+                ) : null}
+                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-center align-middle text-[13px] font-semibold">
+                  {t('Done')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {keyboard.mapToArray((key) => (
+                <AdjustmentSheetTableRow
+                  key={key.number}
+                  hasWippenAssistSpringDesign={summary.hasSprings}
+                  isBlackKey={key.color === KeyColor.Black}
+                  item={key}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 border-t border-border px-4 py-3.5 text-[13px] text-muted-foreground">
+          <span className="font-mono text-xs">
+            {t('{{count}} keys', {
+              count: keyboard.size,
+              ns: 'navigation',
+            })}
+          </span>
+          <span className="inline-flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-ptl-delta-plus px-[7px] py-0.5 text-xs text-ptl-delta-plus-foreground">
+              +
+            </span>
+            {t('to add')}
+            <span className="rounded-full bg-ptl-delta-minus px-[7px] py-0.5 text-xs text-ptl-delta-minus-foreground">
+              −
+            </span>
+            {t('to remove')}
+            <span className="text-ptl-ink-3">{t('values in grams')}</span>
+          </span>
+        </div>
+      </section>
+
+      <p className="ptl-print-only m-0 text-[12px] leading-[1.5] text-muted-foreground">
+        {t(
+          'Values in grams: current → target, then the difference to apply (+ to add, − to remove). “unchanged”: a difference below {{threshold}} g.',
+          { threshold: formatWeightValue(0.1, currentLanguage) },
+        )}
+      </p>
+      <PrintFooter />
     </div>
   );
 };

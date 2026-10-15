@@ -149,3 +149,40 @@ export const computeKeyboardGeometry = (
     width: whiteIndex * whiteKeyWidth,
   };
 };
+
+/**
+ * The key whose centre is nearest to a horizontal position.
+ *
+ * This is how a chart turns a pointer into a note: its x axis runs in the same
+ * units as the keyboard below it, so the reading follows the finger.
+ */
+export const findKeyAtPosition = (
+  geometry: KeyboardGeometry,
+  position: number,
+): number | null => {
+  let nearest: PlacedKey | null = null;
+  let nearestDistance = Number.POSITIVE_INFINITY;
+
+  for (const key of geometry.keysByNumber.values()) {
+    const distance = Math.abs(key.center - position);
+    if (distance < nearestDistance) {
+      nearest = key;
+      nearestDistance = distance;
+    }
+  }
+
+  return nearest?.number ?? null;
+};
+
+/**
+ * The C of every octave, which is how a technician reads along a keyboard.
+ *
+ * Derived from the keys themselves rather than hard-coded C1…C8: the
+ * application supports keyboards that are neither 88 keys nor start on A.
+ */
+export const octaveMarks = (
+  keys: readonly Key[],
+): { label: string; number: number }[] =>
+  keys
+    .filter((key) => key.color === KeyColor.White && key.name.startsWith('C'))
+    .map((key) => ({ label: key.name, number: key.number }));
