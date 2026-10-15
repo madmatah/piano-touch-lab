@@ -104,7 +104,7 @@ const screenPlotWidth = (windowWidth: number): number =>
  * figure all the height it had and none of the width, which drew the whole
  * keyboard into a square.
  */
-const LANDSCAPE = 2.5;
+export const LANDSCAPE = 2.5;
 
 /**
  * The height to draw a plot at, in a window of this size.

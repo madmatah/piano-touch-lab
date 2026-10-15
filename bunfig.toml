@@ -3,4 +3,4 @@ plugins = ["bun-plugin-tailwind", "./config/external-fonts-plugin.ts"]
 env = "BUN_PUBLIC_*"
 
 [test]
-preload = ["./config/test/happydom.ts", "./config/test/testing-library.ts"]
+preload = ["./config/test/happydom.ts", "./config/test/testing-library.ts", "./config/test/i18next.ts"]

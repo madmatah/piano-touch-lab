@@ -16,6 +16,8 @@ import { octaveMarks } from '@/lib/piano/keyboard/keyboard-geometry';
 import { cn } from '@/lib/utils';
 
 import {
+  isPassDone,
+  passProgress,
   useMeasurePasses,
   type MeasurePassId,
 } from './hooks/use-measure-passes';
@@ -67,16 +69,7 @@ export const MeasureKeyboardPanel = ({
   };
 
   const progress = useMemo(
-    () =>
-      Object.fromEntries(
-        passes.map((pass) => [
-          pass.id,
-          measuredKeys
-            .slice(0, keyboard.size)
-            .filter((key) => pass.fields.every((field) => key[field] !== null))
-            .length,
-        ]),
-      ) as Record<MeasurePassId, number>,
+    () => passProgress(passes, measuredKeys, keyboard.size),
     [keyboard.size, measuredKeys, passes],
   );
 
@@ -88,7 +81,7 @@ export const MeasureKeyboardPanel = ({
     }
     keys.forEach((key) => {
       const measured = measuredKeys[key.number - 1];
-      if (measured && pass.fields.every((field) => measured[field] !== null)) {
+      if (measured && isPassDone(pass, measured)) {
         map.set(key.number, 'marked');
       }
     });
@@ -148,7 +141,7 @@ export const MeasureKeyboardPanel = ({
                 <span className="font-mono font-semibold">{pass.number}</span>
                 {passLabels[pass.id]}
                 <span className="font-mono text-[11px] opacity-80">
-                  {progress[pass.id]}/{keyboard.size}
+                  {progress.get(pass.id) ?? 0}/{keyboard.size}
                 </span>
               </button>
             );

@@ -1,5 +1,10 @@
+import { rmSync } from 'node:fs';
+
+import { LANDSCAPE, PLOT_INSET } from '../src/components/charts/chart-geometry';
+
 /**
- * Measures every Analyze figure in a real browser, on screen and on paper.
+ * Measures every figure of Analyze and Design in a real browser, on screen
+ * and on paper.
  *
  * A chart is drawn by ECharts into a box the page lays out, and a keyboard is
  * drawn beside it by the application: the two agree only as long as they are
@@ -8,10 +13,14 @@
  * screen, once on a sheet the reader had chosen in the print dialog — because
  * a change elsewhere moved one of them.
  *
- * So this walks the pages at two widths, prints each of them for real, and
- * measures what the browser actually laid out. The printing matters: a print
- * is the one moment the page is laid out against something other than the
- * window, and nothing short of printing reproduces it.
+ * So this walks the ten pages that carry a figure in six windows, prints them
+ * for real from three of those, and measures what the browser actually laid
+ * out. The printing matters: a print is the one moment the page is laid out
+ * against something other than the window, and nothing short of printing
+ * reproduces it.
+ *
+ * It starts a browser of its own for each window, on a port the system picks,
+ * so it can never measure the pages of a browser that was already open.
  *
  * Run it against a server you have already started:
  *
@@ -20,7 +29,6 @@
  */
 
 const ORIGIN = process.argv[2] ?? 'http://localhost:3000';
-const PORT = 9333;
 
 /**
  * The windows the figures are laid out in, and the zoom the reader is at.
@@ -79,10 +87,7 @@ const STYLESHEET_SHEET = {
 const READERS_SHEET = { margin: '0mm', name: 'a sheet the reader chose' };
 const SHEETS = [STYLESHEET_SHEET, READERS_SHEET];
 
-/** Kept in step with `PLOT_INSET` in `chart-geometry.ts`. */
-const PLOT_INSET = { left: 48, right: 56 };
-/** And with `LANDSCAPE`, and the tallest plot the design draws unaided. */
-const LANDSCAPE = 2.5;
+/** The tallest plot the design draws unaided. */
 const DESIGNED_PLOT = 384;
 /** Half a pixel of rounding on each side is not a misalignment. */
 const TOLERANCE = 1.5;
@@ -314,6 +319,9 @@ const checkFigure = (where: string, measured: Measurement) => {
  */
 const openBrowser = async (zoom: number) => {
   const profile = `/tmp/ptl-check-figures-${process.pid}-${Math.round(zoom * 100)}`;
+  // Left over from a run that was interrupted: its port file would be read as
+  // this browser's.
+  rmSync(profile, { force: true, recursive: true });
   await Bun.write(
     `${profile}/Default/Preferences`,
     JSON.stringify({
@@ -324,17 +332,30 @@ const openBrowser = async (zoom: number) => {
       },
     }),
   );
-  return Bun.spawn(
+  const chrome = Bun.spawn(
     [
       'google-chrome-stable',
       '--headless=new',
       '--disable-gpu',
       '--no-first-run',
-      `--remote-debugging-port=${PORT}`,
+      // Whatever port is free: the browser writes down the one it took.
+      '--remote-debugging-port=0',
       `--user-data-dir=${profile}`,
     ],
     { stderr: 'ignore', stdout: 'ignore' },
   );
+  return { chrome, profile };
+};
+
+/** The port the browser took, once it has written it down. */
+const debuggingPort = async (profile: string): Promise<number> => {
+  const [port] = (await Bun.file(`${profile}/DevToolsActivePort`).text()).split(
+    '\n',
+  );
+  if (!port) {
+    throw new Error('no port yet');
+  }
+  return Number(port);
 };
 
 const waitFor = async <T>(
@@ -351,8 +372,8 @@ const waitFor = async <T>(
   throw new Error('the browser never answered');
 };
 
-const targets = (): Promise<{ webSocketDebuggerUrl: string }> =>
-  fetch(`http://127.0.0.1:${PORT}/json/new?about:blank`, {
+const targets = (port: number): Promise<{ webSocketDebuggerUrl: string }> =>
+  fetch(`http://127.0.0.1:${port}/json/new?about:blank`, {
     method: 'PUT',
   }).then(
     (response) => response.json() as Promise<{ webSocketDebuggerUrl: string }>,
@@ -401,7 +422,8 @@ const connect = async (url: string) => {
 for (const view of VIEWS) {
   const browser = await openBrowser(view.zoom);
   try {
-    const target = await waitFor(targets);
+    const port = await waitFor(() => debuggingPort(browser.profile));
+    const target = await waitFor(() => targets(port));
     const page = await connect(target.webSocketDebuggerUrl);
 
     // A first visit loads the demonstration piano, so the figures have data.
@@ -557,8 +579,9 @@ for (const view of VIEWS) {
 
     page.close();
   } finally {
-    browser.kill();
-    await Bun.sleep(400);
+    browser.chrome.kill();
+    await browser.chrome.exited;
+    rmSync(browser.profile, { force: true, recursive: true });
   }
 }
 
