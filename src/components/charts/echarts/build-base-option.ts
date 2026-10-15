@@ -19,6 +19,29 @@ export interface AxisScale {
   minorSplit?: boolean;
 }
 
+/**
+ * A design scale widened to whatever the instrument actually reads.
+ *
+ * Every scale in the mockups is a floor: an unusual piano stretches the axis
+ * rather than have its outlying keys quietly dropped off the plot, which is
+ * what ECharts does with a value outside an explicit min/max.
+ */
+export const scaleOver = (
+  base: AxisScale,
+  values: readonly number[],
+): AxisScale =>
+  values.length === 0
+    ? base
+    : {
+        ...base,
+        max:
+          Math.ceil(Math.max(base.max, ...values) / base.interval) *
+          base.interval,
+        min:
+          Math.floor(Math.min(base.min, ...values) / base.interval) *
+          base.interval,
+      };
+
 /** The highest tick the interval actually lands on. */
 const highestTick = (scale: AxisScale): number =>
   scale.min +

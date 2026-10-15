@@ -112,10 +112,12 @@ export const KeyboardChart = ({
 
   const option = useMemo<EChartsOption>(() => {
     const echartsSeries = series.map((serie) => ({
-      data: serie.data.map((point) => [
-        geometry.keysByNumber.get(point.number)?.center ?? 0,
-        point.payload,
-      ]),
+      // A point whose key is not on this keyboard has nowhere to stand; it is
+      // left out rather than piled up against the first key.
+      data: serie.data.flatMap((point) => {
+        const center = geometry.keysByNumber.get(point.number)?.center;
+        return center === undefined ? [] : [[center, point.payload]];
+      }),
       name: serie.name,
       showSymbol: false,
       silent: true,

@@ -14,6 +14,7 @@ import {
 } from '@/components/charts/interfaces';
 import {
   selectComputedStrikeWeightRatio,
+  selectStrikeWeightRatio,
   StrikeWeightRatioChart,
 } from '@/components/charts/StrikeWeightRatioChart';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
@@ -34,7 +35,9 @@ export const AnalyzeStrikeWeightRatioPage = () => {
   const { useManualSWRMeasurements } = useMeasureOptions();
   const stats = useKeyboardStats(
     analyzedKeyboard,
-    selectComputedStrikeWeightRatio,
+    useManualSWRMeasurements
+      ? selectComputedStrikeWeightRatio
+      : selectStrikeWeightRatio,
   );
 
   const renderSidePanel = useCallback(

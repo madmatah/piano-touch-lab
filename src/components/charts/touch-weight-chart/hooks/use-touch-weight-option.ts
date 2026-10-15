@@ -13,6 +13,7 @@ import { CHART_HEIGHTS, PLOT_INSET } from '../../chart-geometry';
 import {
   buildKeyAxis,
   buildValueAxis,
+  scaleOver,
   MONO_FONT,
   type AxisScale,
 } from '../../echarts/build-base-option';
@@ -111,14 +112,6 @@ const valuesOf = (series: TouchDesignSerie[]): number[] =>
   series.flatMap((serie) =>
     serie.data.filter(isMeasured).map((point) => point.payload),
   );
-
-/** The design scale, widened to whatever the instrument actually reads. */
-const scaleOver = (base: AxisScale, values: readonly number[]): AxisScale => ({
-  ...base,
-  max: Math.ceil(Math.max(base.max, ...values) / base.interval) * base.interval,
-  min:
-    Math.floor(Math.min(base.min, ...values) / base.interval) * base.interval,
-});
 
 const buildPanelAxis = (
   tokens: ChartTokens,

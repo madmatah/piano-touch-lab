@@ -14,7 +14,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { octaveMarks } from '@/lib/piano/keyboard/keyboard-geometry';
 import { cn } from '@/lib/utils';
 
-import { MEASURE_PASSES, type MeasurePassId } from './measure-passes';
+import { useMeasurePasses, type MeasurePassId } from './measure-passes';
 
 export interface MeasureKeyboardPanelProps {
   currentKeyNumber: number | null;
@@ -30,6 +30,9 @@ export interface MeasureKeyboardPanelProps {
  * It sticks to the top of the page, because the answer to "where am I?" is
  * needed exactly when the table has scrolled it out of sight.
  */
+/** Hoisted: a fresh object here would recompute the whole keyboard. */
+const KEYBOARD_GEOMETRY = { keyHeight: 72 };
+
 export const MeasureKeyboardPanel = ({
   currentKeyNumber,
   currentPassId,
@@ -43,6 +46,7 @@ export const MeasureKeyboardPanel = ({
   );
 
   const keys = useMemo(() => keyboard.getKeys(), [keyboard]);
+  const passes = useMeasurePasses();
 
   const passLabels: Record<MeasurePassId, string> = {
     'down-up': t('Down & up weight'),
@@ -53,7 +57,7 @@ export const MeasureKeyboardPanel = ({
   const progress = useMemo(
     () =>
       Object.fromEntries(
-        MEASURE_PASSES.map((pass) => [
+        passes.map((pass) => [
           pass.id,
           measuredKeys
             .slice(0, keyboard.size)
@@ -61,11 +65,11 @@ export const MeasureKeyboardPanel = ({
             .length,
         ]),
       ) as Record<MeasurePassId, number>,
-    [keyboard.size, measuredKeys],
+    [keyboard.size, measuredKeys, passes],
   );
 
   const tones = useMemo(() => {
-    const pass = MEASURE_PASSES.find((item) => item.id === currentPassId);
+    const pass = passes.find((item) => item.id === currentPassId);
     const map = new Map<number, PianoKeyTone>();
     if (!pass) {
       return map;
@@ -80,7 +84,7 @@ export const MeasureKeyboardPanel = ({
       map.set(currentKeyNumber, 'current');
     }
     return map;
-  }, [currentKeyNumber, currentPassId, keys, measuredKeys]);
+  }, [currentKeyNumber, currentPassId, keys, measuredKeys, passes]);
 
   const currentKey =
     currentKeyNumber === null
@@ -108,7 +112,7 @@ export const MeasureKeyboardPanel = ({
           aria-label={t('Measuring pass')}
           className="inline-flex flex-wrap overflow-hidden rounded-md border border-ptl-rule-strong"
         >
-          {MEASURE_PASSES.map((pass, index) => {
+          {passes.map((pass, index) => {
             const isSelected = pass.id === currentPassId;
             return (
               <button
@@ -150,7 +154,7 @@ export const MeasureKeyboardPanel = ({
       <PianoKeyboard
         keys={keys}
         description={t('Keyboard: click a key to jump to it')}
-        geometry={{ keyHeight: 72 }}
+        geometry={KEYBOARD_GEOMETRY}
         labels={labels}
         onKeySelect={onKeySelect}
         toneByKeyNumber={tones}

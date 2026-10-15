@@ -7,7 +7,7 @@ import { KeyColor } from '@/lib/piano/keyboard';
 import { cn } from '@/lib/utils';
 
 import { KeyMeasurement } from './KeyMeasurement';
-import { MEASURE_PASSES, type MeasurePassId } from './measure-passes';
+import { useMeasurePasses, type MeasurePassId } from './measure-passes';
 
 export interface KeyMeasureListProps {
   currentPassId: MeasurePassId;
@@ -33,10 +33,11 @@ export const KeyMeasureList = ({
   const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
 
+  const passes = useMeasurePasses();
+
   const activeFields = useMemo(
-    () =>
-      MEASURE_PASSES.find((pass) => pass.id === currentPassId)?.fields ?? [],
-    [currentPassId],
+    () => passes.find((pass) => pass.id === currentPassId)?.fields ?? [],
+    [currentPassId, passes],
   );
 
   const measuredColumns = [

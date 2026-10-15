@@ -43,8 +43,8 @@ export const ChartKeyboardAxis = ({
   return (
     <div
       style={{
-        marginLeft: PLOT_INSET.left - PLOT_INSET.bedBleed,
-        marginRight: PLOT_INSET.right - PLOT_INSET.bedBleed,
+        marginLeft: PLOT_INSET.left,
+        marginRight: PLOT_INSET.right,
       }}
     >
       <PianoKeyboard
