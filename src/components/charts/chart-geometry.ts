@@ -1,3 +1,9 @@
+import { KEYBED_OVERHANG } from '@/components/piano/KeyboardPlate';
+import {
+  WHITE_KEY_LENGTH_RATIO,
+  type KeyboardGeometryOptions,
+} from '@/lib/piano/keyboard/keyboard-geometry';
+
 /**
  * The frame every chart is drawn in.
  *
@@ -15,10 +21,6 @@ export const PLOT_INSET = {
 export const CHART_HEIGHTS = {
   /** The friction panel under the static balance chart. */
   frictionPlot: 96,
-  /** The drawn keyboard serving as the x axis, key sticks included. */
-  keyboard: 62,
-  /** The row of C1…C8 marks under the keyboard. */
-  octaveLabels: 18,
   /** The plot area of an Analyze chart. */
   plot: 280,
   /** The plot area of a Design chart, which shares its page with controls. */
@@ -58,11 +60,66 @@ export const PRINT_FURNITURE = {
 export const PLOT_BOX_MARGIN = 20;
 
 /**
- * What a page on screen takes besides its plot: the header bar, the title,
- * the lede, the frame of the figure with its legend and reading, the octave
- * marks under it, the line of help at the foot and the page's own bottom
- * margin. A Design page carries its target above the figure as well, which
- * is most of the difference.
+ * The keyboard under a chart, in pixels.
+ *
+ * It is drawn to scale, as on the home page: stretched to the width of the
+ * plot and squeezed into a strip, its keys came out barely longer than wide
+ * and its black keys twice too fat.
+ */
+const CHART_KEYBOARD = {
+  /** The felt along the back of the keybed. */
+  feltLength: 4,
+  /**
+   * The longest a key is drawn. On a wide screen a key to scale would be
+   * half as long again, and the keyboard would weigh as much as the plot it
+   * serves; past this, the keys are only made shorter.
+   */
+  mostKeyLength: 120,
+  /** The sticks behind the balance rail, which the read key's wood fans across. */
+  stickLength: 18,
+} as const;
+
+/** The white keys of a standard keyboard, which a page's height is ruled by. */
+const STANDARD_WHITE_KEYS = 52;
+
+/**
+ * The keyboard under a chart, laid out for the width it is drawn at, one
+ * unit to the pixel.
+ */
+export const chartKeyboardLayout = (
+  width: number,
+  whiteKeyCount: number,
+): Required<KeyboardGeometryOptions> => {
+  const whiteKeyWidth = whiteKeyCount === 0 ? 0 : width / whiteKeyCount;
+  return {
+    feltHeight: CHART_KEYBOARD.feltLength,
+    keyHeight: Math.min(
+      whiteKeyWidth * WHITE_KEY_LENGTH_RATIO,
+      CHART_KEYBOARD.mostKeyLength,
+    ),
+    leverHeight: CHART_KEYBOARD.stickLength,
+    whiteKeyWidth,
+  };
+};
+
+/** How tall that keyboard is drawn, keybed included. */
+export const chartKeyboardHeight = (
+  width: number,
+  whiteKeyCount: number = STANDARD_WHITE_KEYS,
+): number => {
+  const layout = chartKeyboardLayout(width, whiteKeyCount);
+  return (
+    layout.leverHeight + layout.feltHeight + layout.keyHeight + KEYBED_OVERHANG
+  );
+};
+
+/**
+ * What a page on screen takes besides its plot and its keyboard: the header
+ * bar, the title, the lede, the frame of the figure with its legend and
+ * reading, the octave marks under it, the line of help at the foot and the
+ * page's own bottom margin. A Design page carries its target above the
+ * figure as well, which is most of the difference. The keyboard is counted
+ * apart, because it grows with the width of the window.
  *
  * Measured off the laid-out pages rather than added up, which is why these
  * are two numbers, and taken from the tallest page of each kind so that none
@@ -70,8 +127,8 @@ export const PLOT_BOX_MARGIN = 20;
  * scrollbar, where one too short costs a little white.
  */
 const SCREEN_FURNITURE = {
-  analyze: 983,
-  design: 1283,
+  analyze: 921,
+  design: 1221,
 } as const;
 
 /**
@@ -128,7 +185,11 @@ export const screenPlotHeight = (
       0,
       Math.min(
         SCREEN_PLOT_GROWTH,
-        windowHeight - SCREEN_FURNITURE[variant],
+        windowHeight -
+          SCREEN_FURNITURE[variant] -
+          chartKeyboardHeight(
+            screenPlotWidth(windowWidth) - PLOT_INSET.left - PLOT_INSET.right,
+          ),
         screenPlotWidth(windowWidth) / LANDSCAPE - base,
       ),
     ),

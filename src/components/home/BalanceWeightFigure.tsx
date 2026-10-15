@@ -5,21 +5,27 @@ import {
   formatSignedWeightValue,
 } from '@/lib/format/format-weight';
 import { feltBalanceWeight } from '@/lib/piano/touch-design/felt-balance-weight';
-import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import {
+  computeKeyboardGeometry,
+  WHITE_KEY_LENGTH_RATIO,
+} from '@/lib/piano/keyboard/keyboard-geometry';
+import { KeyboardPlate, keybedHeight } from '@/components/piano/KeyboardPlate';
 import { useTextScale } from '@/hooks/use-text-scale';
 import { useTranslation } from '@/hooks/use-translation';
 
+import {
+  diamondsPath,
+  linePath,
+  plotX,
+  plotY,
+  type PlotBox,
+} from './figures/plot';
 import type { HomeState } from './hooks/use-home-state';
 
 /** The drawing is laid out in white-key widths of 20, as the charts are. */
 const WHITE_KEY_WIDTH = 20;
-/**
- * Deep keys, where a chart's keyboard is a thin axis strip: this is the one
- * place the instrument is shown for itself rather than to read a curve by.
- */
-const KEY_HEIGHT = 130;
-/** The keybed shows a sliver of itself below the front of the keys. */
-const KEYBED_OVERHANG = 4;
+/** Keys of the instrument's proportions, as under every chart. */
+const KEY_HEIGHT = WHITE_KEY_WIDTH * WHITE_KEY_LENGTH_RATIO;
 
 const PLOT_TOP = 16;
 const PLOT_BOTTOM = 141;
@@ -33,22 +39,12 @@ const WEIGHT_STEP = 10;
 /** Below this spread the design lands on one weight, and can be named. */
 const FLAT_TARGET_TOLERANCE = 0.5;
 
-const diamond = (x: number, y: number, radius = 3.4) =>
-  `M${x.toFixed(1)} ${(y - radius).toFixed(1)}` +
-  `l${radius} ${radius}l${-radius} ${radius}l${-radius} ${-radius}z`;
+const DOT_RADIUS = 3.4;
 
 interface Point {
   x: number;
   y: number;
 }
-
-const polyline = (points: Point[]) =>
-  points
-    .map(
-      (point, index) =>
-        `${index === 0 ? 'M' : 'L'}${point.x.toFixed(1)} ${point.y.toFixed(1)}`,
-    )
-    .join('');
 
 /**
  * The balance weight of the piano on screen, key by key, over its own
@@ -108,35 +104,43 @@ export const BalanceWeightFigure = ({
         Math.max(WEIGHT_CEILING, ...measuredWeights, ...targetWeights) /
           WEIGHT_STEP,
       ) * WEIGHT_STEP;
-    const y = (weight: number) =>
-      PLOT_TOP + ((max - weight) / (max - min)) * (PLOT_BOTTOM - PLOT_TOP);
-
-    const placeOf = (keyNumber: number) =>
-      geometry.keysByNumber.get(keyNumber)?.backCenter;
+    // One step per key, from the balance rail slot of the first to that of
+    // the last: the box the home page illustrations are drawn in.
+    const box: PlotBox = {
+      from: 0,
+      height: PLOT_BOTTOM - PLOT_TOP,
+      max,
+      min,
+      to: keys.length - 1,
+      width: (keys.length - 1) * geometry.slotWidth,
+      x: geometry.slotWidth / 2,
+      y: PLOT_TOP,
+    };
+    const measuredValues = keys.map((key) => feltBalanceWeight(key.payload));
+    const targetValues = keys.map(
+      (key) => targetByNumber.get(key.number) ?? null,
+    );
 
     const measured: Point[] = [];
     const target: Point[] = [];
     const gapColumns: string[] = [];
-    for (const key of keys) {
-      const place = placeOf(key.number);
-      if (place === undefined) {
-        continue;
-      }
-      const weight = feltBalanceWeight(key.payload);
+    keys.forEach((_, index) => {
+      const x = plotX(box, index);
+      const weight = measuredValues[index] ?? null;
+      const aim = targetValues[index] ?? null;
       if (weight !== null) {
-        measured.push({ x: place, y: y(weight) });
+        measured.push({ x, y: plotY(box, weight) });
       }
-      const aim = targetByNumber.get(key.number);
-      if (aim !== undefined) {
-        target.push({ x: place, y: y(aim) });
+      if (aim !== null) {
+        target.push({ x, y: plotY(box, aim) });
       }
-      if (weight !== null && aim !== undefined) {
+      if (weight !== null && aim !== null) {
         gapColumns.push(
-          `M${place - geometry.slotWidth / 2} ${y(weight)}` +
-            `h${geometry.slotWidth}V${y(aim)}h${-geometry.slotWidth}z`,
+          `M${x - geometry.slotWidth / 2} ${plotY(box, weight)}` +
+            `h${geometry.slotWidth}V${plotY(box, aim)}h${-geometry.slotWidth}z`,
         );
       }
-    }
+    });
 
     const differences = keys
       .map((key) => {
@@ -179,7 +183,7 @@ export const BalanceWeightFigure = ({
         (_, index) => min + index * WEIGHT_STEP,
       ),
 
-      height: KEYBOARD_TOP + geometry.height + KEYBED_OVERHANG,
+      height: KEYBOARD_TOP + keybedHeight(geometry),
 
       isTargetFlat: targetSpread <= FLAT_TARGET_TOLERANCE,
 
@@ -189,9 +193,11 @@ export const BalanceWeightFigure = ({
           : differences.reduce((total, value) => total + value, 0) /
             differences.length,
 
-      measuredDots: measured.map((point) => diamond(point.x, point.y)).join(''),
+      measuredDots: diamondsPath(measuredValues, box, DOT_RADIUS),
 
-      measuredLine: polyline(measured),
+      // Broken over the keys not measured yet, as on every other figure: a
+      // line drawn across them would stand for weights nobody has taken.
+      measuredLine: linePath(measuredValues, box),
 
       measuredMax: Math.max(...measuredWeights),
 
@@ -210,7 +216,7 @@ export const BalanceWeightFigure = ({
       stems: measured
         .map((point) => `M${point.x} ${point.y + 4}V${KEYBOARD_TOP - 2}`)
         .join(''),
-      targetLine: polyline(target),
+      targetLine: linePath(targetValues, box),
       targetWeight: targetWeights.length === 0 ? null : targetWeights[0]!,
       // Hung from the target rather than from a fixed rule: the comb then
       // follows the line it belongs to, as it does in the artboard where that
@@ -393,33 +399,11 @@ export const BalanceWeightFigure = ({
         ) : null}
 
         <g transform={`translate(0, ${KEYBOARD_TOP})`}>
-          <rect
-            x="0"
-            y="0"
-            width={figure.width}
-            height={figure.geometry.height + KEYBED_OVERHANG}
-            rx="3"
-            className="fill-ptl-keybed"
-          />
-          <rect
-            x="0"
-            y="0"
-            width={figure.width}
-            height={figure.geometry.feltHeight}
-            className="fill-ptl-felt"
-          />
-          <path
-            d={figure.geometry.whiteKeys.map((key) => key.path).join('')}
-            strokeWidth="0.8"
-            className="fill-ptl-key-white stroke-ptl-key-white-edge"
-          />
-          <path
-            d={figure.geometry.blackKeys.map((key) => key.path).join('')}
-            className="fill-ptl-key-black"
-          />
-          {home.stage === 'measuring' && figure.nextKey ? (
-            <path d={figure.nextKey} className="fill-ptl-brass" />
-          ) : null}
+          <KeyboardPlate geometry={figure.geometry}>
+            {home.stage === 'measuring' && figure.nextKey ? (
+              <path d={figure.nextKey} className="fill-ptl-brass" />
+            ) : null}
+          </KeyboardPlate>
         </g>
 
         {home.stage === 'measuring' ? (

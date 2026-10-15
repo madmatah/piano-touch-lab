@@ -4,7 +4,8 @@ import { MainLayout } from '../MainLayout';
 import { PageHeading } from '../layout/PageHeading';
 import { PageSection } from '../layout/PageSection';
 import { SavedLocallyIndicator } from '../layout/SavedLocallyIndicator';
-import { PianoKeyboard, type PianoKeyTone } from '../piano/PianoKeyboard';
+import { type PianoKeyTone } from '../piano/KeyboardPlate';
+import { PianoKeyboard } from '../piano/PianoKeyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import {
   usePianoProfileState,

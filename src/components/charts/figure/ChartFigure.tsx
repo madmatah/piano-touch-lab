@@ -1,4 +1,4 @@
-import { CHART_HEIGHTS, MIN_PLOT_WIDTH, PLOT_INSET } from '../chart-geometry';
+import { MIN_PLOT_WIDTH, PLOT_INSET } from '../chart-geometry';
 import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
@@ -91,10 +91,13 @@ export const ChartFigure = ({
               : MIN_PLOT_WIDTH.design,
           }}
         >
-          {geometry && highlightedKey ? (
-            <HoverBand geometry={geometry} keyNumber={highlightedKey} />
-          ) : null}
-          <div className="relative z-10">{children}</div>
+          {/* The band runs down to the keyboard, whatever its height. */}
+          <div className="relative">
+            {geometry && highlightedKey ? (
+              <HoverBand geometry={geometry} keyNumber={highlightedKey} />
+            ) : null}
+            <div className="relative z-10">{children}</div>
+          </div>
           {keyboard}
         </div>
       </div>
@@ -131,9 +134,8 @@ const HoverBand = ({
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute top-0 z-0 bg-ptl-brass-soft"
+      className="pointer-events-none absolute inset-y-0 z-0 bg-ptl-brass-soft"
       style={{
-        bottom: CHART_HEIGHTS.keyboard + CHART_HEIGHTS.octaveLabels,
         left: `calc(${PLOT_INSET.left}px + ${start} * ${insets})`,
         width: `calc(${width} * ${insets})`,
       }}
