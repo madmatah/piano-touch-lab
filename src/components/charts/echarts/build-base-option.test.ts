@@ -1,60 +1,118 @@
-import { describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 
 import {
   scaleFromReadings,
   scaleOver,
   type AxisScale,
-} from './build-base-option';
+} from '@/components/charts/echarts/build-base-option';
 
-/** The static balance panel of the design: ruled every 20g, from zero. */
 const WEIGHT: AxisScale = { interval: 20, max: 100, min: 0 };
+const FRONT_WEIGHT: AxisScale = { interval: 10, max: 45, min: -10 };
 
-describe('A scale widened to what the instrument reads', () => {
-  it('should keep the design scale where the readings fit in it', () => {
-    expect(scaleOver(WEIGHT, [40, 88])).toEqual(WEIGHT);
+describe('The scaleOver() function', () => {
+  let result: AxisScale;
+
+  describe('When the readings fit in the design scale', () => {
+    beforeEach(() => {
+      result = scaleOver(WEIGHT, [40, 88]);
+    });
+
+    it('should keep the design scale', () => {
+      expect(result).toEqual(WEIGHT);
+    });
   });
 
-  it('should take in a reading the design did not expect', () => {
-    expect(scaleOver(WEIGHT, [40, 104]).max).toBe(120);
+  describe('When the design ceiling is off the rules and nothing reaches it', () => {
+    beforeEach(() => {
+      result = scaleOver(FRONT_WEIGHT, [-8.9, 41.2]);
+    });
+
+    it('should keep the design ceiling', () => {
+      expect(result.max).toBe(45);
+    });
+  });
+
+  describe('When a reading goes over the design ceiling', () => {
+    beforeEach(() => {
+      result = scaleOver(WEIGHT, [40, 104]);
+    });
+
+    it('should take the ceiling to the next rule above it', () => {
+      expect(result.max).toBe(120);
+    });
+  });
+
+  describe('When a reading goes under the design floor', () => {
+    beforeEach(() => {
+      result = scaleOver(FRONT_WEIGHT, [-14, 30]);
+    });
+
+    it('should take the floor to the next rule under it', () => {
+      expect(result.min).toBe(-20);
+    });
   });
 });
 
-describe('A scale lifted to where the readings start', () => {
-  it('should rule the panel from under the lowest reading', () => {
-    // An ordinary piano: nothing under 37g, so two fifths of a panel ruled
-    // from zero would be drawn for nothing.
-    expect(scaleFromReadings(WEIGHT, [37.4, 88])).toEqual({
-      interval: 10,
-      max: 100,
-      min: 30,
+describe('The scaleFromReadings() function', () => {
+  let result: AxisScale;
+
+  describe('When nothing reads near zero', () => {
+    beforeEach(() => {
+      result = scaleFromReadings(WEIGHT, [37.4, 88]);
+    });
+
+    it('should rule the panel from the first round step under the lowest reading', () => {
+      expect(result).toEqual({ interval: 10, max: 100, min: 30 });
     });
   });
 
-  it('should leave the rules on round values', () => {
-    // 35 is the first step of 5 under 37.4, and a panel ruled every 5 from
-    // 35 to 100 would carry fourteen rules: the step that fits is 10.
-    expect(scaleFromReadings(WEIGHT, [37.4, 88]).min % 10).toBe(0);
-  });
+  describe('When the lowest reading falls on a round step', () => {
+    beforeEach(() => {
+      result = scaleFromReadings(WEIGHT, [40, 88]);
+    });
 
-  it('should keep a reading off the foot of its panel', () => {
-    // A reading sitting on the foot reads as one that ran off it.
-    expect(scaleFromReadings(WEIGHT, [40, 88]).min).toBe(30);
-  });
-
-  it('should leave the design scale alone on a piano that reads low', () => {
-    expect(scaleFromReadings(WEIGHT, [4, 88])).toEqual(WEIGHT);
-    expect(scaleFromReadings(WEIGHT, [0, 88])).toEqual(WEIGHT);
-  });
-
-  it('should still take in a reading the design did not expect', () => {
-    expect(scaleFromReadings(WEIGHT, [37, 104])).toEqual({
-      interval: 20,
-      max: 120,
-      min: 20,
+    it('should keep that reading off the foot of the panel', () => {
+      expect(result.min).toBe(30);
     });
   });
 
-  it('should have nothing to go on without readings', () => {
-    expect(scaleFromReadings(WEIGHT, [])).toEqual(WEIGHT);
+  describe('When a piano reads low', () => {
+    beforeEach(() => {
+      result = scaleFromReadings(WEIGHT, [4, 88]);
+    });
+
+    it('should keep the design scale whole', () => {
+      expect(result).toEqual(WEIGHT);
+    });
+  });
+
+  describe('When a key reads nothing at all', () => {
+    beforeEach(() => {
+      result = scaleFromReadings(WEIGHT, [0, 88]);
+    });
+
+    it('should keep the design scale whole', () => {
+      expect(result).toEqual(WEIGHT);
+    });
+  });
+
+  describe('When a reading goes over the design ceiling', () => {
+    beforeEach(() => {
+      result = scaleFromReadings(WEIGHT, [37, 104]);
+    });
+
+    it('should widen the scale and rule it more coarsely', () => {
+      expect(result).toEqual({ interval: 20, max: 120, min: 20 });
+    });
+  });
+
+  describe('When there are no readings', () => {
+    beforeEach(() => {
+      result = scaleFromReadings(WEIGHT, []);
+    });
+
+    it('should keep the design scale', () => {
+      expect(result).toEqual(WEIGHT);
+    });
   });
 });

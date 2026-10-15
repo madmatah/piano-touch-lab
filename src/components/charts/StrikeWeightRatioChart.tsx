@@ -10,6 +10,7 @@ import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weig
 
 import { CHART_HEIGHTS, PLOT_BOX_MARGIN, PLOT_INSET } from './chart-geometry';
 import { GRID_TOP, type AxisScale } from './echarts/build-base-option';
+import { ChartEmptyFrame } from './figure/ChartEmptyFrame';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
@@ -21,6 +22,7 @@ import {
   type ChartReadingContext,
   type TouchDesignSerie,
 } from './interfaces';
+import { useLegendToggles } from './hooks/use-legend-toggles';
 
 /** The scale of the mockups: 5.5 to 7.0, ruled every 0.5 and halved by a faint line. */
 const RATIO_BAND = { interval: 0.5, max: 7, min: 5.5 } as const;
@@ -39,8 +41,8 @@ type KeyWithStrikeWeightRatio<T> = T &
 /**
  * The quantity this chart plots.
  *
- * The chart draws the median of it and the rail states that same median, so
- * both read the keyboard through this one selector.
+ * The chart draws the median of it and the reading states that same median,
+ * so both read the keyboard through this one selector.
  */
 export const selectComputedStrikeWeightRatio = (
   key: KeyWith<Pick<TouchWeightKeyAnalysis, 'computedStrikeWeightRatio'>>,
@@ -178,14 +180,17 @@ const ChartReferenceOverlay = ({
 
 export interface StrikeWeightRatioChartProps<T> {
   caption?: React.ReactNode;
+  /** Said over the empty figure, until there is something to draw. */
+  emptyState?: React.ReactNode;
   /** Draws the hand-measured ratio beside the computed one. */
   displayBothManualAndComputed: boolean;
   /** Legend entries contributed by the page, e.g. the design target. */
   extraLegendItems?: ChartLegendItem[];
   keyboard: KeyboardLike<KeyWith<KeyWithStrikeWeightRatio<T>>>;
   /**
-   * The rail to the right of the figure. It is a function so that the panel
-   * reads the very series the chart draws, rather than computing them again.
+   * The reading strip at the head of the figure. It is a function so that the
+   * strip reads the very series the chart draws, rather than computing them
+   * again.
    */
   renderReading?: (context: ChartReadingContext) => React.ReactNode;
   targetSerie?: TouchDesignSerie;
@@ -194,6 +199,7 @@ export interface StrikeWeightRatioChartProps<T> {
 
 export const StrikeWeightRatioChart = <T,>({
   caption,
+  emptyState,
   displayBothManualAndComputed,
   extraLegendItems,
   keyboard,
@@ -260,14 +266,31 @@ export const StrikeWeightRatioChart = <T,>({
 
   const scale = useMemo(() => buildRatioScale(series), [series]);
 
+  const { isShown, withToggles } = useLegendToggles();
+  const drawnSeries = useMemo(
+    () =>
+      series.filter((serie) =>
+        isShown(
+          serie === computedSerie
+            ? 'computed'
+            : serie === manualSerie
+              ? 'manual'
+              : 'target',
+        ),
+      ),
+    [computedSerie, isShown, manualSerie, series],
+  );
+
   // The brass rule stands for the median alone. Where the page sets a target,
   // that target is what the keys are read against, and the chart already draws
   // it as a line of its own.
   const medianRule = targetSerie ? null : stats.median;
 
+  // The stems hang from the ratios to what they are read against, so they go
+  // when the ratios do.
   const stems = useMemo(
     () =>
-      computedSerie.data.flatMap<Stem>((point) => {
+      (isShown('computed') ? computedSerie.data : []).flatMap<Stem>((point) => {
         const from = targetSerie
           ? serieValueAt(targetSerie, point.number)
           : stats.median;
@@ -277,48 +300,71 @@ export const StrikeWeightRatioChart = <T,>({
         }
         return [{ from, to: point.payload, x }];
       }),
-    [computedSerie, geometry, stats.median, targetSerie],
+    [computedSerie, geometry, isShown, stats.median, targetSerie],
   );
 
   const legendItems = useMemo<ChartLegendItem[]>(
-    () => [
-      ...(extraLegendItems ?? []),
-      ...(isEmpty
-        ? []
-        : [
-            {
-              colorClassName: 'text-foreground',
-              id: 'computed',
-              label: computedSerieLabel,
-              mark: 'dot' as const,
-            },
-          ]),
-      ...(showsManual
-        ? [
-            {
-              colorClassName: 'text-muted-foreground',
-              id: 'manual',
-              label: t('Measured Strike Weight Ratio'),
-              mark: 'diamond' as const,
-            },
-          ]
-        : []),
-      ...(medianRule === null
-        ? []
-        : [
-            {
-              colorClassName: 'text-ptl-brass',
-              id: 'median',
-              label: t('Median'),
-              mark: 'line-dashed' as const,
-            },
-          ]),
+    () =>
+      withToggles([
+        ...(extraLegendItems ?? []),
+        ...(isEmpty
+          ? []
+          : [
+              {
+                colorClassName: 'text-foreground',
+                id: 'computed',
+                label: computedSerieLabel,
+                mark: 'dot' as const,
+              },
+            ]),
+        ...(showsManual
+          ? [
+              {
+                colorClassName: 'text-muted-foreground',
+                id: 'manual',
+                label: t('Measured Strike Weight Ratio'),
+                mark: 'diamond' as const,
+              },
+            ]
+          : []),
+        ...(medianRule === null
+          ? []
+          : [
+              {
+                colorClassName: 'text-ptl-brass',
+                id: 'median',
+                label: t('Median'),
+                mark: 'line-dashed' as const,
+              },
+            ]),
+      ]),
+    [
+      computedSerieLabel,
+      extraLegendItems,
+      isEmpty,
+      medianRule,
+      showsManual,
+      t,
+      withToggles,
     ],
-    [computedSerieLabel, extraLegendItems, isEmpty, medianRule, showsManual, t],
   );
 
   const plotHeight =
     variant === 'analyze' ? CHART_HEIGHTS.plot : CHART_HEIGHTS.plotCompact;
+
+  if (isEmpty && emptyState) {
+    return (
+      <ChartEmptyFrame
+        geometry={geometry}
+        height={plotHeight}
+        keys={keys}
+        scale={buildRatioScale([])}
+        variant={variant}
+      >
+        {emptyState}
+      </ChartEmptyFrame>
+    );
+  }
 
   const figure = (
     <ChartFigure
@@ -351,7 +397,7 @@ export const StrikeWeightRatioChart = <T,>({
       <div className="relative">
         <ChartReferenceOverlay
           geometry={geometry}
-          median={medianRule}
+          median={isShown('median') ? medianRule : null}
           medianLabel={formatRatio(medianRule, currentLanguage)}
           scale={scale}
           stems={stems}
@@ -363,7 +409,7 @@ export const StrikeWeightRatioChart = <T,>({
             height={plotHeight}
             onChartReady={hover.bindChart}
             scale={scale}
-            series={series}
+            series={drawnSeries}
           />
         </div>
       </div>

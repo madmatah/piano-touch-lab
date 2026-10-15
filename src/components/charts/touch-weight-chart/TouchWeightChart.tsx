@@ -5,6 +5,7 @@ import type { EChartsOption } from 'echarts';
 import { useTranslation } from '@/hooks/use-translation';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
+import { ChartEmptyFrame } from '../figure/ChartEmptyFrame';
 import { ChartFigure } from '../figure/ChartFigure';
 import { ChartKeyboardAxis } from '../figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from '../figure/ChartLegend';
@@ -22,6 +23,7 @@ import {
 import {
   FRICTION_GRID,
   touchWeightPlotHeight,
+  WEIGHT_SCALE,
   useTouchWeightOption,
 } from './hooks/use-touch-weight-option';
 import {
@@ -32,7 +34,7 @@ import {
 } from './hooks/use-touch-weight-series';
 
 /**
- * What the chart hands to the rail beside it.
+ * What the chart hands to the reading strip at its head.
  *
  * `ChartReadingContext`, which the other figures use, carries one measured
  * series and its reference curves; this figure draws four series of equal
@@ -66,14 +68,17 @@ const ALL_VISIBLE: Record<TouchWeightSerieId, boolean> = {
 export interface TouchWeightChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
   caption?: React.ReactNode;
+  /** Said over the empty figure, until there is something to draw. */
+  emptyState?: React.ReactNode;
   /**
    * The balance weight of the instrument as it stands, drawn hollow behind
    * the designed one so the two can be read against each other.
    */
   ghostSerie?: TouchDesignSerie;
   /**
-   * The rail to the right of the figure. It is a function so that the panel
-   * reads the very series the chart draws, rather than computing them again.
+   * The reading strip at the head of the figure. It is a function so that the
+   * strip reads the very series the chart draws, rather than computing them
+   * again.
    */
   renderReading?: (context: TouchWeightReadingContext) => React.ReactNode;
   useSupportSpringMeasurements: boolean;
@@ -83,6 +88,7 @@ export interface TouchWeightChartProps {
 export const TouchWeightChart = ({
   analyzedKeyboard,
   caption,
+  emptyState,
   ghostSerie,
   renderReading,
   useSupportSpringMeasurements,
@@ -170,8 +176,8 @@ export const TouchWeightChart = ({
   );
 
   const { hoveredKey } = hover;
-  // The zone is named here rather than in the page: the rail must agree with
-  // the bands the chart has drawn.
+  // The zone is named here rather than in the page: the reading must agree
+  // with the bands the chart has drawn.
   const frictionZoneLabel = useMemo(() => {
     if (hoveredKey === null) {
       return null;
@@ -183,6 +189,23 @@ export const TouchWeightChart = ({
     );
     return zone ? zoneLabels[zone] : null;
   }, [analyzedKeyboard.size, hoveredKey, series.friction, zoneLabels]);
+
+  const isEmpty = series.balance.data.every(
+    (point) => point.payload === undefined,
+  );
+  if (isEmpty && emptyState) {
+    return (
+      <ChartEmptyFrame
+        geometry={geometry}
+        height={touchWeightPlotHeight()}
+        keys={keys}
+        scale={WEIGHT_SCALE}
+        variant={variant}
+      >
+        {emptyState}
+      </ChartEmptyFrame>
+    );
+  }
 
   const figure = (
     <ChartFigure

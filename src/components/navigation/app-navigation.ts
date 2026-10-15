@@ -35,9 +35,11 @@ const firstOpenLink = (links: NavigationLink[]): string | undefined =>
 /**
  * The four steps of the workflow, in order.
  *
- * One model, two readers: the sidebar renders it, and the breadcrumb of the
- * page header looks the current route up in it. Adding a page means adding it
- * here only.
+ * One model, three readers: the sidebar renders it, and the breadcrumb of the
+ * page header and the title of the document look the current route up in
+ * it. A new page is also declared to the router (`AppRouter.tsx`), and a
+ * Design page to the steps bar (`use-design-steps.ts`), which adds what each
+ * step is set to.
  */
 export const useAppNavigation = (): NavigationStep[] => {
   const { t } = useTranslation();

@@ -269,9 +269,13 @@ export const findKeyAtBackPosition = (
  * Derived from the keys themselves rather than hard-coded C1…C8: the
  * application supports keyboards that are neither 88 keys nor start on A.
  */
+/** A C, where an octave starts: what the figures mark and the tables rule off. */
+export const isOctaveStart = (key: Pick<Key, 'color' | 'name'>): boolean =>
+  key.color === KeyColor.White && key.name.startsWith('C');
+
 export const octaveMarks = (
   keys: readonly Key[],
 ): { label: string; number: number }[] =>
   keys
-    .filter((key) => key.color === KeyColor.White && key.name.startsWith('C'))
+    .filter(isOctaveStart)
     .map((key) => ({ label: key.name, number: key.number }));

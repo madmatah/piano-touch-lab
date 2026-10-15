@@ -1,4 +1,5 @@
 import type { KeyWith } from '@/lib/piano/keyboard';
+import { isOctaveStart } from '@/lib/piano/keyboard/keyboard-geometry';
 import { cn } from '@/lib/utils';
 
 import type { KeyAdjustmentPayload } from './AdjustmentSheet.types';
@@ -31,21 +32,18 @@ const Adjustment = ({
   </td>
 );
 
-/**
+/*
  * Each C opens an octave, which the printed sheet rules off, as a score does.
  * Half a pixel heavier than the rules between rows: in a collapsed table the
  * bottom border of the row above wins over a top border no wider than it.
  */
-const isOctaveStart = (name: string, isBlackKey: boolean) =>
-  !isBlackKey && name.startsWith('C');
-
 export const AdjustmentSheetTableRow: React.FC<
   AdjustmentSheetTableRowProps
 > = ({ hasWippenAssistSpringDesign, isBlackKey, item }) => (
   <tr
     className={cn(
       'even:bg-secondary',
-      isOctaveStart(item.name, isBlackKey) &&
+      isOctaveStart(item) &&
         'print:[&>td]:border-t-[1.5px] print:[&>td]:border-t-foreground',
     )}
   >
@@ -53,7 +51,7 @@ export const AdjustmentSheetTableRow: React.FC<
     <td
       className={cn(
         cellClassName,
-        isOctaveStart(item.name, isBlackKey) && 'print:font-semibold',
+        isOctaveStart(item) && 'print:font-semibold',
       )}
     >
       {isBlackKey ? (

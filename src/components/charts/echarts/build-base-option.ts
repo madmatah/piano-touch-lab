@@ -24,23 +24,32 @@ export interface AxisScale {
  *
  * Every scale in the mockups is a floor: an unusual piano stretches the axis
  * rather than have its outlying keys quietly dropped off the plot, which is
- * what ECharts does with a value outside an explicit min/max.
+ * what ECharts does with a value outside an explicit min/max. Only an end a
+ * reading goes past moves, to the next rule: a design ceiling that is off
+ * the rules — 45 g on a front weight panel ruled every 10 g — stays where the
+ * mockup puts it while nothing reaches it.
  */
 export const scaleOver = (
   base: AxisScale,
   values: readonly number[],
-): AxisScale =>
-  values.length === 0
-    ? base
-    : {
-        ...base,
-        max:
-          Math.ceil(Math.max(base.max, ...values) / base.interval) *
-          base.interval,
-        min:
-          Math.floor(Math.min(base.min, ...values) / base.interval) *
-          base.interval,
-      };
+): AxisScale => {
+  if (values.length === 0) {
+    return base;
+  }
+  const highest = Math.max(...values);
+  const lowest = Math.min(...values);
+  return {
+    ...base,
+    max:
+      highest <= base.max
+        ? base.max
+        : Math.ceil(highest / base.interval) * base.interval,
+    min:
+      lowest >= base.min
+        ? base.min
+        : Math.floor(lowest / base.interval) * base.interval,
+  };
+};
 
 /**
  * How fine the rules of a raised floor may get, and how many of them there
@@ -144,7 +153,9 @@ export const buildValueAxis = (
   minorSplitLine: scale.minorSplit
     ? { lineStyle: { color: tokens.gridSoft, width: 1 }, show: true }
     : { show: false },
-  minorTick: { show: false },
+  // One faint line halfway between two rules: ECharts splits in five unless
+  // told, and draws the faint lines where its hidden minor ticks fall.
+  minorTick: { show: false, splitNumber: 2 },
   splitLine: { lineStyle: { color: tokens.grid, width: 1 }, show: true },
   type: 'value',
 });

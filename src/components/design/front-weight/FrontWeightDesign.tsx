@@ -13,7 +13,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
 import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
-import { AlertCircleIcon, HourglassIcon } from 'lucide-react';
+import { HourglassIcon } from 'lucide-react';
 import { useStrikeWeightDesign } from '@/hooks/store/use-design-store';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
 import { useFrontWeightRecommendation } from './hooks/use-front-weight-recommendation';
@@ -24,6 +24,7 @@ import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.type
 import { useTargetSeries } from '../hooks/use-target-series-generators';
 import { useTargetReading } from '../hooks/use-target-reading';
 import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
+import { NotEnoughData } from '../NotEnoughData';
 
 export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   analyzedKeyboard,
@@ -214,11 +215,10 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   }, [analyzedKeyboard, currentLanguage, t, targetSerie]);
 
   return !hasEnoughInputData ? (
-    <Alert variant="default" className="my-10 w-full">
-      <AlertCircleIcon />
-      <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
-      <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
-    </Alert>
+    <NotEnoughData
+      title={notEnoughDataErrorTitle}
+      description={notEnoughDataErrorDescription}
+    />
   ) : (
     <DesignLayout
       objective={

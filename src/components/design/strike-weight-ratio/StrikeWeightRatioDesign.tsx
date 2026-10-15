@@ -1,4 +1,3 @@
-import { AlertCircleIcon } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -15,7 +14,6 @@ import {
 
 import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-keyboard-stats';
 import { StrikeWeightRatioChart } from '@/components/charts/StrikeWeightRatioChart';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatRatio, formatSignedRatio } from '@/lib/format/format-weight';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
@@ -29,6 +27,7 @@ import { useTargetSeries } from '../hooks/use-target-series-generators';
 import { useStrikeWeightRatioRecommendation } from './hooks/use-strike-weight-ratio-recommendation';
 import { useStrikeWeightRatioTargetSelector } from './hooks/use-strike-weight-ratio-target-selector';
 import { useTargetReading } from '../hooks/use-target-reading';
+import { NotEnoughData } from '../NotEnoughData';
 
 /** What a constant ratio can be nudged to, and by how much. */
 const RATIO_BOUNDS = { max: 8, min: 4, step: 0.1 } as const;
@@ -276,11 +275,10 @@ export const StrikeWeightRatioDesign: React.FC<
   );
 
   return !hasEnoughData ? (
-    <Alert variant="default" className="my-10 w-full">
-      <AlertCircleIcon />
-      <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
-      <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
-    </Alert>
+    <NotEnoughData
+      title={notEnoughDataErrorTitle}
+      description={notEnoughDataErrorDescription}
+    />
   ) : (
     <DesignLayout
       objective={

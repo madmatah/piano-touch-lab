@@ -1,14 +1,24 @@
 import { useMemo } from 'react';
 
-import { PianoKeyboard } from '@/components/piano/PianoKeyboard';
+import {
+  PianoKeyboard,
+  type PianoKeyTone,
+} from '@/components/piano/PianoKeyboard';
 import { CHART_HEIGHTS, PLOT_INSET } from '../chart-geometry';
 import type { Key } from '@/lib/piano/keyboard/key';
+import { KeyColor } from '@/lib/piano/keyboard/key-color.enum';
 import { octaveMarks } from '@/lib/piano/keyboard/keyboard-geometry';
 
 export interface ChartKeyboardAxisProps {
   description: string;
   highlightedKey?: number | null;
   keys: readonly Key[];
+  /**
+   * The keys the figure is about — those the springs are on — their white
+   * keys washed in brass. The black keys among them keep their colour, as in
+   * the mockup: a run of washed white keys already takes them in.
+   */
+  markedKeys?: ReadonlySet<number>;
   /** Show every C, or every other one when the figure is narrow. */
   marks?: 'all' | 'sparse' | 'none';
   onKeyHover?: (keyNumber: number | null) => void;
@@ -30,9 +40,25 @@ export const ChartKeyboardAxis = ({
   description,
   highlightedKey,
   keys,
+  markedKeys,
   marks = 'all',
   onKeyHover,
 }: ChartKeyboardAxisProps) => {
+  const tones = useMemo(
+    () =>
+      markedKeys
+        ? new Map<number, PianoKeyTone>(
+            keys
+              .filter(
+                (key) =>
+                  key.color === KeyColor.White && markedKeys.has(key.number),
+              )
+              .map((key) => [key.number, 'marked']),
+          )
+        : undefined,
+    [keys, markedKeys],
+  );
+
   const labels = useMemo(() => {
     if (marks === 'none') {
       return undefined;
@@ -62,6 +88,7 @@ export const ChartKeyboardAxis = ({
         labels={labels}
         onKeyHover={onKeyHover}
         stretchToHeight={CHART_HEIGHTS.keyboard}
+        toneByKeyNumber={tones}
       />
     </div>
   );
