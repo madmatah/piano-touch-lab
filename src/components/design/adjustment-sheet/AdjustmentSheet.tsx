@@ -1,5 +1,6 @@
+import { DesignPrintSummary } from '@/components/design/steps/DesignPrintSummary';
 import { PrintHeader } from '@/components/print/PrintHeader';
-import { PrintFooter } from '@/components/print/PrintFooter';
+import { PrintTableFooter } from '@/components/print/PrintTableFooter';
 import { useTranslation } from '@/hooks/use-translation';
 import {
   formatSignedWeightValue,
@@ -48,8 +49,9 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
   return (
     <div className="flex flex-col gap-6">
       <PrintHeader title={t('Adjustment Sheet', { ns: 'navigation' })} />
+      <DesignPrintSummary />
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 print:hidden">
         <SummaryTile
           label={t('Front Weight', { ns: 'navigation' })}
           figure={t('{{count}} keys', {
@@ -91,9 +93,14 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
         ) : null}
       </div>
 
-      <section className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[820px] table-fixed border-collapse">
+      <section className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card print:overflow-visible">
+        <div className="overflow-x-auto print:overflow-visible">
+          {/*
+           * The table scrolls sideways on screen rather than cram eight
+           * columns into a narrow window; on paper there is nowhere to
+           * scroll, so it gives up its floor width and fits the sheet.
+           */}
+          <table className="w-full min-w-[820px] table-fixed border-collapse print:table-auto print:min-w-0 print:text-[12px]">
             <colgroup>
               <col className="w-[52px]" />
               <col className="w-[64px]" />
@@ -133,6 +140,9 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
                 <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-center align-middle text-[13px] font-semibold">
                   {t('Done')}
                 </th>
+                <th className="ptl-print-only h-12 border-b border-ptl-rule-strong border-l px-3 text-left align-middle text-[13px] font-semibold">
+                  {t('Notes')}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -145,9 +155,10 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
                 />
               ))}
             </tbody>
+            <PrintTableFooter colSpan={summary.hasSprings ? 7 : 6} />
           </table>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 border-t border-border px-4 py-3.5 text-[13px] text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 border-t border-border px-4 py-3.5 text-[13px] text-muted-foreground print:hidden">
           <span className="font-mono text-xs">
             {t('{{count}} keys', {
               count: keyboard.size,
@@ -174,7 +185,6 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
           { threshold: formatWeightValue(0.1, currentLanguage) },
         )}
       </p>
-      <PrintFooter />
     </div>
   );
 };

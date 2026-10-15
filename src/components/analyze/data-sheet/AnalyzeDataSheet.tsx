@@ -3,6 +3,8 @@ import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
+import { PrintTableFooter } from '@/components/print/PrintTableFooter';
+
 import { AnalyzeDataSheetTableRow } from './AnalyzeDataSheetTableRow';
 
 /**
@@ -35,10 +37,15 @@ export const AnalyzeDataSheet: React.FC<{
   ];
 
   return (
-    <div className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card">
-      <div className="max-h-[70vh] overflow-auto">
+    <div className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card print:overflow-visible">
+      {/*
+       * The sheet is read by scrolling inside its own frame; on paper the
+       * frame is the sheet, so the height cap and the sticky header go, and
+       * the browser repeats the header on every page instead.
+       */}
+      <div className="max-h-[70vh] overflow-auto print:max-h-none print:overflow-visible">
         <table className="w-full border-collapse text-[13px]">
-          <thead className="sticky top-0 z-10 bg-card">
+          <thead className="sticky top-0 z-10 bg-card print:static">
             <tr>
               <th className="border-b border-border bg-card" colSpan={2} />
               <th
@@ -98,6 +105,9 @@ export const AnalyzeDataSheet: React.FC<{
               />
             ))}
           </tbody>
+          <PrintTableFooter
+            colSpan={2 + measuredColumns.length + computedColumns.length}
+          />
         </table>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-t border-border px-3 py-2.5 font-mono text-[12px] text-muted-foreground">
@@ -106,8 +116,10 @@ export const AnalyzeDataSheet: React.FC<{
             count: analyzedKeyboard.size,
             ns: 'navigation',
           })}
-          {' · '}
-          {t('the header stays visible while scrolling')}
+          <span className="print:hidden">
+            {' · '}
+            {t('the header stays visible while scrolling')}
+          </span>
         </span>
         <span>
           BW = (D + U) / 2 · F = (D − U) / 2 · R = (FW + BW − WBW) / SW

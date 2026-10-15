@@ -38,7 +38,7 @@ export const DesignStepsBar = ({
   return (
     <nav
       aria-label={t('Your design')}
-      className="flex flex-wrap items-stretch gap-2"
+      className="flex flex-wrap items-stretch gap-2 print:hidden"
     >
       {steps.map((step) => {
         const isCurrent = step.id === currentStepId;

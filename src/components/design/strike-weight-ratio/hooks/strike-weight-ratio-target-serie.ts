@@ -2,7 +2,7 @@ import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch
 import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useCallback, useMemo } from 'react';
-import { TouchDesignSerieVariant } from '@/components/charts/TouchDesignChart';
+import { TouchDesignSerieVariant } from '@/components/charts/KeyboardChart';
 import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignTarget,

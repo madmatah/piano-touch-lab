@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { useGenerateSerie } from './use-generate-serie';
 import { Keyboard } from '@/lib/piano/keyboard';
-import { TouchDesignSerieVariant } from '../TouchDesignChart';
+import { TouchDesignSerieVariant } from '../KeyboardChart';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { KeyWith } from '@/lib/piano/keyboard';
 import type { EchartsDataItemStyle, TouchDesignSerie } from '../interfaces';

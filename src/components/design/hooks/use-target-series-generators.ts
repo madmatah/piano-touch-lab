@@ -12,7 +12,7 @@ import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
 import { useMemo } from 'react';
 import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useFrontWeightTargetSerie } from '../front-weight/hooks/use-front-weight-target-serie';
-import { TouchDesignSerieVariant } from '@/components/charts/TouchDesignChart';
+import { TouchDesignSerieVariant } from '@/components/charts/KeyboardChart';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useTranslation } from '@/hooks/use-translation';
 import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';

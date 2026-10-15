@@ -1,7 +1,7 @@
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import { useCallback } from 'react';
-import type { TouchDesignSerieVariant } from '../TouchDesignChart';
+import type { TouchDesignSerieVariant } from '../KeyboardChart';
 import type {
   EchartsDataItemStyle,
   TouchDesignDataPoint,
