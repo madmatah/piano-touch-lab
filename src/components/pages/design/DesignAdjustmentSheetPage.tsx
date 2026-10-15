@@ -34,7 +34,8 @@ export const DesignAdjustmentSheetPage = () => {
           <>
             <Button variant="outlineStrong" onClick={exportBackupFile}>
               <Download className="size-4" />
-              {t('Export', { ns: 'navigation' })}
+              {/* What it saves is the whole profile, not this sheet. */}
+              {t('Export the profile')}
             </Button>
             <PrintButton
               label={t('Print the sheet')}

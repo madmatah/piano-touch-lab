@@ -24,7 +24,12 @@ export const Homepage = () => {
 
   return (
     <MainLayout variant="bare" shouldDisplayDemoBanner={false}>
-      <section className="flex flex-col items-center gap-6 border-b border-border bg-[radial-gradient(70%_80%_at_50%_0%,var(--card)_0%,transparent_70%)] px-12 pt-[104px] max-md:px-4 max-md:pt-12">
+      {/*
+       * The figure rests on the rule that closes the section. A profile with
+       * too few keys measured has no figure, and the text would rest on it
+       * instead: it gets the room the figure would have left.
+       */}
+      <section className="flex flex-col items-center gap-6 border-b border-border bg-[radial-gradient(70%_80%_at_50%_0%,var(--card)_0%,transparent_70%)] px-12 pt-[104px] max-md:px-4 max-md:pt-12 [&:not(:has(>figure))]:pb-16 max-md:[&:not(:has(>figure))]:pb-10">
         <HomeHero
           home={home}
           onCreateProfile={openNewProfileDialog}
@@ -35,7 +40,9 @@ export const Homepage = () => {
           description={
             home.stage === 'demo'
               ? t('Balance weight · demonstration piano')
-              : t('Balance weight · your {{piano}}', { piano: displayName })
+              : displayName
+                ? t('Balance weight · your {{piano}}', { piano: displayName })
+                : t('Balance weight · your piano')
           }
         />
       </section>

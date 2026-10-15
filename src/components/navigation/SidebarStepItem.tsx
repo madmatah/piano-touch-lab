@@ -22,7 +22,7 @@ export const SidebarStepItem = ({
   <NavLink
     to={to}
     className={cn(
-      'flex min-h-10 items-center gap-2.5 rounded-md px-2.5 text-[14.5px] font-medium text-foreground transition-colors',
+      'flex min-h-10 items-center gap-2.5 rounded-md px-2.5 text-[14.5px] font-medium text-foreground transition-colors short:min-h-8',
       'hover:bg-accent',
       'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
       isActive && 'bg-accent shadow-[inset_0_0_0_1px_var(--input)]',

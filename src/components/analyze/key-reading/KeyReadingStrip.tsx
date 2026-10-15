@@ -29,6 +29,10 @@ export interface KeyReading {
  * page. It lies along the top of the figure rather than beside it so that the
  * plot keeps the width of the page, and it is the pointer's own echo, so it
  * never prints.
+ *
+ * It sticks to the top of the screen while its figure is in view: on a short
+ * screen — a phone held sideways — the keyboard is at the bottom of a figure
+ * taller than the screen, and a key touched there was read out of sight.
  */
 export const KeyReadingStrip = ({ reading }: { reading: KeyReading }) => {
   const { footnote, keyNumber, noteName, rows } = reading;
@@ -37,7 +41,7 @@ export const KeyReadingStrip = ({ reading }: { reading: KeyReading }) => {
   return (
     <section
       aria-live="polite"
-      className="flex flex-wrap items-center gap-x-7 gap-y-2.5 border-b border-border bg-ptl-reading px-[18px] py-3 text-ptl-reading-foreground print:hidden"
+      className="sticky top-0 z-20 flex flex-wrap items-center gap-x-7 gap-y-2.5 border-b border-border bg-ptl-reading px-[18px] py-3 text-ptl-reading-foreground print:hidden"
     >
       <span className="flex items-baseline gap-3">
         <span className="font-mono text-[11px] tracking-[0.08em] text-ptl-reading-muted uppercase">

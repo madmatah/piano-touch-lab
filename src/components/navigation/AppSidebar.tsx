@@ -28,7 +28,7 @@ export const AppSidebar = ({ steps }: { steps: NavigationStep[] }) => {
 
   return (
     <Sidebar collapsible="offcanvas" className="border-r border-border">
-      <SidebarContent className="gap-6 overflow-y-auto px-3.5 pt-[26px] pb-5">
+      <SidebarContent className="gap-6 overflow-y-auto px-3.5 pt-[26px] pb-5 short:gap-4 short:pt-4">
         <SidebarBrand />
         {pianoStep ? <SidebarPianoCard label={pianoStep.label} /> : null}
 

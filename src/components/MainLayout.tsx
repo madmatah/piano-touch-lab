@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 
 import { DemoProfileBanner } from './layout/DemoProfileBanner';
 import { PageHeader } from './layout/PageHeader';
+import { useDocumentTitle } from './layout/hooks/use-document-title';
 import { PianoIdentity } from './layout/PianoIdentity';
 import { PrintMargins } from './print/PrintMargins';
 
@@ -33,6 +34,7 @@ export const MainLayout = ({
   // Built here and handed down: deciding which pages are open means designing
   // the whole keyboard, and the sidebar and the breadcrumb both read it.
   const steps = useAppNavigation();
+  useDocumentTitle(steps);
 
   return (
     <SidebarProvider
