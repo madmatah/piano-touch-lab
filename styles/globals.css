@@ -287,10 +287,78 @@
   }
 }
 
-@layer utilities {
-  @media print {
-    [data-slot='sidebar'] {
-      display: none;
-    }
+/*
+ * Print.
+ *
+ * A printed sheet goes into a workshop, not onto a screen: it is always on
+ * white paper, whichever coat the application is wearing. Repointing the
+ * tokens does that for every component at once.
+ */
+@page {
+  size: A4 portrait;
+  margin: 14mm 15mm 12mm;
+}
+
+.ptl-print-only {
+  display: none;
+}
+
+@media print {
+  :root,
+  .dark {
+    color-scheme: light;
+
+    --background: #ffffff;
+    --card: #ffffff;
+    --popover: #ffffff;
+    --foreground: #1a1612;
+    --card-foreground: #1a1612;
+    --muted: #ffffff;
+    --muted-foreground: #4f483f;
+    --secondary: #ffffff;
+    --accent: transparent;
+    --primary: #1a1612;
+    --primary-foreground: #ffffff;
+    --border: #c9c0ae;
+    --input: #b3a994;
+
+    --ptl-ink-3: #5a5248;
+    --ptl-rule-strong: #1a1612;
+    --ptl-brass: #8c6a2c;
+    --ptl-brass-soft: transparent;
+  }
+
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  [data-slot='sidebar'],
+  [data-slot='sidebar-gap'],
+  [data-slot='page-header'],
+  [data-slot='demo-banner'],
+  [data-slot='toaster'] {
+    display: none !important;
+  }
+
+  [data-slot='sidebar-inset'] > main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .ptl-screen-only {
+    display: none !important;
+  }
+
+  .ptl-print-only {
+    display: revert !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    break-inside: avoid;
   }
 }

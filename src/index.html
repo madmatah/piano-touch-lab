@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="./logo.svg" />
     <title>Piano Touch Lab</title>
+    <script>
+      // Paint the chosen theme before the first frame. React mounts too late:
+      // without this, someone who picked the dark workshop gets a flash of
+      // paper white on every load. Mirrors what next-themes writes.
+      (() => {
+        try {
+          const stored = localStorage.getItem('ptl.theme');
+          const isDark =
+            stored === 'dark' ||
+            ((!stored || stored === 'system') &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.style.colorScheme = isDark
+            ? 'dark'
+            : 'light';
+        } catch {
+          // Private browsing can make localStorage throw; the light theme is
+          // a fine fallback.
+        }
+      })();
+    </script>
     <script type="module" src="./frontend.tsx" async></script>
   </head>
   <body>

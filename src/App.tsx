@@ -12,6 +12,7 @@ import { NewProfileDialog } from './components/new-profile/NewProfileDialog';
 import { AppRouter } from './components/AppRouter';
 import { useCreateNewProfileUseCase } from './hooks/profile/use-create-new-profile-use-case';
 import { Toaster } from './components/ui/sonner';
+import { ThemeProvider } from './components/theme/ThemeProvider';
 
 const AppContent = ({
   isNewProfileDialogOpen,
@@ -39,17 +40,19 @@ export const App = () => {
   const [isNewProfileDialogOpen, setIsNewProfileDialogOpen] = useState(false);
 
   return (
-    <Provider container={container}>
-      <KeyboardProvider>
-        <NewProfileDialogProvider onOpenChange={setIsNewProfileDialogOpen}>
-          <BrowserRouter>
-            <AppContent
-              isNewProfileDialogOpen={isNewProfileDialogOpen}
-              setIsNewProfileDialogOpen={setIsNewProfileDialogOpen}
-            />
-          </BrowserRouter>
-        </NewProfileDialogProvider>
-      </KeyboardProvider>
-    </Provider>
+    <ThemeProvider>
+      <Provider container={container}>
+        <KeyboardProvider>
+          <NewProfileDialogProvider onOpenChange={setIsNewProfileDialogOpen}>
+            <BrowserRouter>
+              <AppContent
+                isNewProfileDialogOpen={isNewProfileDialogOpen}
+                setIsNewProfileDialogOpen={setIsNewProfileDialogOpen}
+              />
+            </BrowserRouter>
+          </NewProfileDialogProvider>
+        </KeyboardProvider>
+      </Provider>
+    </ThemeProvider>
   );
 };
