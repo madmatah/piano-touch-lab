@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import {
   FrontWeightDesignMode,
   type FrontWeightDesignTarget,
-} from '../FrontWeightDesign.types';
+} from '@/lib/piano/touch-design/design/front-weight-design';
 import {
   useDesignActions,
   useFrontWeightDesign,

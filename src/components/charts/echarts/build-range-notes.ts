@@ -1,6 +1,6 @@
 import type { CustomSeriesOption } from 'echarts';
 
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import type { ChartTokens } from '../chart-tokens';
 import type { KeyRangeNote } from '../interfaces';
@@ -30,7 +30,7 @@ interface CoordinateApi {
  */
 export const buildRangeNotes = (
   notes: readonly KeyRangeNote[],
-  geometry: KeyboardGeometry,
+  geometry: KeyboardPlacement,
   scale: AxisScale,
   tokens: ChartTokens,
 ): CustomSeriesOption => {

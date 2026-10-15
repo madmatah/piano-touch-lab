@@ -5,9 +5,9 @@ import {
 } from '../TargetSelector';
 import {
   FrontWeightDesignMode,
-  type FrontWeightDesignProps,
   type FrontWeightDesignTarget,
-} from './FrontWeightDesign.types';
+} from '@/lib/piano/touch-design/design/front-weight-design';
+import { type FrontWeightDesignProps } from './FrontWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { DesignChartSummary } from '../DesignChartSummary';
@@ -20,7 +20,7 @@ import { useFrontWeightRecommendation } from './hooks/use-front-weight-recommend
 import { useFrontWeightTargetSelector } from './hooks/use-frontweight-target-selector';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
-import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
+import { StrikeWeightDesignMode } from '@/lib/piano/touch-design/design/strike-weight-design';
 import { useTargetSeries } from '../hooks/use-target-series';
 import { useTargetReading } from '../hooks/use-target-reading';
 import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';

@@ -1,14 +1,16 @@
 import { useCallback, useMemo } from 'react';
 
 import {
-  computeKeyboardGeometry,
   findKeyAtBackPosition,
   findKeyAtPosition,
-  type KeyboardGeometryOptions,
 } from '@/lib/piano/keyboard/keyboard-geometry';
 import type { Key } from '@/lib/piano/keyboard/key';
 import { cn } from '@/lib/utils';
 
+import {
+  computeKeyboardDrawing,
+  type KeyboardDrawingOptions,
+} from './keyboard-drawing';
 import { KeyboardLabelRow, type PianoKeyboardLabel } from './KeyboardLabelRow';
 import {
   KeyboardPlate,
@@ -20,7 +22,7 @@ export interface PianoKeyboardProps {
   className?: string;
   /** Read out to screen readers; the drawing itself carries no text. */
   description: string;
-  geometry?: KeyboardGeometryOptions;
+  geometry?: KeyboardDrawingOptions;
   /** The key being read right now, painted brass wherever it sits. */
   highlightedKey?: number | null;
   keys: readonly Key[];
@@ -49,7 +51,7 @@ export const PianoKeyboard = ({
   toneByKeyNumber,
 }: PianoKeyboardProps) => {
   const geometry = useMemo(
-    () => computeKeyboardGeometry(keys, geometryOptions),
+    () => computeKeyboardDrawing(keys, geometryOptions),
     [keys, geometryOptions],
   );
 

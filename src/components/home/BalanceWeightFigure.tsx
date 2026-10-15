@@ -6,9 +6,9 @@ import {
 } from '@/lib/format/format-weight';
 import { feltBalanceWeight } from '@/lib/piano/touch-design/felt-balance-weight';
 import {
-  computeKeyboardGeometry,
+  computeKeyboardDrawing,
   WHITE_KEY_LENGTH_RATIO,
-} from '@/lib/piano/keyboard/keyboard-geometry';
+} from '@/components/piano/keyboard-drawing';
 import { KeyboardPlate, keybedHeight } from '@/components/piano/KeyboardPlate';
 import { useTextScale } from '@/hooks/use-text-scale';
 import { useTranslation } from '@/hooks/use-translation';
@@ -66,7 +66,7 @@ export const BalanceWeightFigure = ({
 
   const figure = useMemo(() => {
     const keys = home.analyzedKeyboard.getKeys();
-    const geometry = computeKeyboardGeometry(keys, {
+    const geometry = computeKeyboardDrawing(keys, {
       keyHeight: KEY_HEIGHT,
       whiteKeyWidth: WHITE_KEY_WIDTH,
     });

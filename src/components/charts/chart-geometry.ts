@@ -1,8 +1,8 @@
 import { KEYBED_OVERHANG } from '@/components/piano/KeyboardPlate';
 import {
   WHITE_KEY_LENGTH_RATIO,
-  type KeyboardGeometryOptions,
-} from '@/lib/piano/keyboard/keyboard-geometry';
+  type KeyboardDrawingOptions,
+} from '@/components/piano/keyboard-drawing';
 
 /**
  * The frame every chart is drawn in.
@@ -89,7 +89,7 @@ const STANDARD_WHITE_KEYS = 52;
 export const chartKeyboardLayout = (
   width: number,
   whiteKeyCount: number,
-): Required<KeyboardGeometryOptions> => {
+): Required<KeyboardDrawingOptions> => {
   const whiteKeyWidth = whiteKeyCount === 0 ? 0 : width / whiteKeyCount;
   return {
     feltHeight: CHART_KEYBOARD.feltLength,

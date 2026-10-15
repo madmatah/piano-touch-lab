@@ -6,7 +6,7 @@ import { TouchDesignSerieVariant } from '@/components/charts/KeyboardChart';
 import {
   FrontWeightDesignMode,
   type FrontWeightDesignTarget,
-} from '../FrontWeightDesign.types';
+} from '@/lib/piano/touch-design/design/front-weight-design';
 import { useInterpolatedSerieCubicSpline } from '@/hooks/series/use-interpolated-serie-cubic-spline';
 import { generateCustomFrontWeightKeypoints } from '@/lib/piano/touch-design/generate-custom-front-weight-keypoints';
 import { useGenerateDesignedKeyboardFromSeries } from '@/hooks/keyboard/use-generate-designed-keyboard-from-series';

@@ -8,14 +8,14 @@ import { useStrikeWeightTargetSerie } from '../strike-weight/hooks/use-strike-we
 import { useStrikeWeightRatioTargetSerie } from '../strike-weight-ratio/hooks/strike-weight-ratio-target-serie';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import { useWippenSupportSpringsTargetSerie } from '../wippen-support-springs/hooks/use-wippen-support-springs-target-serie';
-import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
+import { FrontWeightDesignMode } from '@/lib/piano/touch-design/design/front-weight-design';
 import { useMemo } from 'react';
 import type { TouchDesignSerie } from '@/components/charts/interfaces';
 import { useFrontWeightTargetSerie } from '../front-weight/hooks/use-front-weight-target-serie';
 import { TouchDesignSerieVariant } from '@/components/charts/KeyboardChart';
 import { useGenerateSerie } from '@/components/charts/hooks/use-generate-serie';
 import { useTranslation } from '@/hooks/use-translation';
-import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
+import { StrikeWeightDesignMode } from '@/lib/piano/touch-design/design/strike-weight-design';
 
 export interface TargetSeries {
   frontWeightTargetSerie: TouchDesignSerie;

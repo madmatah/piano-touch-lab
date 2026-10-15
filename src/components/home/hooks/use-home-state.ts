@@ -12,10 +12,10 @@ import {
   useStrikeWeightRatioDesign,
   useWippenSupportSpringsDesign,
 } from '@/hooks/store/use-design-store';
-import { FrontWeightDesignMode } from '@/components/design/front-weight/FrontWeightDesign.types';
-import { StrikeWeightDesignMode } from '@/components/design/strike-weight/StrikeWeightDesign.types';
-import { StrikeWeightRatioDesignMode } from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign.types';
-import { WippenSupportSpringsDesignMode } from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign.types';
+import { FrontWeightDesignMode } from '@/lib/piano/touch-design/design/front-weight-design';
+import { StrikeWeightDesignMode } from '@/lib/piano/touch-design/design/strike-weight-design';
+import { StrikeWeightRatioDesignMode } from '@/lib/piano/touch-design/design/strike-weight-ratio-design';
+import { WippenSupportSpringsDesignMode } from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
 import {
   useMeasuresStore,

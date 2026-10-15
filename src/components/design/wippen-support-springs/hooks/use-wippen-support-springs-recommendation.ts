@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import {
   WippenSupportSpringsDesignMode,
   type WippenSupportSpringsDesignTarget,
-} from '../WippenSupportSpringsDesign.types';
+} from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 
 export const useWippenSupportSpringsRecommendation = (
   wippenSupportSpringsDesignMode: WippenSupportSpringsDesignMode | null,

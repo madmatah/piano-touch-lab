@@ -8,9 +8,9 @@ import {
 import {
   StrikeWeightRatioDesignMode,
   type StrikeWeightRatioDesignSmoothTarget,
-  type StrikeWeightRatioDesignProps,
   type StrikeWeightRatioDesignTarget,
-} from './StrikeWeightRatioDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-ratio-design';
+import { type StrikeWeightRatioDesignProps } from './StrikeWeightRatioDesign.types';
 
 import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-keyboard-stats';
 import { StrikeWeightRatioChart } from '@/components/charts/StrikeWeightRatioChart';

@@ -1,6 +1,6 @@
 import { useTranslation } from '@/hooks/use-translation';
 import type { Key } from '@/lib/piano/keyboard/key';
-import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import type { KeyboardPlacement } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import type { AxisScale } from '../echarts/build-base-option';
 import { KeyboardChart } from '../KeyboardChart';
@@ -9,7 +9,7 @@ import { ChartKeyboardAxis } from './ChartKeyboardAxis';
 export interface ChartEmptyFrameProps {
   /** What to say, laid over the figure: an `EmptyState`. */
   children: React.ReactNode;
-  geometry: KeyboardGeometry;
+  geometry: KeyboardPlacement;
   height: number;
   keys: readonly Key[];
   scale: AxisScale;

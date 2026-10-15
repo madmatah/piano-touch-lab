@@ -9,9 +9,9 @@ import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.en
 import { StrikeWeightChart } from '../../charts/StrikeWeightChart';
 import {
   StrikeWeightDesignMode,
-  type StrikeWeightDesignProps,
   type StrikeWeightDesignTarget,
-} from './StrikeWeightDesign.types';
+} from '@/lib/piano/touch-design/design/strike-weight-design';
+import { type StrikeWeightDesignProps } from './StrikeWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { HourglassIcon } from 'lucide-react';
@@ -27,7 +27,7 @@ import { useStrikeWeightTargetSelector } from './hooks/use-strike-weight-target-
 import { useStrikeWeightRecommendation } from './hooks/use-strike-weight-recommendation';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
-import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
+import { FrontWeightDesignMode } from '@/lib/piano/touch-design/design/front-weight-design';
 import { useTargetSeries } from '../hooks/use-target-series';
 import { useTargetReading } from '../hooks/use-target-reading';
 import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
