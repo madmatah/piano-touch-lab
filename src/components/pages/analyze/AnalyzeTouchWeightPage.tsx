@@ -165,7 +165,7 @@ export const AnalyzeTouchWeightPage = () => {
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             <Trans
-              i18nKey="Each measurement sits above its key. Balance weight <1>BW = (D + U) / 2</1>; friction <3>F = (D − U) / 2</3>, with the reference zones."
+              i18nKey="Each measurement sits above the back of its key. Balance weight <1>BW = (D + U) / 2</1>; friction <3>F = (D − U) / 2</3>, with the reference zones."
               components={CAPTION_PARTS}
             />
           </FigureCaption>

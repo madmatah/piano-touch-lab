@@ -96,9 +96,9 @@ const isMeasured = (
 ): point is KeyWith<number> & TouchDesignDataPoint =>
   point.payload !== undefined && !Number.isNaN(point.payload);
 
-/** A reading sits above the centre of its own key, not above its number. */
+/** A reading sits above the balance rail slot of its own key. */
 const positionOf = (geometry: KeyboardGeometry, keyNumber: number): number =>
-  geometry.keysByNumber.get(keyNumber)?.center ?? 0;
+  geometry.keysByNumber.get(keyNumber)?.backCenter ?? 0;
 
 const pointsOf = (
   serie: TouchDesignSerie,

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
-  findKeyAtPosition,
+  findKeyAtBackPosition,
   type KeyboardGeometry,
 } from '@/lib/piano/keyboard/keyboard-geometry';
 
@@ -71,7 +71,7 @@ export const useHoveredKey = (
         setHoveredKey(
           position === undefined
             ? null
-            : findKeyAtPosition(geometryRef.current, position),
+            : findKeyAtBackPosition(geometryRef.current, position),
         );
       };
       const onOut = () => setHoveredKey(null);

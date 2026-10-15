@@ -14,8 +14,8 @@ export const PLOT_INSET = {
 export const CHART_HEIGHTS = {
   /** The friction panel under the static balance chart. */
   frictionPlot: 96,
-  /** The drawn keyboard serving as the x axis. */
-  keyboard: 44,
+  /** The drawn keyboard serving as the x axis, key sticks included. */
+  keyboard: 62,
   /** The row of C1…C8 marks under the keyboard. */
   octaveLabels: 18,
   /** The plot area of an Analyze chart. */

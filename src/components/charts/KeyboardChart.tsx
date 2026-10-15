@@ -112,11 +112,15 @@ export const KeyboardChart = ({
 
   const option = useMemo<EChartsOption>(() => {
     const echartsSeries = series.map((serie) => ({
+      // Plotted over the balance rail, where the keys are evenly spaced: a
+      // curve computed key by key is then drawn with an even stride, instead
+      // of losing half its slope at every E–F and B–C.
+      //
       // A point whose key is not on this keyboard has nowhere to stand; it is
       // left out rather than piled up against the first key.
       data: serie.data.flatMap((point) => {
-        const center = geometry.keysByNumber.get(point.number)?.center;
-        return center === undefined ? [] : [[center, point.payload]];
+        const place = geometry.keysByNumber.get(point.number)?.backCenter;
+        return place === undefined ? [] : [[place, point.payload]];
       }),
       name: serie.name,
       showSymbol: false,
