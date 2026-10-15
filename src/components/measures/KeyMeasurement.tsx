@@ -14,7 +14,10 @@ import type {
 } from '@/lib/piano/touch-design/measured-key.requirements';
 import { cn } from '@/lib/utils';
 
-import { useMeasurePasses, type MeasurePassId } from './measure-passes';
+import {
+  useMeasurePasses,
+  type MeasurePassId,
+} from './hooks/use-measure-passes';
 import { MeasureInputField } from './MeasureInputField';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useAnalyzedKey } from '@/hooks/keyboard/use-analyzed-key';

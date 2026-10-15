@@ -15,7 +15,10 @@ import { useTranslation } from '@/hooks/use-translation';
 import { octaveMarks } from '@/lib/piano/keyboard/keyboard-geometry';
 import { cn } from '@/lib/utils';
 
-import { useMeasurePasses, type MeasurePassId } from './measure-passes';
+import {
+  useMeasurePasses,
+  type MeasurePassId,
+} from './hooks/use-measure-passes';
 
 export interface MeasureKeyboardPanelProps {
   currentKeyNumber: number | null;
@@ -23,6 +26,9 @@ export interface MeasureKeyboardPanelProps {
   onKeySelect: (keyNumber: number) => void;
   onPassChange: (passId: MeasurePassId) => void;
 }
+
+/** Hoisted: a fresh object here would recompute the whole keyboard. */
+const KEYBOARD_GEOMETRY = { keyHeight: 72 };
 
 /**
  * Where the session stands: which pass is in hand, how far down the keyboard
@@ -35,9 +41,6 @@ export interface MeasureKeyboardPanelProps {
  * tall, it would take a third to a half of the screen, before the on-screen
  * keyboard takes its share: there it scrolls away with the page instead.
  */
-/** Hoisted: a fresh object here would recompute the whole keyboard. */
-const KEYBOARD_GEOMETRY = { keyHeight: 72 };
-
 export const MeasureKeyboardPanel = ({
   currentKeyNumber,
   currentPassId,

@@ -1,3 +1,4 @@
+import type { EChartsType } from 'echarts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
@@ -5,24 +6,9 @@ import {
   type KeyboardGeometry,
 } from '@/lib/piano/keyboard/keyboard-geometry';
 
-/** The part of the ECharts instance this hook needs. */
-interface HoverableChart {
-  containPixel: (
-    finder: { gridIndex: number },
-    value: [number, number],
-  ) => boolean;
-  convertFromPixel: (
-    finder: { gridIndex: number },
-    value: [number, number],
-  ) => number[];
-  getZr: () => {
-    on: (event: string, handler: (payload: never) => void) => void;
-  };
-}
-
 export interface HoveredKeyApi {
   /** Pass to `<ReactECharts onChartReady>`. */
-  bindChart: (chart: unknown) => void;
+  bindChart: (chart: EChartsType) => void;
   /** Spread on the figure: makes it focusable and the arrows move the reading. */
   figureProps: {
     onKeyDown: React.KeyboardEventHandler;
@@ -54,20 +40,22 @@ export const useHoveredKey = (
   }, [geometry]);
 
   const bindChart = useCallback(
-    (chart: unknown) => {
-      const hoverable = chart as HoverableChart;
-      const zr = hoverable.getZr();
+    (chart: EChartsType) => {
+      const zr = chart.getZr();
 
       const onMove = (event: { offsetX: number; offsetY: number }) => {
-        const point: [number, number] = [event.offsetX, event.offsetY];
+        const point = [event.offsetX, event.offsetY];
         const gridIndex = Array.from({ length: gridCount }, (_, i) => i).find(
-          (index) => hoverable.containPixel({ gridIndex: index }, point),
+          (index) => chart.containPixel({ gridIndex: index }, point),
         );
         if (gridIndex === undefined) {
           setHoveredKey(null);
           return;
         }
-        const [position] = hoverable.convertFromPixel({ gridIndex }, point);
+        // A point gives back a point: its first coordinate is the key axis.
+        const [position] = [
+          chart.convertFromPixel({ gridIndex }, point),
+        ].flat();
         setHoveredKey(
           position === undefined
             ? null
@@ -79,8 +67,8 @@ export const useHoveredKey = (
       // Nothing is unbound first: `onChartReady` fires once per instance, and
       // zrender shares these two events with ECharts itself, whose listeners
       // an argument-less `off` would take down with ours.
-      zr.on('mousemove', onMove as (payload: never) => void);
-      zr.on('globalout', onOut as (payload: never) => void);
+      zr.on('mousemove', onMove);
+      zr.on('globalout', onOut);
     },
     [gridCount],
   );

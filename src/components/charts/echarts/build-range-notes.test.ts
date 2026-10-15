@@ -3,7 +3,7 @@ import type { CustomSeriesOption } from 'echarts';
 
 import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 
-import type { ChartTokens } from '../hooks/use-chart-tokens';
+import type { ChartTokens } from '../chart-tokens';
 import type { KeyRangeNote } from '../interfaces';
 import type { AxisScale } from './build-base-option';
 import { buildRangeNotes } from './build-range-notes';

@@ -541,10 +541,6 @@
     padding: 0;
   }
 
-  .ptl-screen-only {
-    display: none !important;
-  }
-
   /*
    * On screen the plot scrolls sideways when the figure is narrower than the
    * keyboard; on paper there is nowhere to scroll, so the box opens up and the

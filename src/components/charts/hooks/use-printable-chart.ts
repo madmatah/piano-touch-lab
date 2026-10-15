@@ -1,3 +1,4 @@
+import type { EChartsOption, EChartsType } from 'echarts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
@@ -13,19 +14,10 @@ import {
 
 import { FIGURE_CHROME, PRINT_FURNITURE } from '../chart-geometry';
 import { fitDrawingToBox } from '../echarts/fit-drawing';
-import { isSameTokens, readTokens, type ChartTokens } from './use-chart-tokens';
-
-/** All this needs of an ECharts instance: the box it draws in, and the redraw. */
-interface ResizableChart {
-  getDom: () => HTMLElement;
-  /** The renderer underneath, which has to be told to draw now. */
-  getZr: () => { flush: () => void };
-  resize: (size: { width: number | 'auto' }) => void;
-  setOption: (option: unknown, notMerge: boolean) => void;
-}
+import { isSameTokens, readTokens, type ChartTokens } from '../chart-tokens';
 
 interface PrintableChart {
-  onChartReady: (chart: unknown) => void;
+  onChartReady: (chart: EChartsType) => void;
   /** The height the plot may have, in the state the page is in. */
   plotHeight: number;
   tokens: ChartTokens;
@@ -82,10 +74,10 @@ export const usePrintableChart = (
    * directly rather than through the wrapper, which applies an option in a
    * passive effect — too late for a page already on its way to the printer.
    */
-  option: React.RefObject<unknown>,
-  onReady?: (chart: unknown) => void,
+  option: React.RefObject<EChartsOption | null>,
+  onReady?: (chart: EChartsType) => void,
 ): PrintableChart => {
-  const chart = useRef<ResizableChart | null>(null);
+  const chart = useRef<EChartsType | null>(null);
   const [state, setState] = useState(() => ({
     isPrinting: false,
     printedPlotHeight: printablePlotHeight(PRINT_FURNITURE[variant]),
@@ -192,8 +184,8 @@ export const usePrintableChart = (
   }, [option, variant]);
 
   const onChartReady = useCallback(
-    (instance: unknown) => {
-      chart.current = instance as ResizableChart;
+    (instance: EChartsType) => {
+      chart.current = instance;
       onReady?.(instance);
     },
     [onReady],

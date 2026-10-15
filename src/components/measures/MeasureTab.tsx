@@ -3,7 +3,10 @@ import { useCallback, useState } from 'react';
 import { KeyMeasureList } from './KeyMeasureList';
 import { MeasureKeyboardPanel } from './MeasureKeyboardPanel';
 import { PianoMeasureList } from './PianoMeasureList';
-import { useMeasurePasses, type MeasurePassId } from './measure-passes';
+import {
+  useMeasurePasses,
+  type MeasurePassId,
+} from './hooks/use-measure-passes';
 
 export const MeasureTab = () => {
   const [currentPassId, setCurrentPassId] = useState<MeasurePassId>('down-up');

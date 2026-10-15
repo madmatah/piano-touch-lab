@@ -4,7 +4,7 @@ import { formatAxisValue } from '@/lib/format/format-weight';
 import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 
 import { PLOT_INSET } from '../chart-geometry';
-import type { ChartTokens } from '../hooks/use-chart-tokens';
+import type { ChartTokens } from '../chart-tokens';
 
 export const MONO_FONT =
   "'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace";

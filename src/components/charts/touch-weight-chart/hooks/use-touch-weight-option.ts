@@ -18,7 +18,7 @@ import {
   MONO_FONT,
   type AxisScale,
 } from '../../echarts/build-base-option';
-import type { ChartTokens } from '../../hooks/use-chart-tokens';
+import type { ChartTokens } from '../../chart-tokens';
 import type { TouchDesignDataPoint, TouchDesignSerie } from '../../interfaces';
 import {
   TOUCH_WEIGHT_SERIE_IDS,

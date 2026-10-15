@@ -6,7 +6,7 @@ import { BalanceWeightFigure } from '../home/BalanceWeightFigure';
 import { HomeFeatures } from '../home/HomeFeatures';
 import { HomeHero } from '../home/HomeHero';
 import { LoadDemoDialog } from '../home/LoadDemoDialog';
-import { useHomeState } from '../home/use-home-state';
+import { useHomeState } from '../home/hooks/use-home-state';
 import { MainLayout } from '../MainLayout';
 import { Button } from '@/components/ui/button';
 import { useNewProfileDialog } from '@/contexts/new-profile-dialog-context';

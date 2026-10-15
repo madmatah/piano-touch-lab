@@ -1,4 +1,4 @@
-import { useDesignSteps } from './use-design-steps';
+import { useDesignSteps } from './hooks/use-design-steps';
 
 /**
  * The design, recapped at the top of a printed sheet.

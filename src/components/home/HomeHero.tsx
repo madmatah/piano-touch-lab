@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/use-translation';
 
-import type { HomeState } from './use-home-state';
+import type { HomeState } from './hooks/use-home-state';
 
 /**
  * The top of the home page: who the instrument on screen belongs to, and the
