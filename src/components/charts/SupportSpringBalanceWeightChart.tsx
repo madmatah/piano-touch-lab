@@ -8,6 +8,9 @@ import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weig
 
 import { CHART_HEIGHTS } from './chart-geometry';
 import { scaleOver } from './echarts/build-base-option';
+import { EmptyState } from '@/components/app-ui/EmptyState';
+
+import { ChartEmptyFrame } from './figure/ChartEmptyFrame';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
@@ -17,14 +20,30 @@ import { KeyboardChart, TouchDesignSerieVariant } from './KeyboardChart';
 import {
   serieValues,
   type ChartReadingContext,
+  type KeyRangeNote,
   type TouchDesignSerie,
 } from './interfaces';
+import { legendIdOf, useLegendToggles } from './hooks/use-legend-toggles';
 
-/** The scale of the mockups: 0 g to 30 g, ruled every 10 g. */
-const SPRING_WEIGHT_SCALE = { interval: 10, max: 30, min: 0, unit: 'g' };
+/**
+ * The scales of the mockups: what Analyze reads is drawn from 0 to 30 g, ruled
+ * every 10 g; what Design sets, from 0 to 12 g, ruled every 3 g.
+ */
+const SPRING_WEIGHT_SCALES = {
+  analyze: { interval: 10, max: 30, min: 0, unit: 'g' },
+  // A designed spring stays under a dozen grams: against 30 g its curve would
+  // keep to the bottom third of the plot.
+  design: { interval: 3, max: 12, min: 0, unit: 'g' },
+};
 
 type KeyWithSupportSpringBalanceWeight<T> = T &
   Pick<TouchWeightKeyAnalysis, 'supportSpringBalanceWeight'>;
+
+export interface SprungKeys {
+  count: number;
+  first: number;
+  last: number;
+}
 
 export interface SupportSpringBalanceWeightChartProps<T> {
   caption?: React.ReactNode;
@@ -39,10 +58,17 @@ export interface SupportSpringBalanceWeightChartProps<T> {
   extraLegendItems?: ChartLegendItem[];
   keyboard: KeyboardLike<KeyWith<KeyWithSupportSpringBalanceWeight<T>>>;
   /**
-   * The rail to the right of the figure. It is a function so that the panel
-   * reads the very series the chart draws, rather than computing them again.
+   * The reading strip at the head of the figure. It is a function so that the
+   * strip reads the very series the chart draws, rather than computing them
+   * again.
    */
   renderReading?: (context: ChartReadingContext) => React.ReactNode;
+  /**
+   * The keys the designed springs are on, named on the plot and washed on
+   * its keyboard, as the mockup does: where the target stops is the design,
+   * not a gap in it.
+   */
+  sprungKeys?: SprungKeys | null;
   targetSerie?: TouchDesignSerie;
   variant?: 'analyze' | 'design';
 }
@@ -53,6 +79,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
   extraLegendItems,
   keyboard,
   renderReading,
+  sprungKeys,
   targetSerie,
   variant = 'analyze',
 }: SupportSpringBalanceWeightChartProps<T>) => {
@@ -82,32 +109,80 @@ export const SupportSpringBalanceWeightChart = <T,>({
 
   const series = useMemo(
     () => [
-      ...(targetSerie ? [targetSerie] : []),
+      // What lies under the target is what the springs take off the keys.
+      ...(targetSerie ? [{ ...targetSerie, isFilled: true }] : []),
       ...(isEmpty ? [] : [measuredSerie]),
     ],
     [isEmpty, measuredSerie, targetSerie],
   );
 
+  const lastKey = keys[keys.length - 1]?.number;
+  const rangeNotes = useMemo<KeyRangeNote[] | undefined>(() => {
+    if (!sprungKeys) {
+      return undefined;
+    }
+    const { count, first, last } = sprungKeys;
+    return [
+      {
+        from: first,
+        kind: 'bracket',
+        text: t('{{count}} springs', { count }),
+        to: last,
+      },
+      ...(lastKey !== undefined && last < lastKey
+        ? [
+            {
+              from: last + 1,
+              kind: 'label' as const,
+              text: t('without springs'),
+              to: lastKey,
+            },
+          ]
+        : []),
+    ];
+  }, [lastKey, sprungKeys, t]);
+  const markedKeys = useMemo(
+    () =>
+      sprungKeys
+        ? new Set(
+            keys
+              .map((key) => key.number)
+              .filter(
+                (number) =>
+                  number >= sprungKeys.first && number <= sprungKeys.last,
+              ),
+          )
+        : undefined,
+    [keys, sprungKeys],
+  );
+
   const scale = useMemo(
-    () => scaleOver(SPRING_WEIGHT_SCALE, serieValues(series)),
-    [series],
+    () => scaleOver(SPRING_WEIGHT_SCALES[variant], serieValues(series)),
+    [series, variant],
+  );
+
+  const { isShown, withToggles } = useLegendToggles();
+  const drawnSeries = useMemo(
+    () => series.filter((serie) => isShown(legendIdOf(serie))),
+    [isShown, series],
   );
 
   const legendItems = useMemo<ChartLegendItem[]>(
-    () => [
-      ...(extraLegendItems ?? []),
-      ...(isEmpty
-        ? []
-        : [
-            {
-              colorClassName: 'text-foreground',
-              id: 'measured',
-              label: t('Measured spring-supported weight'),
-              mark: 'dot' as const,
-            },
-          ]),
-    ],
-    [extraLegendItems, isEmpty, t],
+    () =>
+      withToggles([
+        ...(extraLegendItems ?? []),
+        ...(isEmpty
+          ? []
+          : [
+              {
+                colorClassName: 'text-foreground',
+                id: 'measured',
+                label: t('Measured spring-supported weight'),
+                mark: 'dot' as const,
+              },
+            ]),
+      ]),
+    [extraLegendItems, isEmpty, t, withToggles],
   );
 
   const plotHeight =
@@ -115,49 +190,25 @@ export const SupportSpringBalanceWeightChart = <T,>({
 
   if (isEmpty && emptyStateActions) {
     return (
-      <section
-        aria-label={t('Chart unavailable')}
-        className="relative overflow-hidden rounded-md border border-ptl-rule-strong bg-card"
+      <ChartEmptyFrame
+        geometry={geometry}
+        height={plotHeight}
+        keys={keys}
+        scale={SPRING_WEIGHT_SCALES[variant]}
+        variant={variant}
       >
-        <div aria-hidden="true" className="px-3 pt-[18px] pb-1.5 opacity-55">
-          <KeyboardChart
-            variant={variant}
-            geometry={geometry}
-            height={plotHeight}
-            scale={SPRING_WEIGHT_SCALE}
-            series={[]}
-          />
-          <ChartKeyboardAxis
-            keys={keys}
-            marks="none"
-            description={t('Keyboard')}
-          />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-ptl-veil p-6">
-          <div className="flex max-w-[520px] flex-col items-center gap-3.5 text-center">
-            <CoilSpring
-              aria-hidden="true"
-              className="size-[34px] text-ptl-brass"
-            />
-            <h2 className="ptl-display m-0 text-[30px] leading-[1.15]">
-              {t('No wippen support spring measurement')}
-            </h2>
-            <p className="m-0 text-[15px] leading-[1.6] text-muted-foreground">
-              {t(
-                'Enable the “Measure Wippen Support Spring tension” option, then record the down weight with the spring attached in Measure.',
-              )}
-            </p>
-            <p className="m-0 text-sm leading-[1.55] text-ptl-ink-3">
-              {t(
-                'This measurement is optional: you can design your springs without it.',
-              )}
-            </p>
-            <div className="flex flex-wrap justify-center gap-2.5 pt-1.5 print:hidden">
-              {emptyStateActions}
-            </div>
-          </div>
-        </div>
-      </section>
+        <EmptyState
+          icon={<CoilSpring />}
+          title={t('No wippen support spring measurement')}
+          text={t(
+            'Enable the “Measure Wippen Support Spring tension” option, then record the down weight with the spring attached in Measure.',
+          )}
+          note={t(
+            'This measurement is optional: you can design your springs without it.',
+          )}
+          actions={emptyStateActions}
+        />
+      </ChartEmptyFrame>
     );
   }
 
@@ -180,6 +231,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
         <ChartKeyboardAxis
           keys={keys}
           highlightedKey={hover.hoveredKey}
+          markedKeys={markedKeys}
           onKeyHover={hover.setHoveredKey}
           description={t('Keyboard: hover a key to read its measurement')}
         />
@@ -191,8 +243,9 @@ export const SupportSpringBalanceWeightChart = <T,>({
         geometry={geometry}
         height={plotHeight}
         onChartReady={hover.bindChart}
+        rangeNotes={rangeNotes}
         scale={scale}
-        series={series}
+        series={drawnSeries}
       />
     </ChartFigure>
   );

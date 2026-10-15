@@ -7,6 +7,7 @@ import type { MeasuredKeyRequirements } from '@/lib/piano/touch-design/measured-
 
 import { CHART_HEIGHTS } from './chart-geometry';
 import { scaleOver } from './echarts/build-base-option';
+import { ChartEmptyFrame } from './figure/ChartEmptyFrame';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
@@ -19,6 +20,7 @@ import {
   type ChartReadingContext,
   type TouchDesignSerie,
 } from './interfaces';
+import { legendIdOf, useLegendToggles } from './hooks/use-legend-toggles';
 
 /** The scale of the mockups: −10 g to 45 g, ruled every 10 g. */
 const FRONT_WEIGHT_SCALE = { interval: 10, max: 45, min: -10, unit: 'g' };
@@ -27,13 +29,16 @@ type KeyWithFrontWeight<T> = T & Pick<MeasuredKeyRequirements, 'frontWeight'>;
 
 export interface FrontWeightChartProps<T> {
   caption?: React.ReactNode;
+  /** Said over the empty figure, until there is something to draw. */
+  emptyState?: React.ReactNode;
   defaultFrontWeightLevelsToInclude?: FrontWeightLevel[];
   /** Legend entries contributed by the page, e.g. the design target. */
   extraLegendItems?: ChartLegendItem[];
   keyboard: KeyboardLike<KeyWith<KeyWithFrontWeight<T>>>;
   /**
-   * The rail to the right of the figure. It is a function so that the panel
-   * reads the very series the chart draws, rather than computing them again.
+   * The reading strip at the head of the figure. It is a function so that the
+   * strip reads the very series the chart draws, rather than computing them
+   * again.
    */
   renderReading?: (context: ChartReadingContext) => React.ReactNode;
   targetSerie?: TouchDesignSerie;
@@ -42,6 +47,7 @@ export interface FrontWeightChartProps<T> {
 
 export const FrontWeightChart = <T,>({
   caption,
+  emptyState,
   defaultFrontWeightLevelsToInclude,
   extraLegendItems,
   keyboard,
@@ -99,34 +105,57 @@ export const FrontWeightChart = <T,>({
     [series],
   );
 
-  const legendItems = useMemo<ChartLegendItem[]>(
-    () => [
-      ...(extraLegendItems ?? []),
-      ...(isEmpty
-        ? []
-        : [
-            {
-              colorClassName: 'text-foreground',
-              id: 'measured',
-              label: t('Measured front weight'),
-              mark: 'dot' as const,
-            },
-          ]),
-      {
-        colorClassName: 'text-ptl-series-standard',
-        id: 'standard-bold',
-        label: t('Standard curves FW#5, FW#7, FW#9'),
-        mark: 'line' as const,
-      },
-      {
-        colorClassName: 'text-ptl-series-standard-soft',
-        id: 'standard-soft',
-        label: t('FW#6, FW#8'),
-        mark: 'line-soft' as const,
-      },
-    ],
-    [extraLegendItems, isEmpty, t],
+  const { isShown, withToggles } = useLegendToggles();
+  const drawnSeries = useMemo(
+    () => series.filter((serie) => isShown(legendIdOf(serie))),
+    [isShown, series],
   );
+
+  const legendItems = useMemo<ChartLegendItem[]>(
+    () =>
+      withToggles([
+        ...(extraLegendItems ?? []),
+        ...(isEmpty
+          ? []
+          : [
+              {
+                colorClassName: 'text-foreground',
+                id: 'measured',
+                label: t('Measured front weight'),
+                mark: 'dot' as const,
+              },
+            ]),
+        {
+          colorClassName: 'text-ptl-series-standard',
+          id: 'standard-bold',
+          label: t('Standard curves FW#5, FW#7, FW#9'),
+          mark: 'line' as const,
+        },
+        {
+          colorClassName: 'text-ptl-series-standard-soft',
+          id: 'standard-soft',
+          label: t('FW#6, FW#8'),
+          mark: 'line-soft' as const,
+        },
+      ]),
+    [extraLegendItems, isEmpty, t, withToggles],
+  );
+
+  if (isEmpty && emptyState) {
+    return (
+      <ChartEmptyFrame
+        geometry={geometry}
+        height={
+          variant === 'analyze' ? CHART_HEIGHTS.plot : CHART_HEIGHTS.plotCompact
+        }
+        keys={keys}
+        scale={FRONT_WEIGHT_SCALE}
+        variant={variant}
+      >
+        {emptyState}
+      </ChartEmptyFrame>
+    );
+  }
 
   const figure = (
     <ChartFigure
@@ -159,7 +188,7 @@ export const FrontWeightChart = <T,>({
         onChartReady={hover.bindChart}
         ruleAt={0}
         scale={scale}
-        series={series}
+        series={drawnSeries}
       />
     </ChartFigure>
   );

@@ -16,6 +16,7 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatGrams } from '@/lib/format/format-weight';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
+import { MeasureFirst } from '@/components/analyze/MeasureFirst';
 
 /** The three curves the mockups read out beside the measurement. */
 const REFERENCE_CURVES = ['FW#5', 'FW#7', 'FW#9'];
@@ -75,6 +76,7 @@ export const AnalyzeFrontWeightPage = () => {
         }
       />
       <FrontWeightChart
+        emptyState={<MeasureFirst />}
         keyboard={analyzedKeyboard}
         renderReading={renderReading}
       />

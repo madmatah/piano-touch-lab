@@ -12,11 +12,16 @@ export interface AnalysisFooterProps {
  * The line under an Analyze figure: how to read it, and what to do about it.
  *
  * Neither belongs on paper — one describes the pointer, the other leads to a
- * page — so the whole line stays on the screen.
+ * page — so the whole line stays on the screen. It runs as wide as the figure
+ * above it, not as the prose: on a wide screen the action otherwise hung
+ * under the middle of the keyboard, 430 px short of the figure's edge.
  */
 export const AnalysisFooter = ({ action, hint }: AnalysisFooterProps) =>
   action || hint ? (
-    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 print:hidden">
+    <div
+      data-slot="page-wide"
+      className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 print:hidden"
+    >
       {hint ? (
         <p className="m-0 max-w-[70ch] text-[13px] leading-[1.55] text-ptl-ink-3">
           {hint}

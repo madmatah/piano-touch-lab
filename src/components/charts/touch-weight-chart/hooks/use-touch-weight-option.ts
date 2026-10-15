@@ -57,7 +57,7 @@ export const touchWeightPlotHeight = (extra = 0) =>
  * They are a floor, not a ceiling: an atypical action is allowed to push a
  * scale further rather than have its readings quietly clipped.
  */
-const WEIGHT_SCALE: AxisScale = { interval: 20, max: 100, min: 0 };
+export const WEIGHT_SCALE: AxisScale = { interval: 20, max: 100, min: 0 };
 const FRICTION_SCALE: AxisScale = { interval: 8, max: 24, min: 0 };
 
 interface SerieStyle {
@@ -133,7 +133,7 @@ const buildPanelAxis = (
 ): YAXisComponentOption => ({
   ...buildValueAxis(tokens, scale, locale),
   gridIndex,
-  // The quantity is named above its own panel: with two scales on one canvas,
+  // The quantity is named above its own panel: with two scales in one drawing,
   // the page heading can no longer say which is which.
   name: title,
   nameGap: 14,
@@ -263,14 +263,14 @@ export interface TouchWeightOptionInput {
 }
 
 /**
- * One canvas, two stacked plots: weight above, friction below.
+ * One drawing, two stacked plots: weight above, friction below.
  *
  * They share the keyboard axis — and the keyboard drawn under the figure — so
  * a key reads as one column across both panels.
  *
  * The key being read is deliberately absent from here: it moves with every
  * pixel of the pointer, and rebuilding this option that often would redraw
- * the whole canvas. The brass band and the lit key are HTML, outside ECharts.
+ * the whole drawing. The brass band and the lit key are HTML, outside ECharts.
  */
 export const useTouchWeightOption = (
   input: TouchWeightOptionInput,
@@ -336,8 +336,8 @@ export const useTouchWeightOption = (
       ],
       legend: { show: false },
       series: echartsSeries,
-      // The rail beside the figure is the reading: a tooltip would say less,
-      // and only while the pointer rests.
+      // The strip at the head of the figure is the reading: a tooltip would
+      // say less, and only while the pointer rests.
       tooltip: { show: false },
       xAxis: [
         buildKeyAxis(geometry),

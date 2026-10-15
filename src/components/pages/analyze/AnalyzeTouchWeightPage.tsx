@@ -17,6 +17,7 @@ import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { EMPTY_VALUE } from '@/lib/format/format-weight';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
+import { MeasureFirst } from '@/components/analyze/MeasureFirst';
 
 export const AnalyzeTouchWeightPage = () => {
   usePrintLandscape();
@@ -66,6 +67,7 @@ export const AnalyzeTouchWeightPage = () => {
         ledeWidth="62ch"
       />
       <TouchWeightChart
+        emptyState={<MeasureFirst />}
         analyzedKeyboard={analyzedKeyboard}
         useSupportSpringMeasurements={useSupportSpringMeasurements}
         renderReading={renderReading}

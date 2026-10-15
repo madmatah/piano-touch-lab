@@ -2,8 +2,9 @@
  * The design tokens a chart needs in JavaScript.
  *
  * Everything else in the interface takes its colour from CSS, but ECharts
- * draws on a canvas and wants strings. Reading the custom properties back off
- * the document keeps one source of truth: the stylesheet.
+ * writes colours into its drawing as values and wants strings. Reading the
+ * custom properties back off the document keeps one source of truth: the
+ * stylesheet.
  */
 const CHART_TOKEN_VARIABLES = {
   axisStrong: '--input',

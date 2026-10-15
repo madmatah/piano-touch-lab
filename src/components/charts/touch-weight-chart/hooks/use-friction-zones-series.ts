@@ -143,8 +143,10 @@ export const buildFrictionZoneSeries = ({
     }));
     const polygon = buildFrictionZonePolygon(edges, geometry.width);
     const lastEdge = edges[edges.length - 1];
-    // The label sits against the right edge of the plot, level with the band
-    // it names — the design states the zones once, in the treble.
+    // The label sits just past the right edge of the plot, level with the
+    // band it names — the design states the zones once, in the treble. Inside
+    // the plot, where the design draws it, it covered the friction of the
+    // last keys; the margin on that side holds nothing else.
     const labelValue = lastEdge
       ? (lastEdge.zone.higher + lastEdge.zone.lower) / 2
       : 0;
@@ -169,12 +171,12 @@ export const buildFrictionZoneSeries = ({
               style: {
                 // zrender's own names: `textAlign` would be read as a legacy
                 // style and the rest of this block converted with it.
-                align: 'right',
+                align: 'left',
                 fill: tokens.inkSubtle,
                 font: `10px ${MONO_FONT}`,
                 text: labels[kind],
                 verticalAlign: 'middle',
-                x: (label[0] ?? 0) - LABEL_INSET,
+                x: (label[0] ?? 0) + LABEL_INSET,
                 y: label[1] ?? 0,
               },
               type: 'text',

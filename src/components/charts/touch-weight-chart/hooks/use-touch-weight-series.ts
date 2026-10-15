@@ -24,8 +24,9 @@ export type TouchWeightSeries = Record<TouchWeightSerieId, TouchDesignSerie>;
  * What the static balance figure draws: down and up weight, the balance
  * between them, and the friction that separates them.
  *
- * Series are kept whole — one entry per key, gaps included — so the rail
- * beside the chart can read a key off the very series that was drawn.
+ * Series are kept whole — one entry per key, gaps included — so the reading
+ * strip at the head of the chart can read a key off the very series that was
+ * drawn.
  */
 export const useTouchWeightSeries = (
   analyzedKeyboard: TouchWeightAnalyzedKeyboard,

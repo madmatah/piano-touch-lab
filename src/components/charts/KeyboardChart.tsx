@@ -16,8 +16,9 @@ import type { ChartTokens } from './hooks/use-chart-tokens';
 import { usePrintableChart } from './hooks/use-printable-chart';
 import { useScreenPlotHeight } from './hooks/use-screen-plot-height';
 import { PLOT_BOX_MARGIN } from './chart-geometry';
+import { buildRangeNotes } from './echarts/build-range-notes';
 import { SVG_RENDERER } from './renderer';
-import type { TouchDesignSerie } from './interfaces';
+import type { KeyRangeNote, TouchDesignSerie } from './interfaces';
 
 export enum TouchDesignSerieVariant {
   DefaultBold = 1,
@@ -35,6 +36,8 @@ export interface KeyboardChartProps {
   onChartReady?: (chart: unknown) => void;
   /** Which frame it sits in, which sets how much of a sheet is left for it. */
   variant?: 'analyze' | 'design';
+  /** Stretches of the keyboard named on the plot, e.g. the keys with springs. */
+  rangeNotes?: readonly KeyRangeNote[];
   scale: AxisScale;
   series: TouchDesignSerie[];
   /** A flat rule drawn across the plot, e.g. zero on the front weight chart. */
@@ -69,6 +72,9 @@ const serieStyleByVariant = (
       };
     case TouchDesignSerieVariant.Target:
       return {
+        ...(serie.isFilled
+          ? { areaStyle: { color: tokens.seriesTargetArea, opacity: 1 } }
+          : {}),
         lineStyle: {
           cap: 'round',
           color: serie.color ?? tokens.seriesTarget,
@@ -110,6 +116,7 @@ export const KeyboardChart = ({
   geometry,
   height,
   onChartReady,
+  rangeNotes,
   ruleAt,
   scale,
   series,
@@ -170,12 +177,26 @@ export const KeyboardChart = ({
       animation: false,
       grid: buildGrid(plotHeight),
       legend: { show: false },
-      series: echartsSeries,
+      series: rangeNotes?.length
+        ? [
+            ...echartsSeries,
+            buildRangeNotes(rangeNotes, geometry, scale, tokens),
+          ]
+        : echartsSeries,
       tooltip: { show: false },
       xAxis: buildKeyAxis(geometry),
       yAxis: buildValueAxis(tokens, scale, currentLanguage),
     } as EChartsOption;
-  }, [currentLanguage, geometry, plotHeight, ruleAt, scale, series, tokens]);
+  }, [
+    currentLanguage,
+    geometry,
+    plotHeight,
+    rangeNotes,
+    ruleAt,
+    scale,
+    series,
+    tokens,
+  ]);
 
   // Kept for the print handler, which has to tell ECharts itself.
   useLayoutEffect(() => {

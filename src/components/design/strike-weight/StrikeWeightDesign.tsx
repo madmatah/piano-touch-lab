@@ -14,7 +14,7 @@ import {
 } from './StrikeWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon, HourglassIcon } from 'lucide-react';
+import { HourglassIcon } from 'lucide-react';
 import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
 import {
@@ -31,6 +31,7 @@ import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
 import { useTargetSeries } from '../hooks/use-target-series-generators';
 import { useTargetReading } from '../hooks/use-target-reading';
 import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
+import { NotEnoughData } from '../NotEnoughData';
 
 const standardCurveTargets: TargetSelectorTarget<StrikeWeightLevel>[] =
   Object.values(StrikeWeightLevel).map((level) => ({
@@ -231,11 +232,10 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   }, [analyzedKeyboard, currentLanguage, t, targetSerie]);
 
   return !hasEnoughData ? (
-    <Alert variant="default" className="my-10 w-full">
-      <AlertCircleIcon />
-      <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
-      <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
-    </Alert>
+    <NotEnoughData
+      title={notEnoughDataErrorTitle}
+      description={notEnoughDataErrorDescription}
+    />
   ) : (
     <DesignLayout
       objective={

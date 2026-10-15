@@ -78,6 +78,8 @@
 
   /* The keyboard, drawn everywhere from the home page to the chart axes. */
   --ptl-key-white: #fcfaf5;
+  /* The dark workshop's warm light at the top of a page; none on paper white. */
+  --ptl-page-wash: none;
   --ptl-key-white-edge: #cfc6b5;
   --ptl-key-white-done: #e8d3a3;
   --ptl-key-black: #1a1612;
@@ -134,9 +136,10 @@
 
 /*
  * The dark theme steps aside for print: ink is ink and paper is paper, and
- * the figures are drawn on a canvas that no print rule can repaint after
- * the fact. Without the declarations below, `:root` holds, so a printed
- * page is the light theme down to the last series colour.
+ * the figures write their colours into their drawing as values, which no
+ * print rule can repaint after the fact — they read them again as the page
+ * prints. Without the declarations below, `:root` holds, so a printed page
+ * is the light theme down to the last series colour.
  */
 @media not print {
   .dark {
@@ -181,6 +184,11 @@
     --ptl-overlay: rgb(0 0 0 / 62%);
 
     --ptl-key-white: #eee6d5;
+    --ptl-page-wash: radial-gradient(
+      90% 60% at 60% -10%,
+      #2a211b 0%,
+      rgb(18 15 13 / 0%) 60%
+    );
     --ptl-key-white-edge: #0b0908;
     --ptl-key-white-done: #c9a35f;
     --ptl-key-black: #0d0b0a;
@@ -470,6 +478,11 @@
    * apart, and the room a wide screen offers goes to a band of white beside
    * them. So a figure is let out of the measure, and takes the page.
    */
+  [data-slot='sidebar-inset'] {
+    background-image: var(--ptl-page-wash);
+    background-repeat: no-repeat;
+  }
+
   [data-slot='page-content'] > * {
     max-width: var(--ptl-text-measure);
   }

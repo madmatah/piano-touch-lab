@@ -125,18 +125,34 @@ export const WippenSupportSpringsDesign: React.FC<
     [t, useSupportSpringMeasurements],
   );
 
+  const sprungPoints = useMemo(
+    () =>
+      targetSerie.data.filter(
+        (point) => point.payload !== undefined && point.payload !== null,
+      ),
+    [targetSerie],
+  );
+  const sprungKeys = useMemo(
+    () =>
+      sprungPoints.length === 0
+        ? null
+        : {
+            count: sprungPoints.length,
+            first: sprungPoints[0]!.number,
+            last: sprungPoints[sprungPoints.length - 1]!.number,
+          },
+    [sprungPoints],
+  );
+
   const summaryEntries = useMemo(() => {
-    const sprungKeys = targetSerie.data.filter(
-      (point) => point.payload !== undefined && point.payload !== null,
-    );
-    if (sprungKeys.length === 0) {
+    if (sprungPoints.length === 0) {
       return [];
     }
-    const first = sprungKeys[0]!;
-    const last = sprungKeys[sprungKeys.length - 1]!;
+    const first = sprungPoints[0]!;
+    const last = sprungPoints[sprungPoints.length - 1]!;
 
     return [
-      { label: t('Springs'), value: sprungKeys.length.toString() },
+      { label: t('Springs'), value: sprungPoints.length.toString() },
       {
         label: t('Tension'),
         // A constant tension has nothing to read as a range.
@@ -158,7 +174,7 @@ export const WippenSupportSpringsDesign: React.FC<
         }),
       },
     ];
-  }, [currentLanguage, t, targetSerie]);
+  }, [currentLanguage, sprungPoints, t]);
 
   return (
     <DesignLayout
@@ -179,6 +195,7 @@ export const WippenSupportSpringsDesign: React.FC<
             renderReading={renderReading}
             variant="design"
             keyboard={analyzedKeyboard}
+            sprungKeys={sprungKeys}
             targetSerie={targetSerie}
             extraLegendItems={[
               {

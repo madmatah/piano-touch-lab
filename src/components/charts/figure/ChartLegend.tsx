@@ -14,12 +14,12 @@ export interface ChartLegendItem {
 }
 
 /**
- * The legend of a figure, in HTML rather than in the chart canvas.
+ * The legend of a figure, in HTML rather than in the chart's drawing.
  *
  * The design puts it in the figure's header, above the rule that separates it
- * from the plot; and on two charts its entries are real buttons that switch a
- * series off. In HTML it follows the theme through CSS, wraps properly and
- * stays selectable.
+ * from the plot, and its entries are real buttons that switch their curves
+ * off, as ECharts' own legend did. In HTML it follows the theme through CSS,
+ * wraps properly and stays selectable.
  */
 export const ChartLegend = ({ items }: { items: ChartLegendItem[] }) => (
   <>

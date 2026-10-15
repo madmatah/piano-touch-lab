@@ -1,4 +1,6 @@
 import type { KeyWith } from '@/lib/piano/keyboard';
+import { isOctaveStart } from '@/lib/piano/keyboard/keyboard-geometry';
+import { cn } from '@/lib/utils';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
 import { AnalyzeDataSheetTableCell } from './AnalyzeDataSheetCell';
@@ -20,7 +22,14 @@ export const AnalyzeDataSheetTableRow: React.FC<
   shouldUseManualSWRMeasurements,
   shouldUseSupportSpringMeasurements,
 }) => (
-  <tr className="border-b border-border last:border-b-0 even:bg-secondary/50 hover:bg-accent">
+  <tr
+    className={cn(
+      'border-b border-border last:border-b-0 even:bg-secondary/50 hover:bg-accent',
+      // Each C opens an octave, ruled off a shade darker, as the mockup does:
+      // a key is found by its octave before its number.
+      isOctaveStart(item) && '[&>td]:border-t [&>td]:border-t-input',
+    )}
+  >
     <td className="px-2 py-[7px] font-mono text-[12px] text-ptl-ink-3">
       {item.number}
     </td>

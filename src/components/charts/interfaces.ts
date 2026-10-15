@@ -8,11 +8,29 @@ export interface TouchDesignSerie {
   data: readonly TouchDesignDataPoint[];
   variant?: TouchDesignSerieVariant;
   color?: string;
+  /**
+   * Shaded down to the axis, as the springs' target is: what lies under the
+   * curve is the weight they take off the keys.
+   */
+  isFilled?: boolean;
 }
 
 /**
- * What a chart hands to the rail beside it: the key being read, and the very
- * series it drew, so the two can never disagree.
+ * A stretch of the keyboard named on the plot: under a bracket at the top of
+ * the plot, or by a bare label over the axis.
+ */
+export interface KeyRangeNote {
+  /** The first key of the stretch. */
+  from: number;
+  kind: 'bracket' | 'label';
+  text: string;
+  /** The last key of the stretch, itself included. */
+  to: number;
+}
+
+/**
+ * What a chart hands to the reading strip at its head: the key being read,
+ * and the very series it drew, so the two can never disagree.
  */
 export interface ChartReadingContext {
   hoveredKey: number | null;
