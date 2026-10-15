@@ -12,7 +12,8 @@ export interface KeyReadingRow {
   value: string;
 }
 
-export interface KeyReadingCardProps {
+export interface KeyReading {
+  /** A sentence under the numbers: what they mean at the key. */
   footnote?: React.ReactNode;
   keyNumber: number | null;
   /** Scientific pitch, e.g. `C4`. */
@@ -21,51 +22,43 @@ export interface KeyReadingCardProps {
 }
 
 /**
- * What one key reads, beside the chart.
+ * What one key reads, across the head of its chart.
  *
  * Ink-dark in both themes — it is the one panel of the interface that is: the
  * design treats it as the instrument's own display, not as a surface of the
- * page.
+ * page. It lies along the top of the figure rather than beside it so that the
+ * plot keeps the width of the page, and it is the pointer's own echo, so it
+ * never prints.
  */
-export const KeyReadingCard = ({
-  footnote,
-  keyNumber,
-  noteName,
-  rows,
-}: KeyReadingCardProps) => {
+export const KeyReadingStrip = ({ reading }: { reading: KeyReading }) => {
+  const { footnote, keyNumber, noteName, rows } = reading;
   const { t } = useTranslation();
 
   return (
     <section
       aria-live="polite"
-      className={cn(
-        'rounded-md border border-ptl-reading-border bg-ptl-reading px-5 pt-[18px] text-ptl-reading-foreground print:hidden',
-        footnote ? 'pb-3.5' : 'pb-2',
-      )}
+      className="flex flex-wrap items-center gap-x-7 gap-y-2.5 border-b border-border bg-ptl-reading px-[18px] py-3 text-ptl-reading-foreground print:hidden"
     >
-      <div className="flex items-baseline justify-between gap-2">
+      <span className="flex items-baseline gap-3">
         <span className="font-mono text-[11px] tracking-[0.08em] text-ptl-reading-muted uppercase">
           {keyNumber === null
             ? t('Reading')
             : t('Reading · key #{{number}}', { number: keyNumber })}
         </span>
-      </div>
-      <div className="pt-2.5 pb-3.5 font-serif text-[64px] leading-none">
-        {noteName ?? '—'}
-      </div>
-      <dl className="m-0">
+        <span className="min-w-[2.2ch] font-serif text-[30px] leading-none">
+          {noteName ?? '—'}
+        </span>
+      </span>
+      <dl className="m-0 flex flex-wrap items-baseline gap-x-6 gap-y-2">
         {rows.map((row) => (
-          <div
-            key={row.label}
-            className="flex items-baseline justify-between gap-3 border-t border-ptl-reading-rule py-[11px]"
-          >
-            <dt className="m-0 flex items-center gap-[9px] text-[13.5px] text-ptl-reading-muted">
+          <div key={row.label} className="flex items-baseline gap-2">
+            <dt className="m-0 flex items-center gap-[7px] text-[12.5px] text-ptl-reading-muted">
               {row.mark}
               {row.label}
             </dt>
             <dd
               className={cn(
-                'm-0 text-[18px] font-medium',
+                'm-0 text-[16px] font-medium',
                 row.isQualitative ? 'font-serif italic' : 'font-mono',
                 (row.isAccent ?? row.isQualitative)
                   ? 'text-ptl-reading-accent'
@@ -78,7 +71,7 @@ export const KeyReadingCard = ({
         ))}
       </dl>
       {footnote ? (
-        <p className="m-0 border-t border-ptl-reading-rule pt-3 text-[13px] leading-[1.5] text-ptl-reading-muted">
+        <p className="m-0 font-serif text-[14px] italic text-ptl-reading-muted">
           {footnote}
         </p>
       ) : null}

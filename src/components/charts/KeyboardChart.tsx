@@ -1,6 +1,6 @@
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 
 import { useTranslation } from '@/hooks/use-translation';
 import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
@@ -12,7 +12,10 @@ import {
   MONO_FONT,
   type AxisScale,
 } from './echarts/build-base-option';
-import { useChartTokens, type ChartTokens } from './hooks/use-chart-tokens';
+import type { ChartTokens } from './hooks/use-chart-tokens';
+import { usePrintableChart } from './hooks/use-printable-chart';
+import { PLOT_BOX_MARGIN } from './chart-geometry';
+import { SVG_RENDERER } from './renderer';
 import type { TouchDesignSerie } from './interfaces';
 
 export enum TouchDesignSerieVariant {
@@ -29,6 +32,8 @@ export interface KeyboardChartProps {
   height: number;
   /** Called with the chart instance, to follow the pointer. */
   onChartReady?: (chart: unknown) => void;
+  /** Which frame it sits in, which sets how much of a sheet is left for it. */
+  variant?: 'analyze' | 'design';
   scale: AxisScale;
   series: TouchDesignSerie[];
   /** A flat rule drawn across the plot, e.g. zero on the front weight chart. */
@@ -107,11 +112,23 @@ export const KeyboardChart = ({
   ruleAt,
   scale,
   series,
+  variant = 'analyze',
 }: KeyboardChartProps) => {
-  const tokens = useChartTokens();
+  const option = useRef<EChartsOption | null>(null);
+  const {
+    onChartReady: bindChart,
+    plotHeight: boxHeight,
+    tokens,
+  } = usePrintableChart(
+    variant,
+    height + PLOT_BOX_MARGIN,
+    option,
+    onChartReady,
+  );
+  const plotHeight = boxHeight - PLOT_BOX_MARGIN;
   const { currentLanguage } = useTranslation();
 
-  const option = useMemo<EChartsOption>(() => {
+  const nextOption = useMemo<EChartsOption>(() => {
     const echartsSeries = series.map((serie) => ({
       // Plotted over the balance rail, where the keys are evenly spaced: a
       // curve computed key by key is then drawn with an even stride, instead
@@ -150,21 +167,27 @@ export const KeyboardChart = ({
 
     return {
       animation: false,
-      grid: buildGrid(height),
+      grid: buildGrid(plotHeight),
       legend: { show: false },
       series: echartsSeries,
       tooltip: { show: false },
       xAxis: buildKeyAxis(geometry),
       yAxis: buildValueAxis(tokens, scale, currentLanguage),
     } as EChartsOption;
-  }, [currentLanguage, geometry, height, ruleAt, scale, series, tokens]);
+  }, [currentLanguage, geometry, plotHeight, ruleAt, scale, series, tokens]);
+
+  // Kept for the print handler, which has to tell ECharts itself.
+  useLayoutEffect(() => {
+    option.current = nextOption;
+  }, [nextOption]);
 
   return (
     <ReactECharts
-      option={option}
+      option={nextOption}
       notMerge
-      onChartReady={onChartReady}
-      style={{ height: height + 20, width: '100%' }}
+      onChartReady={bindChart}
+      opts={SVG_RENDERER}
+      style={{ height: boxHeight, width: '100%' }}
     />
   );
 };

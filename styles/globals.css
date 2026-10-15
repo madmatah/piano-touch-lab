@@ -458,6 +458,85 @@
     display: none !important;
   }
 
+  /*
+   * On screen the plot scrolls sideways when the figure is narrower than the
+   * keyboard; on paper there is nowhere to scroll, so the box opens up and the
+   * chart is redrawn at the width of the sheet (see `usePrintableChart`).
+   */
+  [data-slot='chart-plot'] {
+    overflow: visible !important;
+  }
+
+  [data-slot='chart-plot'] > * {
+    min-width: 0 !important;
+  }
+
+  /*
+   * And the drawing is stretched to that box rather than sized to it. ECharts
+   * draws at a width it is handed in pixels; the figure hands it the sheet's,
+   * but a browser that fits the page to a sheet it was not laid out for lays
+   * it out again afterwards, leaving no turn of script to redraw in. The
+   * drawing carries its own shape instead (see `fitDrawingToBox`), so the box
+   * is filled either way — and where the width was right, shape and box agree
+   * and nothing is stretched.
+   */
+  [data-slot='chart-drawing-box'],
+  [data-slot='chart-drawing'] {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  [data-slot='chart-figure'] {
+    break-inside: avoid;
+  }
+
+  /*
+   * A figure and its title share one sheet. The display size of the title is
+   * for a screen you lean back from; on paper it only has to name the page,
+   * and the room it gives back is what lets the figure stay whole.
+   */
+  [data-slot='page-content'] {
+    gap: 1rem;
+  }
+
+  [data-slot='page-content'] h1 {
+    font-size: 24px;
+  }
+
+  /*
+   * The lede introduces the page to someone arriving on it. A sheet is taken
+   * to the bench with the figure already in mind.
+   */
+  [data-slot='page-lede'] {
+    display: none;
+  }
+
+  /*
+   * The drawn keyboard is a landmark worth its height on a screen you can
+   * scrub along. On a sheet it costs a fifth of the figure to say what the
+   * octave labels under it already say, so only they are kept.
+   */
+  [data-slot='chart-keyboard'] svg {
+    display: none;
+  }
+
+  /*
+   * And the frame gives back the rest, from its own padding rather than from
+   * the plot: the friction panel sits under the weights in the same box, so
+   * shortening it crushes one of the two.
+   */
+  [data-slot='chart-figure'] > div:first-child {
+    padding-block: 0.5rem;
+  }
+
+  [data-slot='chart-plot'] {
+    padding-top: 0.5rem;
+  }
+
+  [data-slot='chart-figure'] figcaption {
+    padding-block: 0.5rem;
+  }
+
   thead {
     display: table-header-group;
   }

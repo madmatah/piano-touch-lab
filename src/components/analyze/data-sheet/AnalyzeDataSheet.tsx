@@ -37,7 +37,7 @@ export const AnalyzeDataSheet: React.FC<{
   ];
 
   return (
-    <div className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card print:overflow-visible">
+    <div className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card print:overflow-visible print:rounded-none print:border-0">
       {/*
        * The sheet is read by scrolling inside its own frame; on paper the
        * frame is the sheet, so the height cap and the sticky header go, and
@@ -114,21 +114,6 @@ export const AnalyzeDataSheet: React.FC<{
             colSpan={2 + measuredColumns.length + computedColumns.length}
           />
         </table>
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-t border-border px-3 py-2.5 font-mono text-[12px] text-muted-foreground">
-        <span>
-          {t('{{count}} keys', {
-            count: analyzedKeyboard.size,
-            ns: 'navigation',
-          })}
-          <span className="print:hidden">
-            {' · '}
-            {t('the header stays visible while scrolling')}
-          </span>
-        </span>
-        <span>
-          BW = (D + U) / 2 · F = (D − U) / 2 · R = (FW + BW − WBW) / SW
-        </span>
       </div>
     </div>
   );

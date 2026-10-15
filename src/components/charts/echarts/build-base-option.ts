@@ -119,11 +119,14 @@ export const buildKeyAxis = (
   type: 'value',
 });
 
+/** The air over the plot rectangle, where the topmost label sits. */
+export const GRID_TOP = 10;
+
 export const buildGrid = (height: number) => ({
   bottom: 0,
   containLabel: false,
   height,
   left: PLOT_INSET.left,
   right: PLOT_INSET.right,
-  top: 10,
+  top: GRID_TOP,
 });

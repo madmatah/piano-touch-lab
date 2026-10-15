@@ -7,8 +7,8 @@ import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
 import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
-import { AnalysisSidePanel } from '@/components/analyze/key-reading/AnalysisSidePanel';
-import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-keyboard-stats';
+import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
+import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpringBalanceWeightChart';
 import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
@@ -21,24 +21,18 @@ import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-stor
 import { useTranslation } from '@/hooks/use-translation';
 import { formatGrams } from '@/lib/format/format-weight';
 import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
-import type { TouchWeightAnalyzedKey } from '@/lib/piano/touch-design/touch-weight-key-analysis';
+import { usePrintLandscape } from '@/hooks/use-print-page-size';
 
 const FIGURE_NUMBER =
   ANALYZE_FIGURE_NUMBERS['/analyze/wippen-support-springs']!;
 const DESIGN_PATH = '/design/wippen-support-springs';
 
-const selectSupportSpringBalanceWeight = (key: TouchWeightAnalyzedKey) =>
-  key.payload.supportSpringBalanceWeight;
-
 export const AnalyzeWippenSupportSpringPage = () => {
+  usePrintLandscape();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { currentLanguage, t } = useTranslation();
   const { updateOption } = useMeasureOptionsActions();
   const navigate = useNavigate();
-  const stats = useKeyboardStats(
-    analyzedKeyboard,
-    selectSupportSpringBalanceWeight,
-  );
 
   // Switching the option on is only half the answer: the values are entered in
   // Measure, so take the reader there rather than leaving them on a page that
@@ -48,10 +42,9 @@ export const AnalyzeWippenSupportSpringPage = () => {
     void navigate('/measure');
   }, [navigate, updateOption]);
 
-  const renderSidePanel = useCallback(
+  const renderReading = useCallback(
     ({ hoveredKey, measuredSerie }: ChartReadingContext) => (
-      <AnalysisSidePanel
-        ariaLabel={t('Spring-supported weight reading')}
+      <KeyReadingStrip
         reading={{
           keyNumber: hoveredKey,
           noteName:
@@ -67,23 +60,9 @@ export const AnalyzeWippenSupportSpringPage = () => {
             },
           ],
         }}
-        summary={[
-          // A count out of 88 would claim every key should carry a spring;
-          // most instruments fit them on the bass alone.
-          { label: t('Measured springs'), value: `${stats.count}` },
-          {
-            label: t('Average tension'),
-            value: formatGrams(stats.mean, currentLanguage),
-          },
-          {
-            label: t('Maximum tension'),
-            value: formatGrams(stats.max, currentLanguage),
-          },
-        ]}
-        action={{ label: t('Design the springs'), to: DESIGN_PATH }}
       />
     ),
-    [analyzedKeyboard, currentLanguage, stats, t],
+    [analyzedKeyboard, currentLanguage, t],
   );
 
   return (
@@ -104,7 +83,7 @@ export const AnalyzeWippenSupportSpringPage = () => {
       />
       <SupportSpringBalanceWeightChart
         keyboard={analyzedKeyboard}
-        renderSidePanel={renderSidePanel}
+        renderReading={renderReading}
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             {t(
@@ -125,6 +104,9 @@ export const AnalyzeWippenSupportSpringPage = () => {
             </Button>
           </>
         }
+      />
+      <AnalysisFooter
+        action={{ label: t('Design the springs'), to: DESIGN_PATH }}
       />
     </MainLayout>
   );

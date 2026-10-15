@@ -5,7 +5,8 @@ import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
 import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
-import { AnalysisSidePanel } from '@/components/analyze/key-reading/AnalysisSidePanel';
+import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
+import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
   ChartLegendMark,
@@ -24,6 +25,7 @@ import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { EMPTY_VALUE, formatGrams } from '@/lib/format/format-weight';
 import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
+import { usePrintLandscape } from '@/hooks/use-print-page-size';
 
 const FIGURE_NUMBER = ANALYZE_FIGURE_NUMBERS['/analyze/touch-weight']!;
 
@@ -45,42 +47,19 @@ const readingMark = (kind: ChartLegendMarkKind, colorClassName: string) => (
   </span>
 );
 
-/**
- * Averaged over the series the chart drew rather than over the stored
- * measurements: what the figure shows is already relieved of the load the
- * support springs carry, and the rail has to say the same thing.
- */
-const summaryOf = (serie: TouchDesignSerie) => {
-  const values = serie.data
-    .map((point) => point.payload)
-    .filter(
-      (value): value is number => value !== undefined && !Number.isNaN(value),
-    );
-
-  return {
-    count: values.length,
-    mean:
-      values.length === 0
-        ? null
-        : values.reduce((total, value) => total + value, 0) / values.length,
-  };
-};
-
 export const AnalyzeTouchWeightPage = () => {
+  usePrintLandscape();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { currentLanguage, t } = useTranslation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
 
-  const renderSidePanel = useCallback(
+  const renderReading = useCallback(
     ({ frictionZoneLabel, hoveredKey, series }: TouchWeightReadingContext) => {
-      const balance = summaryOf(series.balance);
-      const friction = summaryOf(series.friction);
       const readingOf = (serie: TouchDesignSerie) =>
         formatGrams(serieValueAt(serie, hoveredKey), currentLanguage);
 
       return (
-        <AnalysisSidePanel
-          ariaLabel={t('Static balance reading')}
+        <KeyReadingStrip
           reading={{
             keyNumber: hoveredKey,
             noteName:
@@ -114,23 +93,6 @@ export const AnalyzeTouchWeightPage = () => {
               },
             ],
           }}
-          summary={[
-            {
-              label: t('Average balance weight'),
-              value: formatGrams(balance.mean, currentLanguage),
-            },
-            {
-              label: t('Average friction'),
-              value: formatGrams(friction.mean, currentLanguage),
-            },
-            {
-              label: t('Measured keys'),
-              value: `${balance.count}/${analyzedKeyboard.size}`,
-            },
-          ]}
-          hint={t(
-            'Hover or tap the chart to read a key; use ← → for the next one.',
-          )}
         />
       );
     },
@@ -158,7 +120,7 @@ export const AnalyzeTouchWeightPage = () => {
       <TouchWeightChart
         analyzedKeyboard={analyzedKeyboard}
         useSupportSpringMeasurements={useSupportSpringMeasurements}
-        renderSidePanel={renderSidePanel}
+        renderReading={renderReading}
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             <Trans
@@ -167,6 +129,11 @@ export const AnalyzeTouchWeightPage = () => {
             />
           </FigureCaption>
         }
+      />
+      <AnalysisFooter
+        hint={t(
+          'Hover or tap the chart to read a key; use ← → for the next one.',
+        )}
       />
     </MainLayout>
   );

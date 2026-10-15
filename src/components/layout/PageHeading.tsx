@@ -32,6 +32,7 @@ export const PageHeading = ({
       </h1>
       {lede ? (
         <p
+          data-slot="page-lede"
           className="m-0 text-base leading-[1.55] text-muted-foreground"
           style={{ maxWidth: ledeWidth }}
         >

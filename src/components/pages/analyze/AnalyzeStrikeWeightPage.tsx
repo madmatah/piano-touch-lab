@@ -5,8 +5,8 @@ import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
 import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
-import { AnalysisSidePanel } from '@/components/analyze/key-reading/AnalysisSidePanel';
-import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-keyboard-stats';
+import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
+import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { StrikeWeightChart } from '@/components/charts/StrikeWeightChart';
 import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
@@ -15,10 +15,10 @@ import {
 } from '@/components/charts/interfaces';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
-import { EMPTY_VALUE, formatGrams } from '@/lib/format/format-weight';
+import { formatGrams } from '@/lib/format/format-weight';
 import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
 import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
-import type { TouchWeightAnalyzedKey } from '@/lib/piano/touch-design/touch-weight-key-analysis';
+import { usePrintLandscape } from '@/hooks/use-print-page-size';
 
 const FIGURE_NUMBER = ANALYZE_FIGURE_NUMBERS['/analyze/strike-weight']!;
 /**
@@ -31,18 +31,14 @@ const REFERENCE_CURVES: readonly string[] = [
   StrikeWeightLevel.Level9,
 ];
 
-const selectStrikeWeight = (key: TouchWeightAnalyzedKey) =>
-  key.payload.strikeWeight;
-
 export const AnalyzeStrikeWeightPage = () => {
+  usePrintLandscape();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { currentLanguage, t } = useTranslation();
-  const stats = useKeyboardStats(analyzedKeyboard, selectStrikeWeight);
 
-  const renderSidePanel = useCallback(
+  const renderReading = useCallback(
     ({ hoveredKey, measuredSerie, referenceSeries }: ChartReadingContext) => (
-      <AnalysisSidePanel
-        ariaLabel={t('Strike weight reading')}
+      <KeyReadingStrip
         reading={{
           keyNumber: hoveredKey,
           noteName:
@@ -68,34 +64,9 @@ export const AnalyzeStrikeWeightPage = () => {
             })),
           ],
         }}
-        summary={[
-          {
-            // The mockups name the key the extreme was read on, not just its
-            // value: a heavy top octave does not read like a heavy bass.
-            label: t('Heaviest ({{note}})', {
-              note: stats.maxKeyName ?? EMPTY_VALUE,
-            }),
-            value: formatGrams(stats.max, currentLanguage),
-          },
-          {
-            label: t('Lightest ({{note}})', {
-              note: stats.minKeyName ?? EMPTY_VALUE,
-            }),
-            value: formatGrams(stats.min, currentLanguage),
-          },
-          { label: t('Mean'), value: formatGrams(stats.mean, currentLanguage) },
-          {
-            label: t('Measured keys'),
-            value: `${stats.count}/${stats.size}`,
-          },
-        ]}
-        action={{
-          label: t('Design the strike weight'),
-          to: '/design/strike-weight',
-        }}
       />
     ),
-    [analyzedKeyboard, currentLanguage, stats, t],
+    [analyzedKeyboard, currentLanguage, t],
   );
 
   return (
@@ -116,7 +87,7 @@ export const AnalyzeStrikeWeightPage = () => {
       />
       <StrikeWeightChart
         keyboard={analyzedKeyboard}
-        renderSidePanel={renderSidePanel}
+        renderReading={renderReading}
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             {t(
@@ -124,6 +95,12 @@ export const AnalyzeStrikeWeightPage = () => {
             )}
           </FigureCaption>
         }
+      />
+      <AnalysisFooter
+        action={{
+          label: t('Design the strike weight'),
+          to: '/design/strike-weight',
+        }}
       />
     </MainLayout>
   );
