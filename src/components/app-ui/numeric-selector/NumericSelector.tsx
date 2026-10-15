@@ -2,6 +2,7 @@ import { Minus, Plus } from 'lucide-react';
 import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 
 import { useTranslation } from '@/hooks/use-translation';
+import { decimalSeparatorOf } from '@/lib/format/format-weight';
 import { Stepper } from '../stepper/Stepper';
 
 export interface NumericSelectorProps {
@@ -27,12 +28,6 @@ const roundToStepPrecision = (value: number, step: number): number => {
     Math.pow(10, decimalPlaces)
   );
 };
-
-/** The decimal separator a reader of this locale writes with. */
-const decimalSeparatorOf = (locale: string | undefined): string =>
-  new Intl.NumberFormat(locale)
-    .formatToParts(1.5)
-    .find((part) => part.type === 'decimal')?.value ?? '.';
 
 /**
  * What the reader typed, as a number — or NaN unless all of it is one.

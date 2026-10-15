@@ -21,6 +21,12 @@ export const EMPTY_VALUE = '—';
  */
 const UNIT_SPACE = '\u00a0';
 
+/** The decimal separator a reader of this locale writes with. */
+export const decimalSeparatorOf = (locale: string | undefined): string =>
+  new Intl.NumberFormat(locale)
+    .formatToParts(1.5)
+    .find((part) => part.type === 'decimal')?.value ?? '.';
+
 const format = (
   value: number | null | undefined,
   locale: string,
