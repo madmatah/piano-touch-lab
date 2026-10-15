@@ -37,7 +37,12 @@ export const PrintHeader = ({ title }: { title: string }) => {
         <span className="font-serif text-[15px]">
           Piano Touch <em className="italic">Lab</em>
         </span>
-        <h1 className="m-0 font-serif text-[34px] leading-none">{title}</h1>
+        <h1
+          data-slot="print-title"
+          className="m-0 font-serif text-[34px] leading-none"
+        >
+          {title}
+        </h1>
       </div>
       <div className="flex flex-col items-end gap-[3px] text-[13px]">
         <span className="font-serif text-[18px]">

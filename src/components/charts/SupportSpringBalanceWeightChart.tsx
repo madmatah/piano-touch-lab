@@ -152,7 +152,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
                 'This measurement is optional: you can design your springs without it.',
               )}
             </p>
-            <div className="flex flex-wrap justify-center gap-2.5 pt-1.5">
+            <div className="flex flex-wrap justify-center gap-2.5 pt-1.5 print:hidden">
               {emptyStateActions}
             </div>
           </div>

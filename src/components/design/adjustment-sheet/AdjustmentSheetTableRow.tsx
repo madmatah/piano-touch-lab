@@ -1,4 +1,5 @@
 import type { KeyWith } from '@/lib/piano/keyboard';
+import { cn } from '@/lib/utils';
 
 import type { KeyAdjustmentPayload } from './AdjustmentSheet.types';
 import { AdjustmentValue } from './AdjustmentValue';
@@ -9,8 +10,12 @@ export interface AdjustmentSheetTableRowProps {
   item: KeyWith<KeyAdjustmentPayload | null>;
 }
 
+/*
+ * On paper the rows close up to the 28 px of the print mockup: at their screen
+ * height of 42 px the sheet ran to five pages where the mockup takes four.
+ */
 const cellClassName =
-  'h-[42px] border-b border-border px-3 align-middle font-mono text-sm';
+  'h-[42px] border-b border-border px-3 align-middle font-mono text-sm print:h-7 print:px-1.5 print:text-[13px]';
 
 const Adjustment = ({
   actualValue,
@@ -26,12 +31,31 @@ const Adjustment = ({
   </td>
 );
 
+/**
+ * Each C opens an octave, which the printed sheet rules off, as a score does.
+ * Half a pixel heavier than the rules between rows: in a collapsed table the
+ * bottom border of the row above wins over a top border no wider than it.
+ */
+const isOctaveStart = (name: string, isBlackKey: boolean) =>
+  !isBlackKey && name.startsWith('C');
+
 export const AdjustmentSheetTableRow: React.FC<
   AdjustmentSheetTableRowProps
 > = ({ hasWippenAssistSpringDesign, isBlackKey, item }) => (
-  <tr className="even:bg-secondary">
+  <tr
+    className={cn(
+      'even:bg-secondary',
+      isOctaveStart(item.name, isBlackKey) &&
+        'print:[&>td]:border-t-[1.5px] print:[&>td]:border-t-foreground',
+    )}
+  >
     <td className={`${cellClassName} text-xs text-ptl-ink-3`}>{item.number}</td>
-    <td className={cellClassName}>
+    <td
+      className={cn(
+        cellClassName,
+        isOctaveStart(item.name, isBlackKey) && 'print:font-semibold',
+      )}
+    >
       {isBlackKey ? (
         <span className="inline-flex rounded-[3px] bg-ptl-key-black px-1.5 py-px text-[12.5px] text-ptl-key-white">
           {item.name}
@@ -55,7 +79,8 @@ export const AdjustmentSheetTableRow: React.FC<
       />
     )}
     <td className={`${cellClassName} text-center`}>
-      <span className="inline-block size-[18px] rounded-[3px] border-[1.5px] border-input align-middle" />
+      {/* In ink on paper: a pale box vanishes from a black and white laser. */}
+      <span className="inline-block size-[18px] rounded-[3px] border-[1.5px] border-input align-middle print:size-[15px] print:rounded-[2px] print:border-foreground" />
     </td>
     {/* Room to write on the printed sheet; nothing to show on screen. */}
     <td className={`${cellClassName} ptl-print-only border-l`} />
