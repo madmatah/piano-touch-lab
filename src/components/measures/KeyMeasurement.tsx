@@ -1,45 +1,72 @@
-import type {
-  OptionalNumber,
-  MeasuredKeyRequirements,
-} from '@/lib/piano/touch-design/measured-key.requirements';
+import { MessageCircleWarning } from 'lucide-react';
 import { useCallback } from 'react';
-import { MeasureInputField } from './MeasureInputField';
+
 import {
   useMeasuredKeyFromStore,
   useMeasureActions,
 } from '@/hooks/store/use-measure-store';
-import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
-import {
-  ArrowDownFromLine,
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  Hammer,
-  MessageCircleWarning,
-} from 'lucide-react';
-import { useTranslation } from '@/hooks/use-translation';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
+import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
+import { useTranslation } from '@/hooks/use-translation';
+import { formatWeightValue } from '@/lib/format/format-weight';
+import type {
+  MeasuredKeyRequirements,
+  OptionalNumber,
+} from '@/lib/piano/touch-design/measured-key.requirements';
 import { cn } from '@/lib/utils';
+
+import { MEASURE_PASSES, type MeasurePassId } from './measure-passes';
+import { MeasureInputField } from './MeasureInputField';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useKeyMeasurementInconsistency } from './hooks/use-key-measurement-inconsistency';
 
+type MeasuredProperty = keyof Pick<
+  MeasuredKeyRequirements,
+  | 'downWeightWithSpringSupport'
+  | 'downWeightWithoutSpringSupport'
+  | 'frontWeight'
+  | 'strikeWeight'
+  | 'upWeight'
+  | 'measuredStrikeWeightRatio'
+>;
+
 export interface KeyMeasurementProps {
+  balanceWeight: OptionalNumber;
+  currentPassId: MeasurePassId;
+  frictionWeight: OptionalNumber;
+  isBlackKey: boolean;
+  keyName: string;
   keyNumber: number;
+  onFocusKey: (keyNumber: number | null) => void;
 }
 
+const cellClassName = 'h-[42px] border-b border-border px-3 align-middle';
+const computedCellClassName = cn(
+  cellClassName,
+  'text-right font-mono text-sm text-muted-foreground',
+);
+
+/** One key of the measure table: the fields to fill, then what they give. */
 export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
+  balanceWeight,
+  currentPassId,
+  frictionWeight,
+  isBlackKey,
+  keyName,
   keyNumber,
+  onFocusKey,
 }) => {
   const keyIndex = keyNumber - 1;
   const keySpec = useMeasuredKeyFromStore(keyIndex);
   const { updateKeyMeasure } = useMeasureActions();
   const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
-  const { t } = useTranslation();
+  const { currentLanguage, t } = useTranslation();
 
   const {
-    isKeyMeasurementInconsistent,
     allowedDifference,
     computedStrikeWeightRatio,
+    isKeyMeasurementInconsistent,
   } = useKeyMeasurementInconsistency(keyNumber);
 
   const onUpdateKeyProperty = useCallback(
@@ -49,142 +76,113 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     [keyIndex, updateKeyMeasure],
   );
 
-  type MeasuredProperties = keyof Pick<
-    MeasuredKeyRequirements,
-    | 'downWeightWithSpringSupport'
-    | 'downWeightWithoutSpringSupport'
-    | 'frontWeight'
-    | 'strikeWeight'
-    | 'upWeight'
-    | 'measuredStrikeWeightRatio'
-  >;
+  const onFocusChange = useCallback(
+    (isFocused: boolean) => {
+      onFocusKey(isFocused ? keyNumber : null);
+    },
+    [keyNumber, onFocusKey],
+  );
 
-  const tabGroups: MeasuredProperties[][] = [
+  const columns: { label: string; property: MeasuredProperty }[] = [
+    ...(useSupportSpringMeasurements
+      ? [
+          {
+            label: 'DS',
+            property: 'downWeightWithSpringSupport' as const,
+          },
+        ]
+      : []),
+    { label: 'D', property: 'downWeightWithoutSpringSupport' },
+    { label: 'U', property: 'upWeight' },
+    { label: 'FW', property: 'frontWeight' },
+    { label: 'SW', property: 'strikeWeight' },
+    ...(useManualSWRMeasurements
+      ? [{ label: 'SWR', property: 'measuredStrikeWeightRatio' as const }]
+      : []),
+  ];
+
+  const tabGroups: MeasuredProperty[][] = [
     useSupportSpringMeasurements ? ['downWeightWithSpringSupport'] : [],
     ['downWeightWithoutSpringSupport', 'upWeight'],
     ['frontWeight'],
     ['strikeWeight'],
     useManualSWRMeasurements ? ['measuredStrikeWeightRatio'] : [],
-  ].filter((group): group is MeasuredProperties[] => group.length > 0);
+  ].filter((group): group is MeasuredProperty[] => group.length > 0);
 
-  const { getTabIndexFor, orderedProperties } =
-    useKeyTabIndex<MeasuredProperties>(keyIndex, tabGroups);
+  const { getTabIndexFor } = useKeyTabIndex<MeasuredProperty>(
+    keyIndex,
+    tabGroups,
+  );
 
-  const measureSpecs: Record<
-    MeasuredProperties,
-    {
-      placeholder: string;
-      tooltip: string | React.ReactNode;
-    }
-  > = {
-    downWeightWithSpringSupport: {
-      placeholder: 'DWSS',
-      tooltip: (
-        <div className="flex items-center gap-2">
-          <ArrowDownToLine className="w-3 h-3 stroke-3" />
-          {t('Down Weight (g) with wippen support spring attached')}
-        </div>
-      ),
-    },
-    downWeightWithoutSpringSupport: {
-      placeholder: 'D',
-      tooltip: (
-        <div className="flex items-center gap-2">
-          <ArrowDownToLine className="w-3 h-3 stroke-3" />
-          {t('Down Weight (g) without wippen support spring')}
-        </div>
-      ),
-    },
-    frontWeight: {
-      placeholder: 'FW',
-      tooltip: (
-        <div className="flex items-center gap-2">
-          <ArrowDownFromLine className="w-3 h-3 stroke-3" />
-          {t('Front Weight (g)')}
-        </div>
-      ),
-    },
-    measuredStrikeWeightRatio: {
-      placeholder: 'SWR',
-      tooltip: (
-        <div className="flex items-center gap-2">
-          <Hammer className="w-3 h-3 stroke-3" />
-          {t('Strike Weight Ratio')}
-        </div>
-      ),
-    },
-    strikeWeight: {
-      placeholder: 'SW',
-      tooltip: (
-        <div className="flex items-center gap-2">
-          <Hammer className="w-3 h-3 stroke-3" />
-          {t('Strike Weight (g)')}
-        </div>
-      ),
-    },
-    upWeight: {
-      placeholder: 'U',
-      tooltip: (
-        <div className="flex items-center gap-2">
-          <ArrowUpFromLine className="w-3 h-3 stroke-3" />
-          {t('Up Weight (g)')}
-        </div>
-      ),
-    },
-  };
+  const activeFields =
+    MEASURE_PASSES.find((pass) => pass.id === currentPassId)?.fields ?? [];
+
+  if (!keySpec) {
+    return null;
+  }
 
   return (
-    keySpec && (
-      <div className={'group/key hover:bg-purple-50 p-1 px-3'}>
-        <div className="flex gap-2 justify-start items-start">
-          <div
-            className={cn(
-              'w-11 shrink text-sm font-medium text-gray-700 self-center',
-              isKeyMeasurementInconsistent && 'text-red-500',
-            )}
-          >
-            <span>#{keyNumber}</span>
-            {isKeyMeasurementInconsistent && (
-              <span className="inline-block pl-1.5">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <MessageCircleWarning className="w-4 h-4" />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" variant="destructive">
-                    <p className="whitespace-pre-line">
-                      {t(
-                        'The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.',
-                        {
-                          computedStrikeWeightRatio:
-                            computedStrikeWeightRatio?.toFixed(2) ?? '',
-                          difference: allowedDifference,
-                        },
-                      )}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </span>
-            )}
-          </div>
-          {orderedProperties
-            .filter((property) => {
-              if (property === 'measuredStrikeWeightRatio') {
-                return useManualSWRMeasurements;
-              }
-              return true;
-            })
-            .map((property) => (
-              <MeasureInputField
-                key={property}
-                defaultValue={keySpec[property]}
-                onUpdate={onUpdateKeyProperty(property)}
-                placeholder={measureSpecs[property].placeholder}
-                tooltip={measureSpecs[property].tooltip}
-                tabIndex={getTabIndexFor(property)}
-              />
-            ))}
-        </div>
-      </div>
-    )
+    <tr id={`measure-key-${keyNumber}`} className="even:bg-secondary">
+      <td className={cn(cellClassName, 'font-mono text-xs text-ptl-ink-3')}>
+        <span className="inline-flex items-center gap-1.5">
+          {keyNumber}
+          {isKeyMeasurementInconsistent && (
+            <Tooltip>
+              <TooltipTrigger>
+                <MessageCircleWarning className="size-4 text-destructive" />
+              </TooltipTrigger>
+              <TooltipContent side="right" variant="destructive">
+                <p className="whitespace-pre-line">
+                  {t(
+                    'The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.',
+                    {
+                      computedStrikeWeightRatio:
+                        computedStrikeWeightRatio?.toFixed(2) ?? '',
+                      difference: allowedDifference,
+                    },
+                  )}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </span>
+      </td>
+      <td className={cn(cellClassName, 'font-mono text-[13px]')}>
+        {isBlackKey ? (
+          <span className="inline-flex rounded-[3px] bg-ptl-key-black px-1.5 py-px text-[12.5px] text-ptl-key-white">
+            {keyName}
+          </span>
+        ) : (
+          keyName
+        )}
+      </td>
+      {columns.map((column) => (
+        <td
+          key={column.property}
+          className={cn(
+            cellClassName,
+            !activeFields.includes(column.property) && 'opacity-60',
+          )}
+        >
+          <MeasureInputField
+            aria-label={t('{{measure}}, key {{number}}', {
+              measure: column.label,
+              number: keyNumber,
+            })}
+            defaultValue={keySpec[column.property]}
+            onFocusChange={onFocusChange}
+            onUpdate={onUpdateKeyProperty(column.property)}
+            placeholder={column.label}
+            tabIndex={getTabIndexFor(column.property)}
+          />
+        </td>
+      ))}
+      <td className={computedCellClassName}>
+        {formatWeightValue(balanceWeight, currentLanguage)}
+      </td>
+      <td className={computedCellClassName}>
+        {formatWeightValue(frictionWeight, currentLanguage)}
+      </td>
+    </tr>
   );
 };

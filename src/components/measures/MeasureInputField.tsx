@@ -6,23 +6,34 @@ import { useValidatedNumericInputField } from '@/hooks/use-validated-numeric-inp
 import { cn } from '@/lib/utils';
 
 export interface MeasureInputFieldProps {
+  'aria-label'?: string;
   className?: string;
   defaultValue: OptionalNumber;
+  onFocusChange?: (isFocused: boolean) => void;
   onUpdate: (value: OptionalNumber) => void;
-  validator?: Joi.Schema;
   placeholder?: string;
   tabIndex?: number;
   tooltip?: string | React.ReactNode;
+  validator?: Joi.Schema;
 }
 
+/**
+ * One measured value.
+ *
+ * A field that has been answered is marked by a full-strength rule rather than
+ * a fill: the table is read as a whole, and an answered field should settle
+ * back rather than stand out.
+ */
 export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
+  'aria-label': ariaLabel,
   className,
   defaultValue,
-  placeholder,
-  validator,
+  onFocusChange,
   onUpdate,
+  placeholder,
   tabIndex,
   tooltip: tooltipContent,
+  validator,
 }) => {
   const { error, inputValue, onInputChange } = useValidatedNumericInputField(
     defaultValue,
@@ -32,15 +43,16 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   const shouldShowErrorState = !!error && isFocused;
-  const shouldShowSuccessState = !error && !['', '-'].includes(inputValue);
+  const shouldShowFilledState = !error && !['', '-'].includes(inputValue);
 
   const inputClassName = cn(
-    'w-15 p-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary',
-    className,
+    'h-8 w-16 rounded-md border border-input bg-card px-2 text-center font-mono text-sm text-foreground outline-none transition-colors',
+    'placeholder:text-ptl-ink-3',
+    'focus-visible:border-ptl-current focus-visible:ring-2 focus-visible:ring-ptl-current/40',
+    shouldShowFilledState && 'border-ptl-rule-strong',
     shouldShowErrorState &&
-      'ring-1 ring-red-500 focus:ring-red-500 bg-red-100 text-red-900',
-    shouldShowSuccessState &&
-      'bg-gray-100 ring-1 ring-gray-500 focus:ring-gray-500',
+      'border-destructive bg-destructive/10 text-destructive',
+    className,
   );
 
   return (
@@ -48,12 +60,17 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
       <TooltipTrigger asChild>
         <input
           type="text"
+          aria-label={ariaLabel}
           placeholder={placeholder}
           value={inputValue ?? undefined}
           onChange={onInputChange}
-          onFocus={() => setIsFocused(true)}
+          onFocus={() => {
+            setIsFocused(true);
+            onFocusChange?.(true);
+          }}
           onBlur={(e) => {
             setIsFocused(false);
+            onFocusChange?.(false);
             onInputChange(e);
           }}
           tabIndex={tabIndex}

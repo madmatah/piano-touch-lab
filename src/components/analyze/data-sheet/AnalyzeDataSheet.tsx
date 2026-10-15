@@ -1,49 +1,118 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { useTranslation } from '@/hooks/use-translation';
-import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
-import { AnalyzeDataSheetTableRow } from './AnalyzeDataSheetTableRow';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
+import { KeyColor } from '@/lib/piano/keyboard';
+import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
+import { AnalyzeDataSheetTableRow } from './AnalyzeDataSheetTableRow';
+
+/**
+ * Every value of the instrument, key by key.
+ *
+ * The columns are grouped under two banners — what was measured and what the
+ * tool worked out from it — because that distinction is the whole point of
+ * the sheet: a reader checking a surprising figure needs to know at once
+ * whether to doubt their gauge or their arithmetic.
+ */
 export const AnalyzeDataSheet: React.FC<{
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
 }> = ({ analyzedKeyboard }) => {
-  const { t } = useTranslation();
+  const { currentLanguage, t } = useTranslation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
 
+  const measuredColumns = [
+    { abbreviation: 'D', name: t('Down weight') },
+    { abbreviation: 'U', name: t('Up weight') },
+    { abbreviation: 'FW', name: t('Front weight') },
+    { abbreviation: 'SW', name: t('Strike weight') },
+  ];
+  const computedColumns = [
+    { abbreviation: 'BW', name: t('Balance') },
+    { abbreviation: 'F', name: t('Friction') },
+    { abbreviation: 'R', name: t('Ratio') },
+    ...(useSupportSpringMeasurements
+      ? [{ abbreviation: 'BWS', name: t('Springs') }]
+      : []),
+  ];
+
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[5em]">Note</TableHead>
-            <TableHead className="w-[10em]">{t('D')}</TableHead>
-            <TableHead className="w-[10em]">{t('BW')}</TableHead>
-            <TableHead className="w-[10em]">{t('U')}</TableHead>
-            <TableHead className="w-[10em]">{t('F')}</TableHead>
-            <TableHead className="w-[10em]">{t('FW')}</TableHead>
-            <TableHead className="w-[10em]">{t('SW')}</TableHead>
-            <TableHead className="w-[9em]">{t('R')}</TableHead>
-            {useSupportSpringMeasurements && (
-              <TableHead className="w-[10em]">{t('BWS')}</TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {analyzedKeyboard.mapToArray((key) => (
-            <AnalyzeDataSheetTableRow
-              key={key.number}
-              item={key}
-              shouldUseSupportSpringMeasurements={useSupportSpringMeasurements}
-            />
-          ))}
-        </TableBody>
-      </Table>
+    <div className="overflow-hidden rounded-md border border-ptl-rule-strong bg-card">
+      <div className="max-h-[70vh] overflow-auto">
+        <table className="w-full border-collapse text-[13px]">
+          <thead className="sticky top-0 z-10 bg-card">
+            <tr>
+              <th className="border-b border-border bg-card" colSpan={2} />
+              <th
+                colSpan={measuredColumns.length}
+                scope="colgroup"
+                className="ptl-label border-b border-border bg-ptl-brass-soft px-2 py-2 text-left text-foreground"
+              >
+                {t('Measured')}
+              </th>
+              <th
+                colSpan={computedColumns.length}
+                scope="colgroup"
+                className="ptl-label border-b border-border px-2 py-2 text-left"
+              >
+                {t('Computed')}
+              </th>
+            </tr>
+            <tr className="border-b border-ptl-rule-strong">
+              <th
+                scope="col"
+                className="px-2 pt-2.5 pb-2 text-left align-bottom font-mono text-[11px] text-ptl-ink-3"
+              >
+                {t('No.')}
+              </th>
+              <th
+                scope="col"
+                className="px-2 pt-2.5 pb-2 text-left align-bottom font-mono text-[11px] text-ptl-ink-3"
+              >
+                {t('Note')}
+              </th>
+              {[...measuredColumns, ...computedColumns].map((column) => (
+                <th
+                  key={column.abbreviation}
+                  scope="col"
+                  className="px-2 pt-2.5 pb-2 text-right align-bottom"
+                >
+                  <span className="block font-mono text-[12px] font-semibold text-ptl-brass">
+                    {column.abbreviation}
+                  </span>
+                  <span className="block text-[11px] font-normal text-ptl-ink-3">
+                    {column.name}
+                  </span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {analyzedKeyboard.mapToArray((key) => (
+              <AnalyzeDataSheetTableRow
+                key={key.number}
+                isBlackKey={key.color === KeyColor.Black}
+                item={key}
+                locale={currentLanguage}
+                shouldUseSupportSpringMeasurements={
+                  useSupportSpringMeasurements
+                }
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-t border-border px-3 py-2.5 font-mono text-[12px] text-muted-foreground">
+        <span>
+          {t('{{count}} keys', {
+            count: analyzedKeyboard.size,
+            ns: 'navigation',
+          })}
+          {' · '}
+          {t('the header stays visible while scrolling')}
+        </span>
+        <span>
+          BW = (D + U) / 2 · F = (D − U) / 2 · R = (FW + BW − WBW) / SW
+        </span>
+      </div>
     </div>
   );
 };

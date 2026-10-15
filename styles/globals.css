@@ -39,7 +39,7 @@
   --destructive-foreground: #f7f4ed;
   --border: #dad3c5;
   --input: #b3a994;
-  --ring: #8c6a2c;
+  --ring: #826329;
 
   --sidebar: #f0ece3;
   --sidebar-foreground: #1a1612;
@@ -48,12 +48,18 @@
   --sidebar-accent: rgb(201 163 95 / 16%);
   --sidebar-accent-foreground: #1a1612;
   --sidebar-border: #dad3c5;
-  --sidebar-ring: #8c6a2c;
+  --sidebar-ring: #826329;
 
   /* Ink, rules and brass: the tones shadcn has no name for. */
   --ptl-ink-3: #6b6357;
   --ptl-rule-strong: #1a1612;
-  --ptl-brass: #8c6a2c;
+  /*
+   * A shade darker than the #8c6a2c of the design canvas. At the canvas value
+   * the brass reads 4.4:1 on paper and 4.2:1 on the sidebar, just under the
+   * 4.5:1 the design's own rules ask for, and it carries small text: step
+   * numbers, breadcrumbs, inline links. The hue is unchanged.
+   */
+  --ptl-brass: #826329;
   --ptl-brass-soft: rgb(201 163 95 / 16%);
   --ptl-current: #b5432f;
   --ptl-ok: #3f7d4e;
@@ -78,6 +84,38 @@
   --ptl-series-friction: #857c6e;
   --ptl-series-target: #8c6a2c;
   --ptl-series-standard: #b3a994;
+  --ptl-series-standard-soft: #d3caba;
+  --ptl-series-ghost: #b9af9e;
+  --ptl-series-target-area: #b07f2529;
+
+  /*
+   * Chart tones read from JavaScript. They carry their alpha in the eight-digit
+   * hex form: zrender parses colours by hand and does not understand the modern
+   * `rgb(... / ...)` syntax used elsewhere in this file.
+   */
+  --ptl-chart-grid: #e6e0d4;
+  --ptl-chart-grid-soft: #efeae0;
+  --ptl-chart-range: #cbc2b0;
+  --ptl-zone-high: #9e2f241f;
+  --ptl-zone-medium: #1a16120d;
+  --ptl-zone-low: #b07f2526;
+
+  /* The dark reading panel beside a chart — dark in both themes. */
+  --ptl-reading: #1a1612;
+  --ptl-reading-foreground: #f4f1ea;
+  --ptl-reading-muted: #b9b0a0;
+  --ptl-reading-rule: #3a332c;
+  --ptl-reading-border: #2e2822;
+  --ptl-reading-accent: #d9b46e;
+
+  /* Veil over a chart with nothing to show yet. */
+  --ptl-veil: rgb(251 249 244 / 86%);
+
+  /* Adjustment pills: weight to add, weight to take off. */
+  --ptl-delta-plus: #b07f2529;
+  --ptl-delta-plus-foreground: #6e5220;
+  --ptl-delta-minus: #9e2f241a;
+  --ptl-delta-minus-foreground: #8a2a20;
 }
 
 .dark {
@@ -135,6 +173,30 @@
   --ptl-series-friction: #8c8273;
   --ptl-series-target: #c9a35f;
   --ptl-series-standard: #6a5b45;
+  --ptl-series-standard-soft: #3a322b;
+  --ptl-series-ghost: #5a5046;
+  --ptl-series-target-area: #c9a35f29;
+
+  --ptl-chart-grid: #2a241f;
+  --ptl-chart-grid-soft: #211c18;
+  --ptl-chart-range: #4a4038;
+  --ptl-zone-high: #d2604b2e;
+  --ptl-zone-medium: #eee6d50d;
+  --ptl-zone-low: #c9a35f1a;
+
+  --ptl-reading: #1a1613;
+  --ptl-reading-foreground: #eee6d5;
+  --ptl-reading-muted: #a89d8a;
+  --ptl-reading-rule: #2e2722;
+  --ptl-reading-border: #7a6648;
+  --ptl-reading-accent: #d9b46e;
+
+  --ptl-veil: rgb(26 22 19 / 86%);
+
+  --ptl-delta-plus: #c9a35f29;
+  --ptl-delta-plus-foreground: #e2c68e;
+  --ptl-delta-minus: #d2604b29;
+  --ptl-delta-minus-foreground: #e99a88;
 }
 
 @theme inline {
@@ -159,7 +221,14 @@
   --color-primary: var(--primary);
   --color-ptl-brass-soft: var(--ptl-brass-soft);
   --color-ptl-brass: var(--ptl-brass);
+  --color-ptl-chart-grid-soft: var(--ptl-chart-grid-soft);
+  --color-ptl-chart-grid: var(--ptl-chart-grid);
+  --color-ptl-chart-range: var(--ptl-chart-range);
   --color-ptl-current: var(--ptl-current);
+  --color-ptl-delta-minus-foreground: var(--ptl-delta-minus-foreground);
+  --color-ptl-delta-minus: var(--ptl-delta-minus);
+  --color-ptl-delta-plus-foreground: var(--ptl-delta-plus-foreground);
+  --color-ptl-delta-plus: var(--ptl-delta-plus);
   --color-ptl-ink-3: var(--ptl-ink-3);
   --color-ptl-key-black-done: var(--ptl-key-black-done);
   --color-ptl-key-black: var(--ptl-key-black);
@@ -170,13 +239,26 @@
   --color-ptl-felt: var(--ptl-felt);
   --color-ptl-ok: var(--ptl-ok);
   --color-ptl-overlay: var(--ptl-overlay);
+  --color-ptl-reading-accent: var(--ptl-reading-accent);
+  --color-ptl-reading-border: var(--ptl-reading-border);
+  --color-ptl-reading-foreground: var(--ptl-reading-foreground);
+  --color-ptl-reading-muted: var(--ptl-reading-muted);
+  --color-ptl-reading-rule: var(--ptl-reading-rule);
+  --color-ptl-reading: var(--ptl-reading);
   --color-ptl-rule-strong: var(--ptl-rule-strong);
   --color-ptl-series-balance: var(--ptl-series-balance);
   --color-ptl-series-down: var(--ptl-series-down);
   --color-ptl-series-friction: var(--ptl-series-friction);
+  --color-ptl-series-ghost: var(--ptl-series-ghost);
+  --color-ptl-series-standard-soft: var(--ptl-series-standard-soft);
   --color-ptl-series-standard: var(--ptl-series-standard);
+  --color-ptl-series-target-area: var(--ptl-series-target-area);
   --color-ptl-series-target: var(--ptl-series-target);
   --color-ptl-series-up: var(--ptl-series-up);
+  --color-ptl-veil: var(--ptl-veil);
+  --color-ptl-zone-high: var(--ptl-zone-high);
+  --color-ptl-zone-low: var(--ptl-zone-low);
+  --color-ptl-zone-medium: var(--ptl-zone-medium);
   --color-ptl-warn-border: var(--ptl-warn-border);
   --color-ptl-warn-foreground: var(--ptl-warn-foreground);
   --color-ptl-warn: var(--ptl-warn);
@@ -337,7 +419,7 @@
   [data-slot='sidebar-gap'],
   [data-slot='page-header'],
   [data-slot='demo-banner'],
-  [data-slot='toaster'] {
+  [data-sonner-toaster] {
     display: none !important;
   }
 

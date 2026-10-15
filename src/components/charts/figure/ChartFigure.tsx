@@ -1,0 +1,124 @@
+import { CHART_HEIGHTS, MIN_PLOT_WIDTH, PLOT_INSET } from '../chart-geometry';
+import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import { cn } from '@/lib/utils';
+
+export interface ChartFigureProps {
+  /** Reading of the figure, under a rule at its foot. */
+  caption?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  /** Legend and toggles, above a rule at its head. */
+  header?: React.ReactNode;
+  /** Geometry of the keyboard axis, used to place the hover band. */
+  geometry?: KeyboardGeometry;
+  /** The key being read, marked by a brass band across the plot. */
+  highlightedKey?: number | null;
+  /** The drawn keyboard that serves as the x axis. */
+  keyboard?: React.ReactNode;
+  /** Arrow keys move the reading along the keyboard. */
+  onKeyDown?: React.KeyboardEventHandler;
+  tabIndex?: number;
+  variant?: 'analyze' | 'design';
+}
+
+/**
+ * The frame every chart sits in: a header carrying its legend, the plot with
+ * its keyboard axis, and a reading underneath.
+ */
+export const ChartFigure = ({
+  caption,
+  children,
+  className,
+  geometry,
+  header,
+  highlightedKey,
+  keyboard,
+  onKeyDown,
+  tabIndex,
+  variant = 'analyze',
+}: ChartFigureProps) => {
+  const isAnalyze = variant === 'analyze';
+
+  return (
+    <figure
+      onKeyDown={onKeyDown}
+      tabIndex={tabIndex}
+      className={cn(
+        'm-0 min-w-0 rounded-md border border-ptl-rule-strong bg-card',
+        'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+        isAnalyze ? 'flex-[999_1_560px]' : 'flex-[999_1_480px]',
+        className,
+      )}
+    >
+      {header ? (
+        <div
+          className={cn(
+            'flex flex-wrap items-center gap-y-2.5 border-b border-border px-[18px] py-3.5',
+            isAnalyze ? 'gap-x-[22px]' : 'gap-x-[18px]',
+          )}
+        >
+          {header}
+        </div>
+      ) : null}
+      <div
+        className={cn(
+          'overflow-x-auto pb-1.5',
+          isAnalyze ? 'px-3 pt-4' : 'px-2.5 pt-3.5',
+        )}
+      >
+        <div
+          className="relative"
+          style={{
+            minWidth: isAnalyze
+              ? MIN_PLOT_WIDTH.analyze
+              : MIN_PLOT_WIDTH.design,
+          }}
+        >
+          {geometry && highlightedKey ? (
+            <HoverBand geometry={geometry} keyNumber={highlightedKey} />
+          ) : null}
+          <div className="relative z-10">{children}</div>
+          {keyboard}
+        </div>
+      </div>
+      {caption}
+    </figure>
+  );
+};
+
+/**
+ * The brass column behind the key being read.
+ *
+ * It is laid out from the same coordinates as the keyboard below, so it lines
+ * up with the key whatever the width of the figure. It sits behind the plot:
+ * a 16 % brass wash over the measurement dots would tint them.
+ */
+const HoverBand = ({
+  geometry,
+  keyNumber,
+}: {
+  geometry: KeyboardGeometry;
+  keyNumber: number;
+}) => {
+  const placed = geometry.keysByNumber.get(keyNumber);
+  if (!placed || geometry.width === 0) {
+    return null;
+  }
+
+  const unit = geometry.width / geometry.whiteKeys.length;
+  const start = (placed.center - unit / 2) / geometry.width;
+  const width = unit / geometry.width;
+  const insets = `(100% - ${PLOT_INSET.left + PLOT_INSET.right}px)`;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute top-0 z-0 bg-ptl-brass-soft"
+      style={{
+        bottom: CHART_HEIGHTS.keyboard + CHART_HEIGHTS.octaveLabels,
+        left: `calc(${PLOT_INSET.left}px + ${start} * ${insets})`,
+        width: `calc(${width} * ${insets})`,
+      }}
+    />
+  );
+};

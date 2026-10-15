@@ -3,6 +3,7 @@ import { Trans } from 'react-i18next';
 
 import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
+import { DesignStepsBar } from '@/components/design/steps/DesignStepsBar';
 import { PrintButton } from '../../layout/PrintButton';
 import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '../../../hooks/keyboard/use-designed-keyboard';
@@ -19,6 +20,7 @@ export const DesignAdjustmentSheetPage = () => {
 
   return (
     <MainLayout>
+      <DesignStepsBar currentStepId="sheet" />
       <PageHeading
         eyebrow={t('Design · result')}
         title={

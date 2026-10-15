@@ -1,54 +1,61 @@
-import { TableCell, TableRow } from '@/components/ui/table';
-import type { KeyAdjustmentPayload } from './AdjustmentSheet.types';
 import type { KeyWith } from '@/lib/piano/keyboard';
-import { AdjustmentSheetTableCell } from './AdjustmentSheetTableCell';
+
+import type { KeyAdjustmentPayload } from './AdjustmentSheet.types';
+import { AdjustmentValue } from './AdjustmentValue';
 
 export interface AdjustmentSheetTableRowProps {
-  item: KeyWith<KeyAdjustmentPayload | null>;
   hasWippenAssistSpringDesign: boolean;
+  isBlackKey: boolean;
+  item: KeyWith<KeyAdjustmentPayload | null>;
 }
+
+const cellClassName =
+  'h-[42px] border-b border-border px-3 align-middle font-mono text-sm';
+
+const Adjustment = ({
+  actualValue,
+  targetValue,
+}: {
+  actualValue: number | null;
+  targetValue: number | null;
+}) => (
+  <td className={cellClassName}>
+    <div className="flex items-center gap-2">
+      <AdjustmentValue actualValue={actualValue} targetValue={targetValue} />
+    </div>
+  </td>
+);
 
 export const AdjustmentSheetTableRow: React.FC<
   AdjustmentSheetTableRowProps
-> = ({ item, hasWippenAssistSpringDesign }) => {
-  return (
-    <TableRow key={item.number} className="even:bg-accent hover:bg-primary/10">
-      <TableCell className="font-medium">#{item.number}</TableCell>
-      <AdjustmentSheetTableCell
-        values={
-          item.payload
-            ? {
-                actualValue: item.payload.actualFrontWeight,
-                targetValue: item.payload.targetFrontWeight,
-                unit: 'g',
-              }
-            : null
-        }
-      />
-      <AdjustmentSheetTableCell
-        values={
-          item.payload
-            ? {
-                actualValue: item.payload.actualStrikeWeight,
-                targetValue: item.payload.targetStrikeWeight,
-                unit: 'g',
-              }
-            : null
-        }
-      />
-      {hasWippenAssistSpringDesign && (
-        <AdjustmentSheetTableCell
-          values={
-            item.payload
-              ? {
-                  actualValue: item.payload.actualSupportSpringBalanceWeight,
-                  targetValue: item.payload.targetSupportSpringBalanceWeight,
-                  unit: 'g',
-                }
-              : null
-          }
-        />
+> = ({ hasWippenAssistSpringDesign, isBlackKey, item }) => (
+  <tr className="even:bg-secondary">
+    <td className={`${cellClassName} text-xs text-ptl-ink-3`}>{item.number}</td>
+    <td className={cellClassName}>
+      {isBlackKey ? (
+        <span className="inline-flex rounded-[3px] bg-ptl-key-black px-1.5 py-px text-[12.5px] text-ptl-key-white">
+          {item.name}
+        </span>
+      ) : (
+        item.name
       )}
-    </TableRow>
-  );
-};
+    </td>
+    <Adjustment
+      actualValue={item.payload?.actualFrontWeight ?? null}
+      targetValue={item.payload?.targetFrontWeight ?? null}
+    />
+    <Adjustment
+      actualValue={item.payload?.actualStrikeWeight ?? null}
+      targetValue={item.payload?.targetStrikeWeight ?? null}
+    />
+    {hasWippenAssistSpringDesign && (
+      <Adjustment
+        actualValue={item.payload?.actualSupportSpringBalanceWeight ?? null}
+        targetValue={item.payload?.targetSupportSpringBalanceWeight ?? null}
+      />
+    )}
+    <td className={`${cellClassName} text-center`}>
+      <span className="inline-block size-[18px] rounded-[3px] border-[1.5px] border-input align-middle" />
+    </td>
+  </tr>
+);

@@ -72,9 +72,13 @@ export const useAppNavigation = (): NavigationStep[] => {
         to: '/analyze/strike-weight-ratio',
       },
       {
-        isHidden: !useSupportSpringMeasurements,
+        // Listed even when the measurement option is off: the page is where
+        // the option is explained, and hiding it would leave its own
+        // "turn the option on" prompt unreachable.
         label: t('Wippen Support Springs', { ns: 'navigation' }),
-        tag: t('Option', { ns: 'navigation' }),
+        tag: useSupportSpringMeasurements
+          ? undefined
+          : t('Option', { ns: 'navigation' }),
         to: '/analyze/wippen-support-springs',
       },
       {

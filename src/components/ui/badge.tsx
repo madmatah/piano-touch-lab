@@ -19,10 +19,10 @@ const badgeVariants = cva(
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         /** The filled monospaced pill: DÉMO beside the piano name. */
         mono:
-          "border-transparent bg-primary text-primary-foreground font-mono text-[10px] tracking-[0.08em] px-[7px] py-0.5",
+          "border-transparent bg-primary text-primary-foreground font-mono text-[10px] tracking-[0.08em] uppercase px-[7px] py-0.5",
         /** The hollow monospaced pill: OPTION beside an optional measurement. */
         monoOutline:
-          "border-input text-ptl-ink-3 font-mono text-[9.5px] tracking-[0.06em] px-1.5 py-px",
+          "border-input text-ptl-ink-3 font-mono text-[9.5px] tracking-[0.06em] uppercase px-1.5 py-px",
       },
     },
     defaultVariants: {

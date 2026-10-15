@@ -10,6 +10,9 @@ import {
 } from './FrontWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { DesignChartSummary } from '../DesignChartSummary';
+import { DesignLayout } from '../DesignLayout';
+import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
 import { AlertCircleIcon, HourglassIcon } from 'lucide-react';
 import { useStrikeWeightDesign } from '@/hooks/store/use-design-store';
 import { FrontWeightChart } from '@/components/charts/FrontWeightChart';
@@ -26,7 +29,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
-  const { t } = useTranslation();
+  const { currentLanguage, t } = useTranslation();
   const {
     frontWeightDesignMode,
     frontWeightDesignTarget,
@@ -53,7 +56,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
 
   const frontWeightCurveLabelFormatter = useCallback(
     (value: number) => {
-      return t('FW #{{value}}', {
+      return t('FW#{{value}}', {
         value,
       });
     },
@@ -62,7 +65,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
 
   const balanceWeightLabelFormatter = useCallback(
     (value: number) => {
-      return t('{{value}}g', {
+      return t('{{value}} g', {
         value,
       });
     },
@@ -103,6 +106,10 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
           'The front weight will be computed automatically in order to achieve the specified balance weight.',
         ),
         disabledReason: computedModeDisabledReason,
+        formula: 'FW = WBW + R × SW − BW − BWS',
+        hint: t(
+          'Uses the springs, the strike weight and the ratio set in steps 1, 3 and 4.',
+        ),
         isDisabled: shouldDisableComputedMode,
         label: t('Compute automatically'),
         options: {
@@ -117,7 +124,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
       },
       {
         description: t(
-          'Choose a target from the standard front weight curves.',
+          'Pick a target among the standard front weight curves, from FW#1 to FW#12.',
         ),
         label: t('Use standard curves'),
         options: {
@@ -150,46 +157,104 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     );
   }, [frontWeightDesignMode, targetSerie]);
 
+  const summaryEntries = useMemo(() => {
+    const points = (targetSerie?.data ?? []).filter(
+      (point) => point.payload !== undefined && point.payload !== null,
+    );
+    if (points.length === 0) {
+      return [];
+    }
+    const first = points[0]!;
+    const last = points[points.length - 1]!;
+    const differences = points
+      .map((point) => {
+        const measured = analyzedKeyboard.getKeyByNumber(point.number)?.payload
+          .frontWeight;
+        return measured === null || measured === undefined
+          ? null
+          : point.payload! - measured;
+      })
+      .filter((value): value is number => value !== null);
+
+    return [
+      {
+        label: t('Target'),
+        value: t('from {{from}} ({{fromNote}}) to {{to}} ({{toNote}})', {
+          from: formatGrams(first.payload ?? null, currentLanguage),
+          fromNote: first.name,
+          to: formatGrams(last.payload ?? null, currentLanguage),
+          toNote: last.name,
+        }),
+      },
+      ...(differences.length === 0
+        ? []
+        : [
+            {
+              label: t('Difference with the measured values'),
+              value: t('{{weight}} on average', {
+                weight: formatSignedGrams(
+                  differences.reduce((total, value) => total + value, 0) /
+                    differences.length,
+                  currentLanguage,
+                ),
+              }),
+            },
+          ]),
+    ];
+  }, [analyzedKeyboard, currentLanguage, t, targetSerie]);
+
   return !hasEnoughInputData ? (
-    <Alert variant="default" className="w-full my-10">
+    <Alert variant="default" className="my-10 w-full">
       <AlertCircleIcon />
       <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
       <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
     </Alert>
   ) : (
-    <div>
-      <div className="flex flex-col gap-1">
-        <div className="w-full max-w-[1000px]">
-          <TargetSelector
-            title={t('Choose a target from the standard front weight curves.')}
-            modes={targetSelectorModes}
-            selectedMode={frontWeightDesignMode}
-            selectedTarget={frontWeightDesignTarget}
-            onModeChange={onModeChange}
-            onTargetChange={onTargetChange}
+    <DesignLayout
+      objective={
+        <TargetSelector
+          title={t('Target')}
+          modes={targetSelectorModes}
+          selectedMode={frontWeightDesignMode}
+          selectedTarget={frontWeightDesignTarget}
+          onModeChange={onModeChange}
+          onTargetChange={onTargetChange}
+        />
+      }
+      chart={
+        shouldDisplayComputeModeWaitingMessage ? (
+          <Alert variant="default" className="flex-[999_1_480px]">
+            <HourglassIcon />
+            <AlertTitle>
+              {t('Waiting for remaining design targets to be specified.')}
+            </AlertTitle>
+            <AlertDescription>
+              {t(
+                'The front weight will be computed when all other design targets will be specified.',
+              )}
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <FrontWeightChart
+            variant="design"
+            keyboard={analyzedKeyboard}
+            targetSerie={targetSerie ?? undefined}
+            extraLegendItems={
+              targetSerie
+                ? [
+                    {
+                      colorClassName: 'text-ptl-series-target',
+                      id: 'target',
+                      label: t('Target'),
+                      mark: 'line-thick' as const,
+                    },
+                  ]
+                : undefined
+            }
+            caption={<DesignChartSummary entries={summaryEntries} />}
           />
-        </div>
-        <div className="w-full 2xl:max-w-[--breakpoint-2xl] 3xl:max-w-[100rem]">
-          {shouldDisplayComputeModeWaitingMessage ? (
-            <Alert variant="default" className="w-full my-10">
-              <HourglassIcon />
-              <AlertTitle>
-                {t('Waiting for remaining design targets to be specified.')}
-              </AlertTitle>
-              <AlertDescription>
-                {t(
-                  'The front weight will be computed when all other design targets will be specified.',
-                )}
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <FrontWeightChart
-              keyboard={analyzedKeyboard}
-              targetSerie={targetSerie ?? undefined}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+        )
+      }
+    />
   );
 };

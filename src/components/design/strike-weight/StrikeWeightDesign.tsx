@@ -15,6 +15,12 @@ import {
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon, HourglassIcon } from 'lucide-react';
+import { DesignChartSummary } from '../DesignChartSummary';
+import { DesignLayout } from '../DesignLayout';
+import {
+  formatGrams,
+  formatSignedWeightValue,
+} from '@/lib/format/format-weight';
 import { useFrontWeightDesign } from '@/hooks/store/use-design-store';
 import { useStrikeWeightTargetSelector } from './hooks/use-strike-weight-target-selector';
 import { useStrikeWeightRecommendation } from './hooks/use-strike-weight-recommendation';
@@ -35,7 +41,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
-  const { t } = useTranslation();
+  const { currentLanguage, t } = useTranslation();
   const {
     strikeWeightDesignMode,
     strikeWeightDesignTarget,
@@ -54,7 +60,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   const { frontWeightDesignMode } = useFrontWeightDesign();
   const balanceWeightLabelFormatter = useCallback(
     (value: number) => {
-      return t('{{value}}g', {
+      return t('{{value}} g', {
         value,
       });
     },
@@ -94,100 +100,177 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   const targetSelectorModes: TargetSelectorMode<
     StrikeWeightDesignMode,
     StrikeWeightDesignTarget
-  >[] = [
-    {
-      description: t('Use strike weight measured values'),
-      label: t('Keep the strike weight as is.'),
-      options: {
-        selectorUi: TargetSelectorUi.UniqueTargetSelector,
-        target: null,
+  >[] = useMemo(
+    () => [
+      {
+        description: t('Use strike weight measured values'),
+        label: t('Keep the strike weight as is.'),
+        options: {
+          selectorUi: TargetSelectorUi.UniqueTargetSelector,
+          target: null,
+        },
+        value: StrikeWeightDesignMode.AsMeasured,
       },
-      value: StrikeWeightDesignMode.AsMeasured,
-    },
-    {
-      description: t(
-        'The strike weight will be computed automatically in order to achieve the specified balance weight.',
-      ),
-      disabledReason: computedModeDisabledReason,
-      isDisabled: shouldDisableComputedMode,
-      label: t('Compute automatically'),
-      options: {
-        labelFormatter: balanceWeightLabelFormatter,
-        maxValue: 60,
-        minValue: 30,
-        placeholder: t('Target Balance Weight'),
-        selectorUi: TargetSelectorUi.NumericSelector,
-        step: 1,
+      {
+        description: t(
+          'The strike weight will be computed automatically in order to achieve the specified balance weight.',
+        ),
+        disabledReason: computedModeDisabledReason,
+        // The mirror of the front weight formula: the same balance, solved for
+        // the hammer instead of the key front.
+        formula: 'SW = (BW + FW + BWS − WBW) / R',
+        hint: t(
+          'Uses the springs, the front weight and the ratio set in steps 1, 2 and 4.',
+        ),
+        isDisabled: shouldDisableComputedMode,
+        label: t('Compute automatically'),
+        options: {
+          labelFormatter: balanceWeightLabelFormatter,
+          maxValue: 60,
+          minValue: 30,
+          placeholder: t('Target Balance Weight'),
+          selectorUi: TargetSelectorUi.NumericSelector,
+          step: 1,
+        },
+        value: StrikeWeightDesignMode.Computed,
       },
-      value: StrikeWeightDesignMode.Computed,
-    },
-    {
-      description: t('Choose a target from the standard strike weight curves.'),
-      label: t('Use standard curves'),
-      options: {
-        placeholder: t('Select your target curve'),
-        selectorUi: TargetSelectorUi.ValueSelector,
-        targets: standardCurveTargets,
+      {
+        description: t(
+          'Choose a target from the standard strike weight curves.',
+        ),
+        label: t('Use standard curves'),
+        options: {
+          placeholder: t('Select your target curve'),
+          selectorUi: TargetSelectorUi.ValueSelector,
+          targets: standardCurveTargets,
+        },
+        value: StrikeWeightDesignMode.StandardCurves,
       },
-      value: StrikeWeightDesignMode.StandardCurves,
-    },
-    {
-      description: t(
-        'Create a custom smoothed curve based on your measured strike weight data.',
-      ),
-      label: t('Generate a smoothed curve'),
-      options: {
-        selectorUi: TargetSelectorUi.UniqueTargetSelector,
-        target: SmoothStrategy.LeastSquaresRegression,
+      {
+        description: t(
+          'Create a custom smoothed curve based on your measured strike weight data.',
+        ),
+        label: t('Generate a smoothed curve'),
+        options: {
+          selectorUi: TargetSelectorUi.UniqueTargetSelector,
+          target: SmoothStrategy.LeastSquaresRegression,
+        },
+        value: StrikeWeightDesignMode.Smoothed,
       },
-      value: StrikeWeightDesignMode.Smoothed,
-    },
-  ];
+    ],
+    [
+      t,
+      shouldDisableComputedMode,
+      computedModeDisabledReason,
+      balanceWeightLabelFormatter,
+    ],
+  );
 
-  if (!hasEnoughData) {
-    return (
-      <Alert variant="default" className="w-full my-10">
-        <AlertCircleIcon />
-        <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
-        <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
-      </Alert>
+  // What the target curve costs in grams: where it starts and ends, and how
+  // far the hammers have to move from what was measured.
+  const summaryEntries = useMemo(() => {
+    const points = (targetSerie?.data ?? []).filter(
+      (point) => point.payload !== undefined && point.payload !== null,
     );
-  }
+    if (points.length === 0) {
+      return [];
+    }
+    const first = points[0]!;
+    const last = points[points.length - 1]!;
+    const differences = points
+      .map((point) => {
+        const measured = analyzedKeyboard.getKeyByNumber(point.number)?.payload
+          .strikeWeight;
+        return measured === null || measured === undefined
+          ? null
+          : point.payload! - measured;
+      })
+      .filter((value): value is number => value !== null);
 
-  return (
-    <div>
-      <div className="flex flex-col gap-1">
-        <div className="w-full max-w-[1000px]">
-          <TargetSelector
-            title={t('Target selection')}
-            modes={targetSelectorModes}
-            selectedMode={strikeWeightDesignMode}
-            selectedTarget={strikeWeightDesignTarget}
-            onModeChange={onModeChange}
-            onTargetChange={onTargetChange}
+    return [
+      {
+        label: t('Target'),
+        value: t('from {{from}} ({{fromNote}}) to {{to}} ({{toNote}})', {
+          from: formatGrams(first.payload ?? null, currentLanguage),
+          fromNote: first.name,
+          to: formatGrams(last.payload ?? null, currentLanguage),
+          toNote: last.name,
+        }),
+      },
+      ...(differences.length === 0
+        ? []
+        : [
+            {
+              label: t('Difference with the measured values'),
+              // A range, not a mean: hammers move by a few tenths either way,
+              // and the two cancel out to a meaningless "+0.0 g on average".
+              value: t('from {{min}} to {{max}} g', {
+                max: formatSignedWeightValue(
+                  Math.max(...differences),
+                  currentLanguage,
+                ),
+                min: formatSignedWeightValue(
+                  Math.min(...differences),
+                  currentLanguage,
+                ),
+              }),
+            },
+          ]),
+    ];
+  }, [analyzedKeyboard, currentLanguage, t, targetSerie]);
+
+  return !hasEnoughData ? (
+    <Alert variant="default" className="my-10 w-full">
+      <AlertCircleIcon />
+      <AlertTitle>{notEnoughDataErrorTitle}</AlertTitle>
+      <AlertDescription>{notEnoughDataErrorDescription}</AlertDescription>
+    </Alert>
+  ) : (
+    <DesignLayout
+      objective={
+        <TargetSelector
+          title={t('Target')}
+          modes={targetSelectorModes}
+          selectedMode={strikeWeightDesignMode}
+          selectedTarget={strikeWeightDesignTarget}
+          onModeChange={onModeChange}
+          onTargetChange={onTargetChange}
+        />
+      }
+      chart={
+        shouldDisplayComputeModeWaitingMessage ? (
+          <Alert variant="default" className="flex-[999_1_480px]">
+            <HourglassIcon />
+            <AlertTitle>
+              {t('Waiting for remaining design targets to be specified.')}
+            </AlertTitle>
+            <AlertDescription>
+              {t(
+                'The strike weight will be computed when all other design targets will be specified.',
+              )}
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <StrikeWeightChart
+            variant="design"
+            keyboard={analyzedKeyboard}
+            targetSerie={targetSerie ?? undefined}
+            extraLegendItems={
+              targetSerie
+                ? [
+                    {
+                      colorClassName: 'text-ptl-series-target',
+                      id: 'target',
+                      label: t('Target'),
+                      mark: 'line-thick' as const,
+                    },
+                  ]
+                : undefined
+            }
+            caption={<DesignChartSummary entries={summaryEntries} />}
           />
-        </div>
-        <div className="w-full 2xl:max-w-[--breakpoint-2xl] 3xl:max-w-[100rem]">
-          {shouldDisplayComputeModeWaitingMessage ? (
-            <Alert variant="default" className="w-full my-10">
-              <HourglassIcon />
-              <AlertTitle>
-                {t('Waiting for remaining design targets to be specified.')}
-              </AlertTitle>
-              <AlertDescription>
-                {t(
-                  'The strike weight will be computed when all other design targets will be specified.',
-                )}
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <StrikeWeightChart
-              keyboard={analyzedKeyboard}
-              targetSerie={targetSerie ?? undefined}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+        )
+      }
+    />
   );
 };
