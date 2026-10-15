@@ -17,9 +17,15 @@ export interface ChartKeyboardAxisProps {
 /**
  * The keyboard standing in for the x axis.
  *
- * It is inset by exactly the margins of the plot above it, so the key under a
- * measurement is the key it was taken on.
+ * It is inset by exactly the margins of the plot above it, and the plot is
+ * ruled by the balance rail, where every key gets the same slot. A reading
+ * therefore sits above the back of its own key, and the wood of the key fans
+ * out from there to the front — which is what a grand does, and why the
+ * sticks are drawn here rather than a bare keyboard.
  */
+/** Hoisted: a fresh object would re-cut all 88 keys on every render. */
+const KEYBOARD_GEOMETRY = { leverHeight: 46 };
+
 export const ChartKeyboardAxis = ({
   description,
   highlightedKey,
@@ -48,6 +54,7 @@ export const ChartKeyboardAxis = ({
       }}
     >
       <PianoKeyboard
+        geometry={KEYBOARD_GEOMETRY}
         keys={keys}
         description={description}
         highlightedKey={highlightedKey}

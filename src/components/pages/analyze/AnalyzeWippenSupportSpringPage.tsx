@@ -112,7 +112,7 @@ export const AnalyzeWippenSupportSpringPage = () => {
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             {t(
-              'The weight each spring takes off the measuring point, placed above its own key. Only the keys fitted with a spring carry a measurement.',
+              'The weight each spring takes off the measuring point, placed above the back of its own key. Only the keys fitted with a spring carry a measurement.',
             )}
           </FigureCaption>
         }

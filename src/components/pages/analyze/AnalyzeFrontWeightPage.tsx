@@ -110,7 +110,7 @@ export const AnalyzeFrontWeightPage = () => {
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             {t(
-              'The measured front weight of each key, placed above its own key. The FW#5 to FW#9 curves are there as landmarks.',
+              'The measured front weight of each key, placed above the back of its own key. The FW#5 to FW#9 curves are there as landmarks.',
             )}
           </FigureCaption>
         }

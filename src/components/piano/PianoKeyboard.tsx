@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import {
   computeKeyboardGeometry,
+  findKeyAtBackPosition,
   findKeyAtPosition,
   type KeyboardGeometryOptions,
 } from '@/lib/piano/keyboard/keyboard-geometry';
@@ -88,6 +89,13 @@ export const PianoKeyboard = ({
           .filter((key) => toneOf(key.number) === 'current')
           .map((key) => key.path),
       ),
+      // The stick of the key being read is cut out of the board in the wash
+      // of the reading band above it, so the two make one column from the
+      // plot down to the key.
+      readLever:
+        highlightedKey === null || highlightedKey === undefined
+          ? ''
+          : (geometry.keysByNumber.get(highlightedKey)?.leverPath ?? ''),
       whiteMarked: pick(geometry.whiteKeys, 'marked'),
       whites: joinPaths(geometry.whiteKeys.map((key) => key.path)),
     };
@@ -95,18 +103,26 @@ export const PianoKeyboard = ({
 
   const keybedHeight = geometry.height + KEYBED_OVERHANG;
 
-  /** Turns a pointer position over the drawing into a key number. */
+  /**
+   * Turns a pointer position over the drawing into a key number.
+   *
+   * Over the key sticks the keys are evenly spaced, over the keys they are
+   * not, so the pointer is read against whichever of the two it is on —
+   * otherwise pointing at a stick would light the key beside it.
+   */
   const keyAtEvent = useCallback(
     (event: React.MouseEvent<SVGSVGElement>) => {
       const bounds = event.currentTarget.getBoundingClientRect();
-      if (bounds.width === 0) {
+      if (bounds.width === 0 || bounds.height === 0) {
         return null;
       }
-      const position =
-        ((event.clientX - bounds.left) / bounds.width) * geometry.width;
-      return findKeyAtPosition(geometry, position);
+      const x = ((event.clientX - bounds.left) / bounds.width) * geometry.width;
+      const y = ((event.clientY - bounds.top) / bounds.height) * keybedHeight;
+      return y < geometry.leverHeight
+        ? findKeyAtBackPosition(geometry, x)
+        : findKeyAtPosition(geometry, x);
     },
-    [geometry],
+    [geometry, keybedHeight],
   );
 
   const handleMouseMove = useCallback(
@@ -165,9 +181,27 @@ export const PianoKeyboard = ({
           rx="3"
           className="fill-ptl-keybed"
         />
+        {/*
+         * The sticks are left as one unbroken board: eighty-seven saw
+         * lines across the back of the figure drowned out the plot above
+         * them. Only the key being read is cut out of it, which is enough
+         * to show where the wood goes.
+         */}
+        {geometry.leverHeight > 0 && (
+          <rect
+            x="0"
+            y="0"
+            width={geometry.width}
+            height={geometry.leverHeight}
+            className="fill-ptl-key-white"
+          />
+        )}
+        {paths.readLever && (
+          <path d={paths.readLever} className="fill-ptl-brass-soft" />
+        )}
         <rect
           x="0"
-          y="0"
+          y={geometry.leverHeight}
           width={geometry.width}
           height={geometry.feltHeight}
           className="fill-ptl-felt"

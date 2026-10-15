@@ -272,7 +272,7 @@ export const StrikeWeightRatioChart = <T,>({
         const from = targetSerie
           ? serieValueAt(targetSerie, point.number)
           : stats.median;
-        const x = geometry.keysByNumber.get(point.number)?.center;
+        const x = geometry.keysByNumber.get(point.number)?.backCenter;
         if (from === null || point.payload === undefined || x === undefined) {
           return [];
         }

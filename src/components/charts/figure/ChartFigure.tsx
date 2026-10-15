@@ -89,9 +89,10 @@ export const ChartFigure = ({
 /**
  * The brass column behind the key being read.
  *
- * It is laid out from the same coordinates as the keyboard below, so it lines
- * up with the key whatever the width of the figure. It sits behind the plot:
- * a 16 % brass wash over the measurement dots would tint them.
+ * It covers the key's slot at the balance rail — the same column the plot is
+ * ruled by — so it stands over the back of the key whose stick it lights, at
+ * any width of the figure. It sits behind the plot: a 16 % brass wash over
+ * the measurement dots would tint them.
  */
 const HoverBand = ({
   geometry,
@@ -105,8 +106,8 @@ const HoverBand = ({
     return null;
   }
 
-  const unit = geometry.width / geometry.whiteKeys.length;
-  const start = (placed.center - unit / 2) / geometry.width;
+  const unit = geometry.slotWidth;
+  const start = (placed.backCenter - unit / 2) / geometry.width;
   const width = unit / geometry.width;
   const insets = `(100% - ${PLOT_INSET.left + PLOT_INSET.right}px)`;
 
