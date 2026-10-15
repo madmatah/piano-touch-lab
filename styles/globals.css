@@ -322,6 +322,15 @@
   }
   :root {
     color-scheme: light;
+    /*
+     * Whatever sticks to the top of the page publishes its height here, so
+     * that the browser scrolls a focused field into view below it rather
+     * than behind it: the measuring panel, and the table header under it.
+     * Nothing sticks on most pages, hence the 0.
+     */
+    scroll-padding-top: calc(
+      var(--ptl-sticky-top, 0px) + var(--ptl-sticky-header, 0px) + 12px
+    );
   }
   .dark {
     color-scheme: dark;

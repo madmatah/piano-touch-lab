@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import {
@@ -6,6 +6,7 @@ import {
   type PianoKeyTone,
 } from '@/components/piano/PianoKeyboard';
 import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
+import { useStickyHeight } from '@/hooks/use-sticky-height';
 import {
   useMeasuresStore,
   type MeasuresStore,
@@ -28,7 +29,11 @@ export interface MeasureKeyboardPanelProps {
  * it has got, and which key is being filled.
  *
  * It sticks to the top of the page, because the answer to "where am I?" is
- * needed exactly when the table has scrolled it out of sight.
+ * needed exactly when the table has scrolled it out of sight — and it says
+ * how tall it is, so that a field the focus moves to is scrolled into view
+ * below it rather than behind it. On a phone, or any window under 600 px
+ * tall, it would take a third to a half of the screen, before the on-screen
+ * keyboard takes its share: there it scrolls away with the page instead.
  */
 /** Hoisted: a fresh object here would recompute the whole keyboard. */
 const KEYBOARD_GEOMETRY = { keyHeight: 72 };
@@ -41,6 +46,10 @@ export const MeasureKeyboardPanel = ({
 }: MeasureKeyboardPanelProps) => {
   const { t } = useTranslation();
   const { keyboard } = useKeyboard();
+  const panel = useRef<HTMLElement>(null);
+
+  useStickyHeight(panel, '--ptl-sticky-top');
+
   const measuredKeys = useMeasuresStore()(
     useShallow((state: MeasuresStore) => state.keys),
   );
@@ -103,8 +112,9 @@ export const MeasureKeyboardPanel = ({
 
   return (
     <section
+      ref={panel}
       aria-label={t('Keyboard and measuring pass')}
-      className="sticky top-0 z-10 flex flex-col gap-3 rounded-md border border-ptl-rule-strong bg-card px-4 pt-3.5 pb-3 shadow-[0_14px_28px_-18px_rgb(0_0_0/0.45)]"
+      className="sticky top-0 z-10 flex flex-col gap-3 rounded-md border border-ptl-rule-strong bg-card px-4 pt-3.5 pb-3 shadow-[0_14px_28px_-18px_rgb(0_0_0/0.45)] max-md:static [@media(max-height:600px)]:static"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/*

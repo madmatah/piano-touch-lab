@@ -1,14 +1,13 @@
-import { MessageCircleWarning } from 'lucide-react';
-import { useCallback } from 'react';
+import { MessageCircleWarning, TriangleAlert } from 'lucide-react';
+import { memo, useCallback } from 'react';
 
 import {
   useMeasuredKeyFromStore,
   useMeasureActions,
 } from '@/hooks/store/use-measure-store';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
-import { useKeyTabIndex } from '@/hooks/use-key-tab-index';
 import { useTranslation } from '@/hooks/use-translation';
-import { formatWeightValue } from '@/lib/format/format-weight';
+import { formatRatio, formatWeightValue } from '@/lib/format/format-weight';
 import type {
   MeasuredKeyRequirements,
   OptionalNumber,
@@ -19,6 +18,8 @@ import { useMeasurePasses, type MeasurePassId } from './measure-passes';
 import { MeasureInputField } from './MeasureInputField';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useAnalyzedKey } from '@/hooks/keyboard/use-analyzed-key';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
+import { frictionZoneAt } from '@/components/charts/touch-weight-chart/hooks/use-friction-zones-series';
 import { useKeyMeasurementInconsistency } from './hooks/use-key-measurement-inconsistency';
 
 type MeasuredProperty = keyof Pick<
@@ -35,31 +36,58 @@ export interface KeyMeasurementProps {
   currentPassId: MeasurePassId;
 
   isBlackKey: boolean;
+  /** The key being filled, tinted as the mockup tints it. */
+  isCurrent: boolean;
   keyName: string;
   keyNumber: number;
-  onFocusKey: (keyNumber: number | null) => void;
 }
 
 const cellClassName = 'h-[42px] border-b border-border px-3 align-middle';
+
+const FRICTION_ZONE_DOTS = {
+  high: 'bg-ptl-current',
+  low: 'bg-ptl-brass',
+  medium: 'bg-ptl-ink-3',
+} as const;
+
+const FRICTION_ZONE_LABELS = {
+  high: 'High',
+  low: 'Low',
+  medium: 'Medium',
+} as const;
+
+/*
+ * Below 1280px the table scrolls sideways in its frame, and once it has, the
+ * front weight of which key? The number and the note stay put, on the row's
+ * own background so the fields slide under them.
+ */
+const keyCellClassName = 'max-xl:sticky max-xl:z-[1] max-xl:bg-[inherit]';
 const computedCellClassName = cn(
   cellClassName,
   'text-right font-mono text-sm text-muted-foreground',
 );
 
-/** One key of the measure table: the fields to fill, then what they give. */
-export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
+/**
+ * One key of the measure table: the fields to fill, then what they give.
+ *
+ * Memoised: a Tab moves the focus, and with it the key the panel above
+ * follows, but nothing a row shows — eighty-eight rows of four or six fields
+ * have no business re-rendering for it.
+ */
+export const KeyMeasurement = memo(function KeyMeasurement({
   currentPassId,
   isBlackKey,
+  isCurrent,
   keyName,
   keyNumber,
-  onFocusKey,
-}) => {
+}: KeyMeasurementProps) {
   const keyIndex = keyNumber - 1;
   const keySpec = useMeasuredKeyFromStore(keyIndex);
   const { updateKeyMeasure } = useMeasureActions();
   const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
   const { currentLanguage, t } = useTranslation();
+  const { keyboard } = useKeyboard();
 
   const {
     allowedDifference,
@@ -75,13 +103,6 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       updateKeyMeasure(keyIndex, keyProperty, value);
     },
     [keyIndex, updateKeyMeasure],
-  );
-
-  const onFocusChange = useCallback(
-    (isFocused: boolean) => {
-      onFocusKey(isFocused ? keyNumber : null);
-    },
-    [keyNumber, onFocusKey],
   );
 
   const columns: { label: string; property: MeasuredProperty }[] = [
@@ -102,31 +123,42 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
       : []),
   ];
 
-  const tabGroups: MeasuredProperty[][] = [
-    useSupportSpringMeasurements ? ['downWeightWithSpringSupport'] : [],
-    ['downWeightWithoutSpringSupport', 'upWeight'],
-    ['frontWeight'],
-    ['strikeWeight'],
-    useManualSWRMeasurements ? ['measuredStrikeWeightRatio'] : [],
-  ].filter((group): group is MeasuredProperty[] => group.length > 0);
-
   const passes = useMeasurePasses();
-
-  const { getTabIndexFor } = useKeyTabIndex<MeasuredProperty>(
-    keyIndex,
-    tabGroups,
-  );
 
   const activeFields =
     passes.find((pass) => pass.id === currentPassId)?.fields ?? [];
+
+  const frictionWeight = analyzedKey?.frictionWeight ?? null;
+  const isFrictionNegative = frictionWeight !== null && frictionWeight < 0;
+  // The zone the static balance figure puts the key in, as the mockup marks
+  // it beside the value: a dot by colour, and its name for whoever cannot
+  // tell the colours apart.
+  const frictionZone = frictionZoneAt(frictionWeight, keyNumber, keyboard.size);
 
   if (!keySpec) {
     return null;
   }
 
   return (
-    <tr id={`measure-key-${keyNumber}`} className="even:bg-secondary">
-      <td className={cn(cellClassName, 'font-mono text-xs text-ptl-ink-3')}>
+    <tr
+      id={`measure-key-${keyNumber}`}
+      data-key-number={keyNumber}
+      aria-current={isCurrent ? 'true' : undefined}
+      className={
+        // Solid rather than translucent: the key cells take the row's
+        // background to cover the fields that scroll under them.
+        isCurrent
+          ? 'bg-[color-mix(in_oklab,var(--ptl-current)_7%,var(--card))] dark:bg-[color-mix(in_oklab,var(--ptl-current)_10%,var(--card))]'
+          : 'bg-card even:bg-secondary'
+      }
+    >
+      <td
+        className={cn(
+          cellClassName,
+          keyCellClassName,
+          'font-mono text-xs text-ptl-ink-3 max-xl:left-0',
+        )}
+      >
         <span className="inline-flex items-center gap-1.5">
           {keyNumber}
           {isKeyMeasurementInconsistent && (
@@ -139,9 +171,14 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
                   {t(
                     'The measured SWR is not consistent with the computed SWR ({{computedStrikeWeightRatio}}). The difference is greater than {{difference}}.\nYou should check your measurements to find the source of the inconsistency.\nCheck the SWR chart on analyze page for more details.',
                     {
-                      computedStrikeWeightRatio:
-                        computedStrikeWeightRatio?.toFixed(2) ?? '',
-                      difference: allowedDifference,
+                      computedStrikeWeightRatio: formatRatio(
+                        computedStrikeWeightRatio ?? null,
+                        currentLanguage,
+                      ),
+                      difference: formatRatio(
+                        allowedDifference,
+                        currentLanguage,
+                      ),
                     },
                   )}
                 </p>
@@ -150,7 +187,13 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
           )}
         </span>
       </td>
-      <td className={cn(cellClassName, 'font-mono text-[13px]')}>
+      <td
+        className={cn(
+          cellClassName,
+          keyCellClassName,
+          'font-mono text-[13px] max-xl:left-[52px]',
+        )}
+      >
         {isBlackKey ? (
           <span className="inline-flex rounded-[3px] bg-ptl-key-black px-1.5 py-px text-[12.5px] text-ptl-key-white">
             {keyName}
@@ -173,10 +216,9 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
               number: keyNumber,
             })}
             defaultValue={keySpec[column.property]}
-            onFocusChange={onFocusChange}
+            name={column.property}
             onUpdate={onUpdateKeyProperty(column.property)}
             placeholder={column.label}
-            tabIndex={getTabIndexFor(column.property)}
           />
         </td>
       ))}
@@ -184,11 +226,44 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
         {formatWeightValue(analyzedKey?.balanceWeight ?? null, currentLanguage)}
       </td>
       <td className={computedCellClassName}>
-        {formatWeightValue(
-          analyzedKey?.frictionWeight ?? null,
-          currentLanguage,
+        {/*
+         * A key cannot come up under more weight than it goes down under: a
+         * negative friction is two readings typed the wrong way round, and
+         * it throws the balance weight out with it. Said in the cell rather
+         * than in a tooltip, which no touch screen opens.
+         */}
+        {isFrictionNegative ? (
+          <span
+            title={t('Up weight above down weight: probably swapped')}
+            className="inline-flex items-center gap-1.5 font-semibold text-destructive"
+          >
+            <TriangleAlert aria-hidden="true" className="size-3.5" />
+            {formatWeightValue(frictionWeight, currentLanguage)}
+            <span className="sr-only">
+              {t('Up weight above down weight: probably swapped')}
+            </span>
+          </span>
+        ) : frictionZone ? (
+          <span
+            title={t(FRICTION_ZONE_LABELS[frictionZone])}
+            className="inline-flex items-center gap-2"
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                'size-1.5 rounded-full',
+                FRICTION_ZONE_DOTS[frictionZone],
+              )}
+            />
+            {formatWeightValue(frictionWeight, currentLanguage)}
+            <span className="sr-only">
+              {t(FRICTION_ZONE_LABELS[frictionZone])}
+            </span>
+          </span>
+        ) : (
+          formatWeightValue(frictionWeight, currentLanguage)
         )}
       </td>
     </tr>
   );
-};
+});

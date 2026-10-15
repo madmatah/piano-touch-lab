@@ -9,10 +9,10 @@ export interface MeasureInputFieldProps {
   'aria-label'?: string;
   className?: string;
   defaultValue: OptionalNumber;
-  onFocusChange?: (isFocused: boolean) => void;
+  /** The quantity the field holds: the table finds the next field by it. */
+  name?: string;
   onUpdate: (value: OptionalNumber) => void;
   placeholder?: string;
-  tabIndex?: number;
   tooltip?: string | React.ReactNode;
   validator?: Joi.Schema;
 }
@@ -28,10 +28,9 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   'aria-label': ariaLabel,
   className,
   defaultValue,
-  onFocusChange,
+  name,
   onUpdate,
   placeholder,
-  tabIndex,
   tooltip: tooltipContent,
   validator,
 }) => {
@@ -46,7 +45,8 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
   const shouldShowFilledState = !error && !['', '-'].includes(inputValue);
 
   const inputClassName = cn(
-    'h-8 w-16 rounded-md border border-input bg-card px-2 text-center font-mono text-sm text-foreground outline-none transition-colors',
+    // 16px on a phone: Safari zooms the page into any field set smaller.
+    'h-8 w-16 rounded-md border border-input bg-card px-2 text-center font-mono text-sm text-foreground outline-none transition-colors max-md:text-base',
     'placeholder:text-ptl-ink-3',
     'focus-visible:border-ptl-current focus-visible:ring-2 focus-visible:ring-ptl-current/40',
     shouldShowFilledState && 'border-ptl-rule-strong',
@@ -60,20 +60,22 @@ export const MeasureInputField: React.FC<MeasureInputFieldProps> = ({
       <TooltipTrigger asChild>
         <input
           type="text"
+          // A decimal keypad on a phone, with a key that goes on to the next
+          // field; text rather than number, which would refuse a comma.
+          inputMode="decimal"
+          enterKeyHint="next"
           aria-label={ariaLabel}
+          name={name}
           placeholder={placeholder}
           value={inputValue ?? undefined}
           onChange={onInputChange}
           onFocus={() => {
             setIsFocused(true);
-            onFocusChange?.(true);
           }}
           onBlur={(e) => {
             setIsFocused(false);
-            onFocusChange?.(false);
             onInputChange(e);
           }}
-          tabIndex={tabIndex}
           className={inputClassName}
         />
       </TooltipTrigger>
