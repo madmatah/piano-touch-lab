@@ -18,11 +18,14 @@ export class StrikeWeightCalculator
       wippenBalanceWeight,
     } = key.payload;
 
+    // A front weight or a friction can read 0 g, and that is a reading. A
+    // ratio or a wippen cannot weigh nothing: 0 there is a field left blank,
+    // and the ratio is divided by.
     if (
       frontWeight === null ||
       frontWeight === undefined ||
       !strikeWeightRatio ||
-      !frictionWeight ||
+      frictionWeight === null ||
       !wippenBalanceWeight
     ) {
       return {

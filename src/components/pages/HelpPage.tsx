@@ -176,7 +176,7 @@ export const HelpPage = () => {
         label: t('Strike weight for a target balance weight'),
       },
       {
-        formula: 'BW = SW × R + WBW − FW',
+        formula: 'BW = SW × R + WBW − FW − BWS',
         label: t('Resulting balance weight'),
       },
     ],

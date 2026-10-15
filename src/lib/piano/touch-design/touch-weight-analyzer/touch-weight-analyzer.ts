@@ -97,7 +97,9 @@ export class TouchWeightAnalyzer implements TouchWeightAnalyzerRequirements {
   ): OptionalNumber {
     const { frontWeight, strikeWeight } = keyMeasurements;
 
-    if (!strikeWeight || !frontWeight || !balanceWeight) {
+    // A front weight or a balance weight can read 0 g, and that is a reading.
+    // A hammer cannot weigh nothing — and the strike weight is divided by.
+    if (!strikeWeight || frontWeight === null || balanceWeight === null) {
       return null;
     }
 

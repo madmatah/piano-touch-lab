@@ -1,17 +1,25 @@
 import { ArrowRight } from 'lucide-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
-import { TouchWeightChart } from '../charts/touch-weight-chart/TouchWeightChart';
+import { KeyReadingStrip } from '../analyze/key-reading/KeyReadingStrip';
+import {
+  readingMark,
+  touchWeightReadingRows,
+} from '../analyze/key-reading/touch-weight-reading';
+import {
+  TouchWeightChart,
+  type TouchWeightReadingContext,
+} from '../charts/touch-weight-chart/TouchWeightChart';
 import {
   DESIGN_INCLUDES_SPRING_SUPPORT,
   useTouchWeightPreviewSeries,
 } from './hooks/use-touch-weight-preview-series';
-import type { TouchDesignSerie } from '../charts/interfaces';
+import { serieValueAt, type TouchDesignSerie } from '../charts/interfaces';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
-import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
+import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/bench-adjustment';
 import { formatGrams } from '@/lib/format/format-weight';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
@@ -19,12 +27,31 @@ export interface TouchWeightPreviewProps {
   designedKeyboard: TouchWeightAnalyzedKeyboard;
 }
 
-const averageOf = (serie: TouchDesignSerie): number | null => {
+const isWeight = (value: number | undefined): value is number =>
+  value !== undefined && !Number.isNaN(value);
+
+/**
+ * The keys the design gives a weight to.
+ *
+ * Before and after are averaged over these alone: a key the design cannot
+ * resolve yet — one with no front weight, say — has a "before" but no
+ * "after", and counting it on one side only would compare two pianos.
+ */
+const designedKeysOf = (serie: TouchDesignSerie): ReadonlySet<number> =>
+  new Set(
+    serie.data
+      .filter((point) => isWeight(point.payload))
+      .map((point) => point.number),
+  );
+
+const averageOf = (
+  serie: TouchDesignSerie,
+  keys: ReadonlySet<number>,
+): number | null => {
   const values = serie.data
+    .filter((point) => keys.has(point.number))
     .map((point) => point.payload)
-    .filter(
-      (value): value is number => value !== undefined && !Number.isNaN(value),
-    );
+    .filter(isWeight);
   return values.length === 0
     ? null
     : values.reduce((total, value) => total + value, 0) / values.length;
@@ -85,6 +112,11 @@ export const TouchWeightPreview = ({
     [currentSeries.balance, t],
   );
 
+  const designedKeys = useMemo(
+    () => designedKeysOf(designedSeries.balance),
+    [designedSeries.balance],
+  );
+
   const tiles = useMemo(() => {
     const entries = [
       { current: currentSeries.balance, label: t('Average balance weight') },
@@ -100,8 +132,8 @@ export const TouchWeightPreview = ({
     ];
 
     return entries.map((entry, index) => {
-      const before = averageOf(entry.current);
-      const after = averageOf(designed[index]!);
+      const before = averageOf(entry.current, designedKeys);
+      const after = averageOf(designed[index]!, designedKeys);
       return {
         before: formatGrams(before, currentLanguage),
         isUnchanged:
@@ -112,9 +144,35 @@ export const TouchWeightPreview = ({
         value: formatGrams(after, currentLanguage),
       };
     });
-  }, [currentLanguage, currentSeries, designedSeries, t]);
+  }, [currentLanguage, currentSeries, designedKeys, designedSeries, t]);
 
-  const designedBalance = averageOf(designedSeries.balance);
+  const designedBalance = averageOf(designedSeries.balance, designedKeys);
+
+  // The designed weights of the key under the pointer, and the balance it
+  // has today: the per-key answer the averages above cannot give.
+  const renderReading = useCallback(
+    ({ hoveredKey, series }: TouchWeightReadingContext) => (
+      <KeyReadingStrip
+        reading={{
+          keyNumber: hoveredKey,
+          noteName:
+            designedKeyboard.getKeyByNumber(hoveredKey ?? 0)?.name ?? null,
+          rows: [
+            ...touchWeightReadingRows(series, hoveredKey, currentLanguage),
+            {
+              label: ghostSerie.name,
+              mark: readingMark('diamond-hollow', 'text-ptl-reading-muted'),
+              value: formatGrams(
+                serieValueAt(ghostSerie, hoveredKey),
+                currentLanguage,
+              ),
+            },
+          ],
+        }}
+      />
+    ),
+    [currentLanguage, designedKeyboard, ghostSerie],
+  );
 
   return (
     <div data-slot="page-wide" className="flex flex-col gap-4">
@@ -133,6 +191,7 @@ export const TouchWeightPreview = ({
         variant="design"
         analyzedKeyboard={designedKeyboard}
         ghostSerie={ghostSerie}
+        renderReading={renderReading}
         useSupportSpringMeasurements={DESIGN_INCLUDES_SPRING_SUPPORT}
         caption={
           <figcaption className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border px-[18px] pt-3 pb-4 text-[13px] text-muted-foreground">
@@ -142,7 +201,7 @@ export const TouchWeightPreview = ({
                 {formatGrams(designedBalance, currentLanguage)}
               </span>{' '}
               {t('across the {{count}} keys', {
-                count: designedKeyboard.size,
+                count: designedKeys.size,
               })}
             </span>
             <Link

@@ -17,15 +17,22 @@ export class TouchWeightPreviewer implements TouchWeightPreviewerRequirements {
       supportSpringBalanceWeight,
     } = key.payload;
 
+    // A front weight or a friction can read 0 g, and that is a reading. A
+    // hammer, a ratio or a wippen cannot weigh nothing: 0 there is a field
+    // left blank.
     if (
-      !frontWeight ||
+      frontWeight === null ||
       !strikeWeight ||
       !strikeWeightRatio ||
-      !frictionWeight ||
+      frictionWeight === null ||
       !wippenBalanceWeight
     ) {
+      // Every weight the design produces is cleared, not just two of them:
+      // what the key measured would otherwise be read as what it was given.
       return {
         ...key.payload,
+        balanceWeight: null,
+        downWeightWithSpringSupport: null,
         downWeightWithoutSpringSupport: null,
         upWeight: null,
       };

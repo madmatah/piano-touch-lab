@@ -153,6 +153,24 @@ describe('The StrikeWeightCalculator class', () => {
       });
     });
 
+    describe('When the friction reads zero', () => {
+      beforeEach(() => {
+        key = {
+          ...baseKey,
+          payload: {
+            ...baseKey.payload,
+            frictionWeight: 0,
+          },
+        };
+        targetBalanceWeight = fakeTargetBalanceWeight;
+        result = instance.calculateStrikeWeight(key, targetBalanceWeight);
+      });
+
+      it('should still compute the strikeWeight', () => {
+        expect(result.strikeWeight).not.toBeNull();
+      });
+    });
+
     describe('When wippenBalanceWeight is zero', () => {
       beforeEach(() => {
         key = {

@@ -8,7 +8,8 @@ export const useKeyMeasurementsHelpers = (): {
     keyMeasure: MeasuredKeyRequirements,
   ) => MeasuredKeyRequirements;
 } => {
-  const { useManualSWRMeasurements } = useMeasureOptions();
+  const { useManualSWRMeasurements, useSupportSpringMeasurements } =
+    useMeasureOptions();
   const globalMeasure = useGlobalMeasures();
 
   const computeKeyMeasurements = useCallback(
@@ -18,8 +19,13 @@ export const useKeyMeasurementsHelpers = (): {
       const keyWeightRatio =
         keyMeasure.keyWeightRatio ?? globalMeasure.keyWeightRatio;
 
+      // A reading taken under an option that is now off is no longer what
+      // the piano is: it stays in the profile, but nothing computes with it.
       return {
         ...keyMeasure,
+        downWeightWithSpringSupport: useSupportSpringMeasurements
+          ? keyMeasure.downWeightWithSpringSupport
+          : null,
         keyWeightRatio,
         measuredStrikeWeightRatio: useManualSWRMeasurements
           ? keyMeasure.measuredStrikeWeightRatio
@@ -27,7 +33,7 @@ export const useKeyMeasurementsHelpers = (): {
         wippenRadiusWeight,
       };
     },
-    [globalMeasure, useManualSWRMeasurements],
+    [globalMeasure, useManualSWRMeasurements, useSupportSpringMeasurements],
   );
 
   return { computeKeyMeasurements };

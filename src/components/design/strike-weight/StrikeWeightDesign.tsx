@@ -19,6 +19,7 @@ import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
 import {
   formatGrams,
+  formatSignedGrams,
   formatSignedWeightValue,
 } from '@/lib/format/format-weight';
 import { useFrontWeightDesign } from '@/hooks/store/use-design-store';
@@ -28,6 +29,8 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useCallback, useMemo } from 'react';
 import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
 import { useTargetSeries } from '../hooks/use-target-series-generators';
+import { useTargetReading } from '../hooks/use-target-reading';
+import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
 
 const standardCurveTargets: TargetSelectorTarget<StrikeWeightLevel>[] =
   Object.values(StrikeWeightLevel).map((level) => ({
@@ -56,6 +59,14 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   );
   const { strikeWeightTargetSerie: targetSerie } =
     useTargetSeries(analyzedKeyboard);
+
+  const renderReading = useTargetReading({
+    difference: benchAdjustment,
+    format: formatGrams,
+    formatDifference: formatSignedGrams,
+    keyboard: analyzedKeyboard,
+    targetSerie,
+  });
 
   const { frontWeightDesignMode } = useFrontWeightDesign();
   const balanceWeightLabelFormatter = useCallback(
@@ -252,6 +263,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
           </Alert>
         ) : (
           <StrikeWeightChart
+            renderReading={renderReading}
             variant="design"
             keyboard={analyzedKeyboard}
             targetSerie={targetSerie ?? undefined}

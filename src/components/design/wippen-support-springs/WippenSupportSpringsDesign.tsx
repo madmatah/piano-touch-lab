@@ -15,11 +15,13 @@ import {
 import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpringBalanceWeightChart';
 import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
-import { formatGrams } from '@/lib/format/format-weight';
+import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
 import { useWippenSupportSpringsTargetSelector } from './hooks/use-wippen-support-springs-target-selector';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { WippenDesignSelector } from './wippen-design-selector/WippenDesignSelector';
 import { useTargetSeries } from '../hooks/use-target-series-generators';
+import { useTargetReading } from '../hooks/use-target-reading';
+import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
 
 export const WippenSupportSpringsDesign: React.FC<
   WippenSupportSpringsDesignProps
@@ -40,6 +42,14 @@ export const WippenSupportSpringsDesign: React.FC<
   );
   const { supportSpringBalanceWeightTargetSerie: targetSerie } =
     useTargetSeries(analyzedKeyboard);
+
+  const renderReading = useTargetReading({
+    difference: benchAdjustment,
+    format: formatGrams,
+    formatDifference: formatSignedGrams,
+    keyboard: analyzedKeyboard,
+    targetSerie,
+  });
 
   const targetSelectorModes: TargetSelectorMode<
     WippenSupportSpringsDesignMode,
@@ -166,6 +176,7 @@ export const WippenSupportSpringsDesign: React.FC<
         wippenSupportSpringsDesignMode ===
         WippenSupportSpringsDesignMode.None ? null : (
           <SupportSpringBalanceWeightChart
+            renderReading={renderReading}
             variant="design"
             keyboard={analyzedKeyboard}
             targetSerie={targetSerie}

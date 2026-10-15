@@ -1,5 +1,8 @@
 import { useTranslation } from '@/hooks/use-translation';
-import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
+import {
+  benchAdjustment,
+  isWorthAdjusting,
+} from '@/lib/piano/touch-design/bench-adjustment';
 import { cn } from '@/lib/utils';
 import {
   formatSignedWeightValue,
@@ -18,6 +21,9 @@ export interface AdjustmentValueProps {
  * red to take it off — because that is the only thing a technician acts on. On
  * paper the pill flattens to plain bold text, as the printed sheet of the
  * design shows it: a tinted lozenge per row is a lot of toner for a sign.
+ *
+ * A key that was never read still gets its target — springs fitted where
+ * none were measured are set to it all the same — but no change to make.
  */
 export const AdjustmentValue: React.FC<AdjustmentValueProps> = ({
   actualValue,
@@ -25,13 +31,27 @@ export const AdjustmentValue: React.FC<AdjustmentValueProps> = ({
 }) => {
   const { currentLanguage, t } = useTranslation();
 
-  if (actualValue === null || targetValue === null) {
+  if (targetValue === null) {
     return <span className="text-ptl-ink-3">—</span>;
   }
 
-  const difference = targetValue - actualValue;
+  const difference = benchAdjustment(actualValue, targetValue);
 
-  if (Math.abs(difference) < ADJUSTMENT_THRESHOLD) {
+  if (actualValue === null || difference === null) {
+    return (
+      <>
+        <span className="text-ptl-ink-3">—</span>
+        <span aria-hidden="true" className="text-xs text-ptl-ink-3">
+          →
+        </span>
+        <span className="font-semibold text-foreground">
+          {formatWeightValue(targetValue, currentLanguage)}
+        </span>
+      </>
+    );
+  }
+
+  if (!isWorthAdjusting(difference)) {
     return (
       <>
         <span className="text-muted-foreground">

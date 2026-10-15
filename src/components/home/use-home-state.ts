@@ -11,7 +11,6 @@ import {
   useStrikeWeightRatioDesign,
   useWippenSupportSpringsDesign,
 } from '@/hooks/store/use-design-store';
-import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { FrontWeightDesignMode } from '@/components/design/front-weight/FrontWeightDesign.types';
 import { StrikeWeightDesignMode } from '@/components/design/strike-weight/StrikeWeightDesign.types';
 import { StrikeWeightRatioDesignMode } from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign.types';
@@ -49,7 +48,6 @@ export interface HomeState {
 
 export const useHomeState = (): HomeState => {
   const { isDemoProfile } = usePianoProfileState();
-  const { useSupportSpringMeasurements } = useMeasureOptions();
   const { keyboard } = useKeyboard();
   const { measured, total } = useMeasuredKeyCount();
   const analyzedKeyboard = useAnalyzedKeyboard();
@@ -99,10 +97,10 @@ export const useHomeState = (): HomeState => {
       // The demo is already loaded: the button opens it rather than reloading.
       demo: '/analyze/touch-weight',
       designed: '/design/adjustment-sheet',
-      // The first design page that is actually open to them.
-      measured: useSupportSpringMeasurements
-        ? '/design/wippen-support-springs'
-        : '/design/front-weight',
+      // The first step of the design. Springs are designed whether or not
+      // they were measured: skipping the step with the option off hid it
+      // from whoever has springs and never measured them.
+      measured: '/design/wippen-support-springs',
       measuring: '/measure',
     }[stage];
 
@@ -124,6 +122,5 @@ export const useHomeState = (): HomeState => {
     measured,
     nextKeyToMeasure,
     total,
-    useSupportSpringMeasurements,
   ]);
 };

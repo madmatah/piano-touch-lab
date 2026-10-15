@@ -18,10 +18,12 @@ export class FrontWeightCalculator
       wippenBalanceWeight,
     } = key.payload;
 
+    // A friction can read 0 g, and that is a reading. A hammer, a ratio or a
+    // wippen cannot weigh nothing: 0 there is a field left blank.
     if (
       !strikeWeight ||
       !strikeWeightRatio ||
-      !frictionWeight ||
+      frictionWeight === null ||
       !wippenBalanceWeight
     ) {
       return {
