@@ -5,7 +5,8 @@ import { MainLayout } from '../../MainLayout';
 import { PageHeading } from '../../layout/PageHeading';
 import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
-import { AnalysisSidePanel } from '@/components/analyze/key-reading/AnalysisSidePanel';
+import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
+import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { useKeyboardStats } from '@/components/analyze/key-reading/hooks/use-keyboard-stats';
 import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
@@ -26,10 +27,12 @@ import {
   formatSignedRatio,
 } from '@/lib/format/format-weight';
 import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
+import { usePrintLandscape } from '@/hooks/use-print-page-size';
 
 const FIGURE_NUMBER = ANALYZE_FIGURE_NUMBERS['/analyze/strike-weight-ratio']!;
 
 export const AnalyzeStrikeWeightRatioPage = () => {
+  usePrintLandscape();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const { currentLanguage, t } = useTranslation();
   const { useManualSWRMeasurements } = useMeasureOptions();
@@ -40,15 +43,14 @@ export const AnalyzeStrikeWeightRatioPage = () => {
       : selectStrikeWeightRatio,
   );
 
-  const renderSidePanel = useCallback(
+  const renderReading = useCallback(
     ({ hoveredKey, measuredSerie }: ChartReadingContext) => {
       const ratio = serieValueAt(measuredSerie, hoveredKey);
       const deviation =
         ratio === null || stats.median === null ? null : ratio - stats.median;
 
       return (
-        <AnalysisSidePanel
-          ariaLabel={t('Strike weight ratio reading')}
+        <KeyReadingStrip
           reading={{
             // The ratio is a leverage, but it reads as a weight at the key:
             // the mockup spells that out under the figures.
@@ -73,32 +75,6 @@ export const AnalyzeStrikeWeightRatioPage = () => {
                 value: formatSignedRatio(deviation, currentLanguage),
               },
             ],
-          }}
-          summary={[
-            {
-              label: t('Median'),
-              value: formatRatio(stats.median, currentLanguage),
-            },
-            {
-              label: t('Mean'),
-              value: formatRatio(stats.mean, currentLanguage),
-            },
-            {
-              label: stats.minKeyName
-                ? t('Minimum · {{note}}', { note: stats.minKeyName })
-                : t('Minimum'),
-              value: formatRatio(stats.min, currentLanguage),
-            },
-            {
-              label: stats.maxKeyName
-                ? t('Maximum · {{note}}', { note: stats.maxKeyName })
-                : t('Maximum'),
-              value: formatRatio(stats.max, currentLanguage),
-            },
-          ]}
-          action={{
-            label: t('Design the ratio'),
-            to: '/design/strike-weight-ratio',
           }}
         />
       );
@@ -125,7 +101,7 @@ export const AnalyzeStrikeWeightRatioPage = () => {
       <StrikeWeightRatioChart
         keyboard={analyzedKeyboard}
         displayBothManualAndComputed={useManualSWRMeasurements}
-        renderSidePanel={renderSidePanel}
+        renderReading={renderReading}
         caption={
           <FigureCaption number={FIGURE_NUMBER}>
             {t(
@@ -133,6 +109,12 @@ export const AnalyzeStrikeWeightRatioPage = () => {
             )}
           </FigureCaption>
         }
+      />
+      <AnalysisFooter
+        action={{
+          label: t('Design the ratio'),
+          to: '/design/strike-weight-ratio',
+        }}
       />
     </MainLayout>
   );

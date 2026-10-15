@@ -20,6 +20,8 @@ export interface ChartFigureProps {
   keyboard?: React.ReactNode;
   /** Arrow keys move the reading along the keyboard. */
   onKeyDown?: React.KeyboardEventHandler;
+  /** What the key under the pointer reads, along the head of the figure. */
+  reading?: React.ReactNode;
   tabIndex?: number;
   variant?: 'analyze' | 'design';
 }
@@ -38,6 +40,7 @@ export const ChartFigure = ({
   keyboard,
   label,
   onKeyDown,
+  reading,
   tabIndex,
   variant = 'analyze',
 }: ChartFigureProps) => {
@@ -46,6 +49,7 @@ export const ChartFigure = ({
 
   return (
     <figure
+      data-slot="chart-figure"
       className={cn(
         'm-0 min-w-0 rounded-md border border-ptl-rule-strong bg-card',
         isAnalyze ? 'flex-[999_1_560px]' : 'flex-[999_1_480px]',
@@ -62,12 +66,14 @@ export const ChartFigure = ({
           {header}
         </div>
       ) : null}
+      {reading}
       {/*
        * The focus stop is the box that scrolls, so the same element both
        * reaches the far end of the keyboard and moves the reading with the
        * arrow keys.
        */}
       <div
+        data-slot="chart-plot"
         role="group"
         aria-label={label ?? t('Figure: hover a key, or use the arrow keys')}
         onKeyDown={onKeyDown}

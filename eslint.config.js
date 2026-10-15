@@ -24,6 +24,13 @@ export default defineConfig(
     },
   },
   {
+    // A command-line check reports to the terminal; that is its whole output.
+    files: ['scripts/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     ignores: [
       './build.ts',
       './config/',

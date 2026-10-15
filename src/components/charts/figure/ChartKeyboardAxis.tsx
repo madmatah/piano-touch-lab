@@ -48,6 +48,7 @@ export const ChartKeyboardAxis = ({
 
   return (
     <div
+      data-slot="chart-keyboard"
       style={{
         marginLeft: PLOT_INSET.left,
         marginRight: PLOT_INSET.right,

@@ -1,5 +1,6 @@
 import ReactECharts from 'echarts-for-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { EChartsOption } from 'echarts';
 
 import { useTranslation } from '@/hooks/use-translation';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
@@ -9,7 +10,8 @@ import { ChartKeyboardAxis } from '../figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from '../figure/ChartLegend';
 import type { ChartLegendMarkKind } from '../figure/ChartLegendMark';
 import { useChartFigure } from '../hooks/use-chart-figure';
-import { useChartTokens } from '../hooks/use-chart-tokens';
+import { usePrintableChart } from '../hooks/use-printable-chart';
+import { SVG_RENDERER } from '../renderer';
 import { serieValueAt, type TouchDesignSerie } from '../interfaces';
 import {
   frictionZoneAt,
@@ -18,7 +20,7 @@ import {
 } from './hooks/use-friction-zones-series';
 import {
   FRICTION_GRID,
-  TOUCH_WEIGHT_PLOT_HEIGHT,
+  touchWeightPlotHeight,
   useTouchWeightOption,
 } from './hooks/use-touch-weight-option';
 import {
@@ -72,7 +74,7 @@ export interface TouchWeightChartProps {
    * The rail to the right of the figure. It is a function so that the panel
    * reads the very series the chart draws, rather than computing them again.
    */
-  renderSidePanel?: (context: TouchWeightReadingContext) => React.ReactNode;
+  renderReading?: (context: TouchWeightReadingContext) => React.ReactNode;
   useSupportSpringMeasurements: boolean;
   variant?: 'analyze' | 'design';
 }
@@ -81,14 +83,21 @@ export const TouchWeightChart = ({
   analyzedKeyboard,
   caption,
   ghostSerie,
-  renderSidePanel,
+  renderReading,
   useSupportSpringMeasurements,
   variant = 'analyze',
 }: TouchWeightChartProps) => {
   const { currentLanguage, t } = useTranslation();
-  const tokens = useChartTokens();
   // Two grids: the pointer has to be followed over the friction panel too.
   const { geometry, hover, keys } = useChartFigure(analyzedKeyboard, 2);
+  const option = useRef<EChartsOption | null>(null);
+  const { onChartReady, plotHeight, tokens } = usePrintableChart(
+    'analyze',
+    touchWeightPlotHeight(),
+    option,
+    hover.bindChart,
+  );
+  const extraWeightHeight = Math.max(0, plotHeight - touchWeightPlotHeight());
   const series = useTouchWeightSeries(
     analyzedKeyboard,
     useSupportSpringMeasurements,
@@ -116,7 +125,8 @@ export const TouchWeightChart = ({
     () => ({ friction: t('FRICTION (g)'), weight: t('WEIGHT (g)') }),
     [t],
   );
-  const option = useTouchWeightOption({
+  const nextOption = useTouchWeightOption({
+    extraWeightHeight,
     frictionZones,
     geometry,
     ghostSerie: ghostSerie && isGhostVisible ? ghostSerie : null,
@@ -126,6 +136,11 @@ export const TouchWeightChart = ({
     tokens,
     visibleSeries,
   });
+
+  // Kept for the print handler, which has to tell ECharts itself.
+  useLayoutEffect(() => {
+    option.current = nextOption;
+  }, [nextOption]);
 
   const legendItems = useMemo<ChartLegendItem[]>(
     () => [
@@ -170,6 +185,7 @@ export const TouchWeightChart = ({
 
   const figure = (
     <ChartFigure
+      reading={renderReading?.({ frictionZoneLabel, hoveredKey, series })}
       variant={variant}
       geometry={geometry}
       highlightedKey={hoveredKey}
@@ -186,22 +202,17 @@ export const TouchWeightChart = ({
       {...hover.figureProps}
     >
       <ReactECharts
-        option={option}
+        option={nextOption}
         notMerge
-        onChartReady={hover.bindChart}
-        style={{ height: TOUCH_WEIGHT_PLOT_HEIGHT, width: '100%' }}
+        onChartReady={onChartReady}
+        opts={SVG_RENDERER}
+        style={{
+          height: touchWeightPlotHeight(extraWeightHeight),
+          width: '100%',
+        }}
       />
     </ChartFigure>
   );
 
-  if (!renderSidePanel) {
-    return figure;
-  }
-
-  return (
-    <div className="flex flex-wrap items-start gap-6">
-      {figure}
-      {renderSidePanel({ frictionZoneLabel, hoveredKey, series })}
-    </div>
-  );
+  return figure;
 };

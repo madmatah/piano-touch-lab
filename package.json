@@ -5,18 +5,19 @@
   "type": "module",
   "scripts": {
     "build": "bun run build.ts",
+    "check:figures": "bun run scripts/check-figures.ts",
     "checks": "bun lint && bun typecheck && bun i18n:check && bun test",
     "dev": "bun --hot src/index.tsx",
-    "format:check": "prettier --check .",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "i18n": "i18next --config config/i18next-parser.config.cjs",
     "i18n:check": "bun i18n:check-missing-keys && bun i18n:check-missing-translations",
     "i18n:check-missing-keys": "i18next --config config/i18next-parser.config.cjs --fail-on-update",
     "i18n:check-missing-translations": "bunx i18n-check -l src/locales/ -s en -f i18next",
     "lint": "bunx eslint && bun format:check",
     "start": "NODE_ENV=production bun src/index.tsx",
-    "test:watch": "bun test --watch",
     "test": "bun test --bail --silent",
+    "test:watch": "bun test --watch",
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {

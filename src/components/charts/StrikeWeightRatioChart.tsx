@@ -8,8 +8,8 @@ import type { KeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
-import { CHART_HEIGHTS } from './chart-geometry';
-import { buildGrid, type AxisScale } from './echarts/build-base-option';
+import { CHART_HEIGHTS, PLOT_BOX_MARGIN, PLOT_INSET } from './chart-geometry';
+import { GRID_TOP, type AxisScale } from './echarts/build-base-option';
 import { ChartFigure } from './figure/ChartFigure';
 import { ChartKeyboardAxis } from './figure/ChartKeyboardAxis';
 import { ChartLegend, type ChartLegendItem } from './figure/ChartLegend';
@@ -102,25 +102,24 @@ interface Stem {
  *
  * `KeyboardChart` draws one series per quantity and offers no slot for either
  * of these, so they are drawn here instead, over the plot rectangle the chart
- * lays out — read from `buildGrid`, not measured off the canvas. Being SVG and
- * HTML they also follow the theme through CSS, as the hover band does.
+ * lays out. It is pinned to the insets that rectangle keeps rather than given
+ * a height of its own, so that it still covers the plot when the figure is
+ * given the height of a sheet. Being SVG and HTML they also follow the theme
+ * through CSS, as the hover band does.
  */
 const ChartReferenceOverlay = ({
   geometry,
-  height,
   median,
   medianLabel,
   scale,
   stems,
 }: {
   geometry: KeyboardGeometry;
-  height: number;
   median: number | null;
   medianLabel: string;
   scale: AxisScale;
   stems: readonly Stem[];
 }) => {
-  const grid = buildGrid(height);
   const row = (value: number) =>
     ((scale.max - value) / (scale.max - scale.min)) * PLOT_SPAN;
 
@@ -133,10 +132,10 @@ const ChartReferenceOverlay = ({
       aria-hidden="true"
       className="pointer-events-none absolute z-0"
       style={{
-        height: grid.height,
-        left: grid.left,
-        right: grid.right,
-        top: grid.top,
+        bottom: PLOT_BOX_MARGIN - GRID_TOP,
+        left: PLOT_INSET.left,
+        right: PLOT_INSET.right,
+        top: GRID_TOP,
       }}
     >
       <svg
@@ -188,7 +187,7 @@ export interface StrikeWeightRatioChartProps<T> {
    * The rail to the right of the figure. It is a function so that the panel
    * reads the very series the chart draws, rather than computing them again.
    */
-  renderSidePanel?: (context: ChartReadingContext) => React.ReactNode;
+  renderReading?: (context: ChartReadingContext) => React.ReactNode;
   targetSerie?: TouchDesignSerie;
   variant?: 'analyze' | 'design';
 }
@@ -198,7 +197,7 @@ export const StrikeWeightRatioChart = <T,>({
   displayBothManualAndComputed,
   extraLegendItems,
   keyboard,
-  renderSidePanel,
+  renderReading,
   targetSerie,
   variant = 'analyze',
 }: StrikeWeightRatioChartProps<T>) => {
@@ -323,6 +322,11 @@ export const StrikeWeightRatioChart = <T,>({
 
   const figure = (
     <ChartFigure
+      reading={renderReading?.({
+        hoveredKey: hover.hoveredKey,
+        measuredSerie: computedSerie,
+        referenceSeries: showsManual ? [manualSerie] : [],
+      })}
       variant={variant}
       geometry={geometry}
       highlightedKey={hover.hoveredKey}
@@ -347,7 +351,6 @@ export const StrikeWeightRatioChart = <T,>({
       <div className="relative">
         <ChartReferenceOverlay
           geometry={geometry}
-          height={plotHeight}
           median={medianRule}
           medianLabel={formatRatio(medianRule, currentLanguage)}
           scale={scale}
@@ -366,18 +369,5 @@ export const StrikeWeightRatioChart = <T,>({
     </ChartFigure>
   );
 
-  if (!renderSidePanel) {
-    return figure;
-  }
-
-  return (
-    <div className="flex flex-wrap items-start gap-6">
-      {figure}
-      {renderSidePanel({
-        hoveredKey: hover.hoveredKey,
-        measuredSerie: computedSerie,
-        referenceSeries: showsManual ? [manualSerie] : [],
-      })}
-    </div>
-  );
+  return figure;
 };

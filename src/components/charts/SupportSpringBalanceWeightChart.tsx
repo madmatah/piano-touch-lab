@@ -42,7 +42,7 @@ export interface SupportSpringBalanceWeightChartProps<T> {
    * The rail to the right of the figure. It is a function so that the panel
    * reads the very series the chart draws, rather than computing them again.
    */
-  renderSidePanel?: (context: ChartReadingContext) => React.ReactNode;
+  renderReading?: (context: ChartReadingContext) => React.ReactNode;
   targetSerie?: TouchDesignSerie;
   variant?: 'analyze' | 'design';
 }
@@ -52,7 +52,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
   emptyStateActions,
   extraLegendItems,
   keyboard,
-  renderSidePanel,
+  renderReading,
   targetSerie,
   variant = 'analyze',
 }: SupportSpringBalanceWeightChartProps<T>) => {
@@ -162,6 +162,12 @@ export const SupportSpringBalanceWeightChart = <T,>({
 
   const figure = (
     <ChartFigure
+      reading={renderReading?.({
+        hoveredKey: hover.hoveredKey,
+        measuredSerie,
+        // The spring chart has no standard curves to compare against.
+        referenceSeries: [],
+      })}
       variant={variant}
       geometry={geometry}
       highlightedKey={hover.hoveredKey}
@@ -189,19 +195,5 @@ export const SupportSpringBalanceWeightChart = <T,>({
     </ChartFigure>
   );
 
-  if (!renderSidePanel) {
-    return figure;
-  }
-
-  return (
-    <div className="flex flex-wrap items-start gap-6">
-      {figure}
-      {renderSidePanel({
-        hoveredKey: hover.hoveredKey,
-        measuredSerie,
-        // The spring chart has no standard curves to compare against.
-        referenceSeries: [],
-      })}
-    </div>
-  );
+  return figure;
 };

@@ -36,9 +36,19 @@ const PANE_GAP = 26;
 const WEIGHT_GRID = 0;
 export const FRICTION_GRID = 1;
 
-/** Both panels, their margins and their titles, plus a hair so the lowest rule is not clipped. */
-export const TOUCH_WEIGHT_PLOT_HEIGHT =
-  PLOT_TOP + WEIGHT_PLOT_HEIGHT + PANE_GAP + CHART_HEIGHTS.frictionPlot + 2;
+/**
+ * Both panels, their margins and their titles, plus a hair so the lowest rule
+ * is not clipped. `extra` is the room a printed sheet has left over, and it
+ * all goes to the weight panel: the friction one reads a range of a few grams
+ * and gains nothing from being stretched.
+ */
+export const touchWeightPlotHeight = (extra = 0) =>
+  PLOT_TOP +
+  WEIGHT_PLOT_HEIGHT +
+  extra +
+  PANE_GAP +
+  CHART_HEIGHTS.frictionPlot +
+  2;
 
 /**
  * The scales of the design.
@@ -235,6 +245,8 @@ const buildGhostSerie = (
 });
 
 export interface TouchWeightOptionInput {
+  /** Room a printed sheet has left over, which the weight panel takes. */
+  extraWeightHeight?: number;
   /** The reference bands behind the friction panel. */
   frictionZones: SeriesOption[];
   geometry: KeyboardGeometry;
@@ -261,6 +273,7 @@ export const useTouchWeightOption = (
   input: TouchWeightOptionInput,
 ): EChartsOption => {
   const {
+    extraWeightHeight = 0,
     frictionZones,
     geometry,
     ghostSerie,
@@ -306,7 +319,7 @@ export const useTouchWeightOption = (
       animation: false,
       grid: [
         {
-          height: WEIGHT_PLOT_HEIGHT,
+          height: WEIGHT_PLOT_HEIGHT + extraWeightHeight,
           left: PLOT_INSET.left,
           right: PLOT_INSET.right,
           top: PLOT_TOP,
@@ -315,7 +328,7 @@ export const useTouchWeightOption = (
           height: CHART_HEIGHTS.frictionPlot,
           left: PLOT_INSET.left,
           right: PLOT_INSET.right,
-          top: PLOT_TOP + WEIGHT_PLOT_HEIGHT + PANE_GAP,
+          top: PLOT_TOP + WEIGHT_PLOT_HEIGHT + extraWeightHeight + PANE_GAP,
         },
       ],
       legend: { show: false },
@@ -345,6 +358,7 @@ export const useTouchWeightOption = (
       ],
     };
   }, [
+    extraWeightHeight,
     frictionZones,
     geometry,
     ghostSerie,
