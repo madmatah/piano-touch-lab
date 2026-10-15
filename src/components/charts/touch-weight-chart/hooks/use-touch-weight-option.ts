@@ -13,6 +13,7 @@ import { CHART_HEIGHTS, PLOT_INSET } from '../../chart-geometry';
 import {
   buildKeyAxis,
   buildValueAxis,
+  scaleFromReadings,
   scaleOver,
   MONO_FONT,
   type AxisScale,
@@ -206,10 +207,12 @@ const buildRangeSerie = (
 const buildBaselineSerie = (
   gridIndex: number,
   tokens: ChartTokens,
+  /** The foot of the panel, which is not zero once the floor has been raised. */
+  foot: number,
 ): SeriesOption => ({
   data: [],
   markLine: {
-    data: [{ yAxis: 0 }],
+    data: [{ yAxis: foot }],
     label: { show: false },
     lineStyle: { color: tokens.axisStrong, type: 'solid', width: 1.2 },
     silent: true,
@@ -287,7 +290,7 @@ export const useTouchWeightOption = (
   return useMemo(() => {
     // The scales take in every series, hidden ones included: switching a
     // series off should not move the grid under the others.
-    const weightScale = scaleOver(
+    const weightScale = scaleFromReadings(
       WEIGHT_SCALE,
       valuesOf([
         series.down,
@@ -303,8 +306,8 @@ export const useTouchWeightOption = (
 
     const echartsSeries: SeriesOption[] = [
       ...frictionZones,
-      buildBaselineSerie(WEIGHT_GRID, tokens),
-      buildBaselineSerie(FRICTION_GRID, tokens),
+      buildBaselineSerie(WEIGHT_GRID, tokens, weightScale.min),
+      buildBaselineSerie(FRICTION_GRID, tokens, frictionScale.min),
       // The tie only means something while both of its ends are drawn.
       ...(visibleSeries.down && visibleSeries.up
         ? [buildRangeSerie(series.down, series.up, geometry, tokens)]

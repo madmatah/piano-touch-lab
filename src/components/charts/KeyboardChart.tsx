@@ -14,6 +14,7 @@ import {
 } from './echarts/build-base-option';
 import type { ChartTokens } from './hooks/use-chart-tokens';
 import { usePrintableChart } from './hooks/use-printable-chart';
+import { useScreenPlotHeight } from './hooks/use-screen-plot-height';
 import { PLOT_BOX_MARGIN } from './chart-geometry';
 import { SVG_RENDERER } from './renderer';
 import type { TouchDesignSerie } from './interfaces';
@@ -121,7 +122,7 @@ export const KeyboardChart = ({
     tokens,
   } = usePrintableChart(
     variant,
-    height + PLOT_BOX_MARGIN,
+    useScreenPlotHeight(height + PLOT_BOX_MARGIN, variant),
     option,
     onChartReady,
   );

@@ -10,7 +10,6 @@ import { PrintButton } from '../../layout/PrintButton';
 import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
 import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpringBalanceWeightChart';
-import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
   serieValueAt,
   type ChartReadingContext,
@@ -20,11 +19,8 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useMeasureOptionsActions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatGrams } from '@/lib/format/format-weight';
-import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
 
-const FIGURE_NUMBER =
-  ANALYZE_FIGURE_NUMBERS['/analyze/wippen-support-springs']!;
 const DESIGN_PATH = '/design/wippen-support-springs';
 
 export const AnalyzeWippenSupportSpringPage = () => {
@@ -84,13 +80,6 @@ export const AnalyzeWippenSupportSpringPage = () => {
       <SupportSpringBalanceWeightChart
         keyboard={analyzedKeyboard}
         renderReading={renderReading}
-        caption={
-          <FigureCaption number={FIGURE_NUMBER}>
-            {t(
-              'The weight each spring takes off the measuring point, placed above the back of its own key. Only the keys fitted with a spring carry a measurement.',
-            )}
-          </FigureCaption>
-        }
         emptyStateActions={
           <>
             <Button className="min-h-[46px]" onClick={enableMeasurement}>

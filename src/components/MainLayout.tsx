@@ -60,7 +60,7 @@ export const MainLayout = ({
           data-slot="page-content"
           className={cn(
             variant === 'app' &&
-              'flex w-full max-w-[1240px] flex-col gap-6 px-10 pt-8 pb-14 max-md:px-4 max-md:pt-6 max-md:pb-10',
+              'flex w-full max-w-[1720px] flex-col gap-6 px-10 pt-8 pb-14 max-md:px-4 max-md:pt-6 max-md:pb-10',
             contentClassName,
           )}
         >

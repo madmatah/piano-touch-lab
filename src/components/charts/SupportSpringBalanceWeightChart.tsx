@@ -121,6 +121,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
       >
         <div aria-hidden="true" className="px-3 pt-[18px] pb-1.5 opacity-55">
           <KeyboardChart
+            variant={variant}
             geometry={geometry}
             height={plotHeight}
             scale={SPRING_WEIGHT_SCALE}
@@ -186,6 +187,7 @@ export const SupportSpringBalanceWeightChart = <T,>({
       {...hover.figureProps}
     >
       <KeyboardChart
+        variant={variant}
         geometry={geometry}
         height={plotHeight}
         onChartReady={hover.bindChart}

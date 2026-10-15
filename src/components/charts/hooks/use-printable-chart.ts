@@ -88,7 +88,7 @@ export const usePrintableChart = (
   const chart = useRef<ResizableChart | null>(null);
   const [state, setState] = useState(() => ({
     isPrinting: false,
-    printedPlotHeight: printablePlotHeight(PRINT_FURNITURE),
+    printedPlotHeight: printablePlotHeight(PRINT_FURNITURE[variant]),
     tokens: readTokens(),
   }));
 
@@ -156,7 +156,7 @@ export const usePrintableChart = (
         settle(
           true,
           printablePlotWidth(FIGURE_CHROME[variant]),
-          printablePlotHeight(PRINT_FURNITURE),
+          printablePlotHeight(PRINT_FURNITURE[variant]),
         );
         return;
       }

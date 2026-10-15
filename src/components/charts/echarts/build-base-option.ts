@@ -42,6 +42,54 @@ export const scaleOver = (
           base.interval,
       };
 
+/**
+ * How fine the rules of a raised floor may get, and how many of them there
+ * may be. Finest first: the first step the panel can carry wins.
+ */
+const FLOOR_STEPS = [5, 10, 20] as const;
+const MOST_RULES = 8;
+
+/**
+ * The same scale, with its floor brought up to where the readings start.
+ *
+ * A panel ruled from zero over readings that never come near it draws a good
+ * part of itself for nothing — two fifths of the static balance panel on an
+ * ordinary piano, where the lightest key still reads some thirty grams. That
+ * band was the friction points' in the mockups; they have a panel of their
+ * own now, and nothing moved into it.
+ *
+ * The floor goes to the first round step under the lowest reading, taking
+ * the finest step the panel can still rule without crowding. The step has to
+ * divide the floor as well: a floor of 35 ruled every 10 would put the rules
+ * on 35, 45, 55 rather than on the round values a technician reads them at.
+ *
+ * It never drops below the scale the design drew, and a piano that does read
+ * that low keeps it whole.
+ */
+export const scaleFromReadings = (
+  base: AxisScale,
+  values: readonly number[],
+): AxisScale => {
+  const widened = scaleOver(base, values);
+  if (values.length === 0) {
+    return widened;
+  }
+
+  const lowest = Math.min(...values);
+  for (const step of FLOOR_STEPS) {
+    // Strictly under: a reading sitting on the foot of its panel reads as a
+    // reading that ran off it.
+    const floor = (Math.ceil(lowest / step) - 1) * step;
+    if (floor <= widened.min) {
+      break;
+    }
+    if ((widened.max - floor) / step + 1 <= MOST_RULES) {
+      return { ...widened, interval: step, min: floor };
+    }
+  }
+  return widened;
+};
+
 /** The highest tick the interval actually lands on. */
 const highestTick = (scale: AxisScale): number =>
   scale.min +

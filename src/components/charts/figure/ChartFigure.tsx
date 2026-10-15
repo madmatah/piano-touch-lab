@@ -52,7 +52,6 @@ export const ChartFigure = ({
       data-slot="chart-figure"
       className={cn(
         'm-0 min-w-0 rounded-md border border-ptl-rule-strong bg-card',
-        isAnalyze ? 'flex-[999_1_560px]' : 'flex-[999_1_480px]',
         className,
       )}
     >

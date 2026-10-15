@@ -7,7 +7,6 @@ import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
 import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
 import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
-import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
   ChartLegendMark,
   type ChartLegendMarkKind,
@@ -24,18 +23,7 @@ import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { EMPTY_VALUE, formatGrams } from '@/lib/format/format-weight';
-import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
-
-const FIGURE_NUMBER = ANALYZE_FIGURE_NUMBERS['/analyze/touch-weight']!;
-
-/** The two formulas of the caption, set in mono as the design writes them. */
-const CAPTION_PARTS = [
-  <span key="lead" />,
-  <span key="balance" className="font-mono" />,
-  <span key="between" />,
-  <span key="friction" className="font-mono" />,
-];
 
 /**
  * The reading card is ink-dark in both themes, so its glyphs take the colours
@@ -121,14 +109,6 @@ export const AnalyzeTouchWeightPage = () => {
         analyzedKeyboard={analyzedKeyboard}
         useSupportSpringMeasurements={useSupportSpringMeasurements}
         renderReading={renderReading}
-        caption={
-          <FigureCaption number={FIGURE_NUMBER}>
-            <Trans
-              i18nKey="Each measurement sits above the back of its key. Balance weight <1>BW = (D + U) / 2</1>; friction <3>F = (D − U) / 2</3>, with the reference zones."
-              components={CAPTION_PARTS}
-            />
-          </FigureCaption>
-        }
       />
       <AnalysisFooter
         hint={t(

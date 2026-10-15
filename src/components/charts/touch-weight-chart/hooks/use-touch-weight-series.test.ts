@@ -69,6 +69,19 @@ describe('The useTouchWeightSeries hook', () => {
     });
   });
 
+  describe('When a key reads no weight at all', () => {
+    it('should still draw it', () => {
+      // A key that only just comes back up on its own reads 0g of up weight:
+      // a reading, and the worst one on the instrument, not a missing one.
+      const keyboard = new Keyboard([key({ upWeight: 0 })]);
+      const { result } = renderHook(() =>
+        useTouchWeightSeries(keyboard, false),
+      );
+
+      expect(result.current.up.data[0]?.payload).toBe(0);
+    });
+  });
+
   describe('When a key carries no spring', () => {
     it('should report the same weights either way', () => {
       const keyboard = new Keyboard([

@@ -8,7 +8,6 @@ import { PrintButton } from '../../layout/PrintButton';
 import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
 import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
 import { StrikeWeightChart } from '@/components/charts/StrikeWeightChart';
-import { FigureCaption } from '@/components/charts/figure/FigureCaption';
 import {
   serieValueAt,
   type ChartReadingContext,
@@ -16,11 +15,9 @@ import {
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatGrams } from '@/lib/format/format-weight';
-import { ANALYZE_FIGURE_NUMBERS } from '@/lib/piano/figure-numbers';
 import { StrikeWeightLevel } from '@/lib/piano/touch-design/hammer-weight-level';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
 
-const FIGURE_NUMBER = ANALYZE_FIGURE_NUMBERS['/analyze/strike-weight']!;
 /**
  * The three curves the mockups read out beside the measurement. They are
  * matched by name against the series the chart drew, hence plain strings.
@@ -88,13 +85,6 @@ export const AnalyzeStrikeWeightPage = () => {
       <StrikeWeightChart
         keyboard={analyzedKeyboard}
         renderReading={renderReading}
-        caption={
-          <FigureCaption number={FIGURE_NUMBER}>
-            {t(
-              'The measured strike weight of each key. The SW#1 (lightest) to SW#13 (heaviest) curves are there as landmarks.',
-            )}
-          </FigureCaption>
-        }
       />
       <AnalysisFooter
         action={{

@@ -215,7 +215,10 @@ export const TargetSelector = <Mode extends string, Target>(
         <RadioGroup
           onValueChange={onModeChangeHandler}
           value={selectedMode?.value}
-          className="gap-2.5"
+          // As many cards to the row as fit, each keeping its own height:
+          // the one that is chosen carries its control and is taller, and
+          // the others have no reason to be stretched to match it.
+          className="grid-cols-[repeat(auto-fit,minmax(260px,1fr))] items-start gap-2.5"
         >
           {modes.map((mode) => (
             <RadioItem

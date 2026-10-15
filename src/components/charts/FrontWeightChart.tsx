@@ -151,6 +151,7 @@ export const FrontWeightChart = <T,>({
       {...hover.figureProps}
     >
       <KeyboardChart
+        variant={variant}
         geometry={geometry}
         height={
           variant === 'analyze' ? CHART_HEIGHTS.plot : CHART_HEIGHTS.plotCompact
