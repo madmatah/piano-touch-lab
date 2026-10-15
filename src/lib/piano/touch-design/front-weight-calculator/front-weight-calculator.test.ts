@@ -153,6 +153,24 @@ describe('The FrontWeightCalculator class', () => {
       });
     });
 
+    describe('When the friction reads zero', () => {
+      beforeEach(() => {
+        key = {
+          ...baseKey,
+          payload: {
+            ...baseKey.payload,
+            frictionWeight: 0,
+          },
+        };
+        targetBalanceWeight = fakeTargetBalanceWeight;
+        result = instance.calculateFrontWeight(key, targetBalanceWeight);
+      });
+
+      it('should still compute the frontWeight', () => {
+        expect(result.frontWeight).not.toBeNull();
+      });
+    });
+
     describe('When wippenBalanceWeight is zero', () => {
       beforeEach(() => {
         key = {

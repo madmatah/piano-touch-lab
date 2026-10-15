@@ -87,6 +87,56 @@ describe('The TouchWeightPreviewer class', () => {
       });
     });
 
+    describe('When a measured key cannot be designed', () => {
+      beforeEach(() => {
+        const measuredKeyWithoutFrontWeight = {
+          ...fakeKeyWithAllValues,
+          payload: {
+            ...fakeKeyWithAllValues.payload,
+            balanceWeight: 48.5,
+            downWeightWithSpringSupport: 51,
+            frontWeight: null,
+          },
+        };
+        result = instance.computeTouchWeight(measuredKeyWithoutFrontWeight);
+      });
+
+      it('should not pass its measured balance weight off as a designed one', () => {
+        expect(result.balanceWeight).toBeNull();
+      });
+
+      it('should not pass its measured spring-supported down weight off as a designed one', () => {
+        expect(result.downWeightWithSpringSupport).toBeNull();
+      });
+    });
+
+    describe('When the front weight reads zero', () => {
+      beforeEach(() => {
+        result = instance.computeTouchWeight({
+          ...fakeKeyWithAllValues,
+          payload: { ...fakeKeyWithAllValues.payload, frontWeight: 0 },
+        });
+      });
+
+      it('should still compute the balance weight', () => {
+        expect(result.balanceWeight).toBeCloseTo(64.7);
+      });
+    });
+
+    describe('When the friction reads zero', () => {
+      beforeEach(() => {
+        result = instance.computeTouchWeight({
+          ...fakeKeyWithAllValues,
+          payload: { ...fakeKeyWithAllValues.payload, frictionWeight: 0 },
+        });
+      });
+
+      it('should give the same down and up weights', () => {
+        expect(result.downWeightWithoutSpringSupport).toBeCloseTo(37.7);
+        expect(result.upWeight).toBeCloseTo(37.7);
+      });
+    });
+
     describe('When strikeWeight is missing', () => {
       beforeEach(() => {
         const keyWithMissingStrikeWeight = {

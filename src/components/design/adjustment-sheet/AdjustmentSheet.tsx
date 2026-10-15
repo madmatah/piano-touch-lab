@@ -7,7 +7,7 @@ import {
   formatWeightValue,
 } from '@/lib/format/format-weight';
 import { KeyColor } from '@/lib/piano/keyboard';
-import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
+import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/bench-adjustment';
 
 import { type AdjustmentSheetProps } from './AdjustmentSheet.types';
 import { AdjustmentSheetTableRow } from './AdjustmentSheetTableRow';

@@ -3,7 +3,10 @@ import { useMemo } from 'react';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
-import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
+import {
+  benchAdjustment,
+  isWorthAdjusting,
+} from '@/lib/piano/touch-design/bench-adjustment';
 
 import type { KeyAdjustmentPayload } from '../AdjustmentSheet.types';
 
@@ -26,12 +29,6 @@ export interface AdjustmentRows {
   keyboard: KeyboardLike<KeyWith<KeyAdjustmentPayload | null>>;
   summary: AdjustmentSummary;
 }
-
-const difference = (actual: number | null, target: number | null) =>
-  actual === null || target === null ? null : target - actual;
-
-const moved = (value: number | null) =>
-  value !== null && Math.abs(value) >= ADJUSTMENT_THRESHOLD;
 
 /**
  * The sheet, and the three figures that summarise it.
@@ -82,21 +79,21 @@ export const useAdjustmentRows = (
 
     const frontWeightDifferences = rows
       .map((row) =>
-        difference(
+        benchAdjustment(
           row.payload?.actualFrontWeight ?? null,
           row.payload?.targetFrontWeight ?? null,
         ),
       )
-      .filter(moved) as number[];
+      .filter((change): change is number => isWorthAdjusting(change));
 
     const strikeWeightDifferences = rows
       .map((row) =>
-        difference(
+        benchAdjustment(
           row.payload?.actualStrikeWeight ?? null,
           row.payload?.targetStrikeWeight ?? null,
         ),
       )
-      .filter(moved) as number[];
+      .filter((change): change is number => isWorthAdjusting(change));
 
     // Read off the design, not off the rows: a sprung key whose front weight
     // is still unmeasured has no row, and the bench sheet would lose the

@@ -7,12 +7,19 @@ export interface AnalyzeDataSheetTableRowProps {
   isBlackKey: boolean;
   item: KeyWith<TouchWeightKeyAnalysis>;
   locale: string;
+  shouldUseManualSWRMeasurements: boolean;
   shouldUseSupportSpringMeasurements: boolean;
 }
 
 export const AnalyzeDataSheetTableRow: React.FC<
   AnalyzeDataSheetTableRowProps
-> = ({ isBlackKey, item, locale, shouldUseSupportSpringMeasurements }) => (
+> = ({
+  isBlackKey,
+  item,
+  locale,
+  shouldUseManualSWRMeasurements,
+  shouldUseSupportSpringMeasurements,
+}) => (
   <tr className="border-b border-border last:border-b-0 even:bg-secondary/50 hover:bg-accent">
     <td className="px-2 py-[7px] font-mono text-[12px] text-ptl-ink-3">
       {item.number}
@@ -26,6 +33,18 @@ export const AnalyzeDataSheetTableRow: React.FC<
         item.name
       )}
     </td>
+    {shouldUseSupportSpringMeasurements && (
+      <AnalyzeDataSheetTableCell
+        locale={locale}
+        // The analysis falls back to the plain down weight where no spring
+        // reading was taken; a key with no spring balance weight had none.
+        value={
+          item.payload.supportSpringBalanceWeight === null
+            ? null
+            : item.payload.downWeightWithSpringSupport
+        }
+      />
+    )}
     <AnalyzeDataSheetTableCell
       locale={locale}
       value={item.payload.downWeightWithoutSpringSupport}
@@ -39,6 +58,13 @@ export const AnalyzeDataSheetTableRow: React.FC<
       locale={locale}
       value={item.payload.strikeWeight}
     />
+    {shouldUseManualSWRMeasurements && (
+      <AnalyzeDataSheetTableCell
+        isRatio
+        locale={locale}
+        value={item.payload.measuredStrikeWeightRatio}
+      />
+    )}
     <AnalyzeDataSheetTableCell
       locale={locale}
       value={item.payload.balanceWeight}
@@ -50,7 +76,7 @@ export const AnalyzeDataSheetTableRow: React.FC<
     <AnalyzeDataSheetTableCell
       isRatio
       locale={locale}
-      value={item.payload.strikeWeightRatio}
+      value={item.payload.computedStrikeWeightRatio}
     />
     {shouldUseSupportSpringMeasurements && (
       <AnalyzeDataSheetTableCell

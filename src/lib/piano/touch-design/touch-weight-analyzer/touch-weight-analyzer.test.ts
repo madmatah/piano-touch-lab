@@ -231,6 +231,19 @@ describe('The TouchWeightAnalyzer class', () => {
       });
     });
 
+    describe('When the front weight reads zero', () => {
+      beforeEach(() => {
+        key = { ...baseKey, payload: { ...basePayload, frontWeight: 0 } };
+        result = analyzer.analyzeKey(key);
+      });
+
+      it('should still compute computedStrikeWeightRatio', () => {
+        expect(result.computedStrikeWeightRatio).toBeCloseTo(
+          (0 + (40 + 10) / 2 - 0.45 * 17) / 18,
+        );
+      });
+    });
+
     describe('When downWeightWithSpringSupport is not provided', () => {
       let payload: MeasuredKeyRequirements;
 

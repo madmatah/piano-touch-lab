@@ -40,8 +40,11 @@ export const AnalyzeStrikeWeightRatioPage = () => {
   );
 
   const renderReading = useCallback(
-    ({ hoveredKey, measuredSerie }: ChartReadingContext) => {
+    ({ hoveredKey, measuredSerie, referenceSeries }: ChartReadingContext) => {
       const ratio = serieValueAt(measuredSerie, hoveredKey);
+      // With the option on, the chart hands over the ratios read with a
+      // gauge too: the Measure page sends the reader here to compare them.
+      const [manualSerie] = referenceSeries;
       const deviation =
         ratio === null || stats.median === null ? null : ratio - stats.median;
 
@@ -66,6 +69,17 @@ export const AnalyzeStrikeWeightRatioPage = () => {
                 label: t('Computed ratio'),
                 value: formatRatio(ratio, currentLanguage),
               },
+              ...(manualSerie
+                ? [
+                    {
+                      label: t('Measured ratio'),
+                      value: formatRatio(
+                        serieValueAt(manualSerie, hoveredKey),
+                        currentLanguage,
+                      ),
+                    },
+                  ]
+                : []),
               {
                 label: t('Deviation from median'),
                 value: formatSignedRatio(deviation, currentLanguage),

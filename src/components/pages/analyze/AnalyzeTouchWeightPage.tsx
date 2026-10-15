@@ -7,14 +7,7 @@ import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
 import { AnalysisFooter } from '@/components/analyze/key-reading/AnalysisFooter';
 import { KeyReadingStrip } from '@/components/analyze/key-reading/KeyReadingStrip';
-import {
-  ChartLegendMark,
-  type ChartLegendMarkKind,
-} from '@/components/charts/figure/ChartLegendMark';
-import {
-  serieValueAt,
-  type TouchDesignSerie,
-} from '@/components/charts/interfaces';
+import { touchWeightReadingRows } from '@/components/analyze/key-reading/touch-weight-reading';
 import {
   TouchWeightChart,
   type TouchWeightReadingContext,
@@ -22,18 +15,8 @@ import {
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
-import { EMPTY_VALUE, formatGrams } from '@/lib/format/format-weight';
+import { EMPTY_VALUE } from '@/lib/format/format-weight';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
-
-/**
- * The reading card is ink-dark in both themes, so its glyphs take the colours
- * of that card rather than the series colours used over the plot.
- */
-const readingMark = (kind: ChartLegendMarkKind, colorClassName: string) => (
-  <span className={colorClassName}>
-    <ChartLegendMark kind={kind} />
-  </span>
-);
 
 export const AnalyzeTouchWeightPage = () => {
   usePrintLandscape();
@@ -43,9 +26,6 @@ export const AnalyzeTouchWeightPage = () => {
 
   const renderReading = useCallback(
     ({ frictionZoneLabel, hoveredKey, series }: TouchWeightReadingContext) => {
-      const readingOf = (serie: TouchDesignSerie) =>
-        formatGrams(serieValueAt(serie, hoveredKey), currentLanguage);
-
       return (
         <KeyReadingStrip
           reading={{
@@ -53,27 +33,7 @@ export const AnalyzeTouchWeightPage = () => {
             noteName:
               analyzedKeyboard.getKeyByNumber(hoveredKey ?? 0)?.name ?? null,
             rows: [
-              {
-                label: series.down.name,
-                mark: readingMark('triangle-down', 'text-ptl-reading-accent'),
-                value: readingOf(series.down),
-              },
-              {
-                label: series.up.name,
-                mark: readingMark('triangle-up', 'text-ptl-current'),
-                value: readingOf(series.up),
-              },
-              {
-                isAccent: true,
-                label: series.balance.name,
-                mark: readingMark('diamond', 'text-ptl-reading-foreground'),
-                value: readingOf(series.balance),
-              },
-              {
-                label: series.friction.name,
-                mark: readingMark('dot', 'text-ptl-reading-muted'),
-                value: readingOf(series.friction),
-              },
+              ...touchWeightReadingRows(series, hoveredKey, currentLanguage),
               {
                 isQualitative: true,
                 label: t('Friction zone'),

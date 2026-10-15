@@ -10,6 +10,7 @@ const mockUseGlobalMeasures = mock(() => ({
 
 const mockUseMeasureOptions = mock(() => ({
   useManualSWRMeasurements: false,
+  useSupportSpringMeasurements: true,
 }));
 
 void mock.module('../store/use-measure-store', () => ({
@@ -25,7 +26,10 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
     keyWeightRatio: number | null;
     wippenRadiusWeight: number | null;
   };
-  let measureOptions: { useManualSWRMeasurements: boolean };
+  let measureOptions: {
+    useManualSWRMeasurements: boolean;
+    useSupportSpringMeasurements: boolean;
+  };
   let keyMeasure: MeasuredKeyRequirements;
 
   beforeEach(() => {
@@ -35,6 +39,7 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
     };
     measureOptions = {
       useManualSWRMeasurements: false,
+      useSupportSpringMeasurements: true,
     };
     keyMeasure = {
       downWeightWithSpringSupport: 43,
@@ -108,6 +113,40 @@ describe('The useKeyMeasurementsHelpers() hook', () => {
 
         expect(result.measuredStrikeWeightRatio).toBe(
           keyMeasure.measuredStrikeWeightRatio,
+        );
+      });
+    });
+
+    describe('When useSupportSpringMeasurements is false', () => {
+      beforeEach(() => {
+        measureOptions.useSupportSpringMeasurements = false;
+        mockUseMeasureOptions.mockReturnValue(measureOptions);
+      });
+
+      it('should set downWeightWithSpringSupport to null', () => {
+        const { result: hookResult } = renderHook(() =>
+          useKeyMeasurementsHelpers(),
+        );
+        result = hookResult.current.computeKeyMeasurements(keyMeasure);
+
+        expect(result.downWeightWithSpringSupport).toBeNull();
+      });
+    });
+
+    describe('When useSupportSpringMeasurements is true', () => {
+      beforeEach(() => {
+        measureOptions.useSupportSpringMeasurements = true;
+        mockUseMeasureOptions.mockReturnValue(measureOptions);
+      });
+
+      it('should preserve the original downWeightWithSpringSupport value', () => {
+        const { result: hookResult } = renderHook(() =>
+          useKeyMeasurementsHelpers(),
+        );
+        result = hookResult.current.computeKeyMeasurements(keyMeasure);
+
+        expect(result.downWeightWithSpringSupport).toBe(
+          keyMeasure.downWeightWithSpringSupport,
         );
       });
     });

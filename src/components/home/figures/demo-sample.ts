@@ -31,6 +31,8 @@ export const DEMO_DESIGN = {
 const DEFAULT_FIRST_NOTE = 'A0';
 
 const { keys, keyWeightRatio, wippenRadiusWeight } = gaveauModele1.measures;
+const { useManualSWRMeasurements, useSupportSpringMeasurements } =
+  gaveauModele1.measureOptions;
 const startNote = gaveauModele1.piano?.startNote;
 
 const keyboard = KeyboardFactory.fromStartNoteAndLength(
@@ -43,18 +45,22 @@ const frontWeightCalculator = new FrontWeightCalculator();
 
 /**
  * A key's measurements, read from the backup as `useImportBackupData` reads
- * them and falling back to the instrument-wide ones as
- * `useKeyMeasurementsHelpers` does.
+ * them, falling back to the instrument-wide ones and leaving out what the
+ * piano's options switch off, as `useKeyMeasurementsHelpers` does.
  */
 const measurementsOf = (index: number): MeasuredKeyRequirements => {
   const key = keys[index]!;
   return {
-    downWeightWithSpringSupport: key.downWeightWithSpringSupport ?? null,
+    downWeightWithSpringSupport: useSupportSpringMeasurements
+      ? (key.downWeightWithSpringSupport ?? null)
+      : null,
     downWeightWithoutSpringSupport:
       key.downWeightWithoutSpringSupport ?? key.downWeight ?? null,
     frontWeight: key.frontWeight ?? null,
     keyWeightRatio: key.keyWeightRatio ?? keyWeightRatio ?? null,
-    measuredStrikeWeightRatio: key.measuredStrikeWeightRatio ?? null,
+    measuredStrikeWeightRatio: useManualSWRMeasurements
+      ? (key.measuredStrikeWeightRatio ?? null)
+      : null,
     strikeWeight: key.strikeWeight ?? null,
     upWeight: key.upWeight ?? null,
     wippenRadiusWeight: key.wippenRadiusWeight ?? wippenRadiusWeight ?? null,

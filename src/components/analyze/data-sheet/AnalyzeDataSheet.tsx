@@ -19,13 +19,23 @@ export const AnalyzeDataSheet: React.FC<{
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
 }> = ({ analyzedKeyboard }) => {
   const { currentLanguage, t } = useTranslation();
-  const { useSupportSpringMeasurements } = useMeasureOptions();
+  const { useManualSWRMeasurements, useSupportSpringMeasurements } =
+    useMeasureOptions();
 
+  // The same columns, in the same order and under the same names, as the
+  // measuring table: what was read at the bench goes under "Measured", and
+  // only what was worked out from it under "Computed".
   const measuredColumns = [
+    ...(useSupportSpringMeasurements
+      ? [{ abbreviation: 'DS', name: t('D with spring') }]
+      : []),
     { abbreviation: 'D', name: t('Down weight') },
     { abbreviation: 'U', name: t('Up weight') },
     { abbreviation: 'FW', name: t('Front weight') },
     { abbreviation: 'SW', name: t('Strike weight') },
+    ...(useManualSWRMeasurements
+      ? [{ abbreviation: 'SWR', name: t('Ratio') }]
+      : []),
   ];
   const computedColumns = [
     { abbreviation: 'BW', name: t('Balance') },
@@ -104,6 +114,7 @@ export const AnalyzeDataSheet: React.FC<{
                 isBlackKey={key.color === KeyColor.Black}
                 item={key}
                 locale={currentLanguage}
+                shouldUseManualSWRMeasurements={useManualSWRMeasurements}
                 shouldUseSupportSpringMeasurements={
                   useSupportSpringMeasurements
                 }
