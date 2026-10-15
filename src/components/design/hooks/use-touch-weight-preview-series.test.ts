@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 
 import { Keyboard, KeyColor, type KeyWith } from '@/lib/piano/keyboard';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
@@ -35,51 +35,56 @@ const key = (
   },
 });
 
-/** A design that fits springs: the previewer leaves them on the weight. */
-const designedKeyboard = new Keyboard([
-  key({
-    balanceWeight: TARGET_BALANCE_WEIGHT + SPRING,
-    supportSpringBalanceWeight: SPRING,
-  }),
-]);
-
-/** The same piano as it stands, springs fitted but never weighed with them. */
-const analyzedKeyboard = new Keyboard([
-  key({ balanceWeight: 58.5, supportSpringBalanceWeight: SPRING }),
-]);
-
-const render = (useSupportSpringMeasurements: boolean) =>
-  renderHook(() =>
-    useTouchWeightPreviewSeries(
-      designedKeyboard,
-      analyzedKeyboard,
-      useSupportSpringMeasurements,
-    ),
-  ).result.current;
-
 describe('The useTouchWeightPreviewSeries hook', () => {
-  describe('The touch the design gives', () => {
-    it.each([true, false])(
-      'should land on the target whether or not the springs were measured (%s)',
-      (useSupportSpringMeasurements) => {
-        const { designed } = render(useSupportSpringMeasurements);
+  const designedKeyboard = new Keyboard([
+    key({
+      balanceWeight: TARGET_BALANCE_WEIGHT + SPRING,
+      supportSpringBalanceWeight: SPRING,
+    }),
+  ]);
+  const analyzedKeyboard = new Keyboard([
+    key({ balanceWeight: 58.5, supportSpringBalanceWeight: SPRING }),
+  ]);
+  let result: ReturnType<typeof useTouchWeightPreviewSeries>;
 
-        expect(designed.balance.data[0]?.payload).toBe(TARGET_BALANCE_WEIGHT);
-      },
-    );
-  });
+  const render = (useSupportSpringMeasurements: boolean) =>
+    renderHook(() =>
+      useTouchWeightPreviewSeries(
+        designedKeyboard,
+        analyzedKeyboard,
+        useSupportSpringMeasurements,
+      ),
+    ).result.current;
 
-  describe('The touch the piano has today', () => {
-    it('should take the springs off when they were measured', () => {
-      const { current } = render(true);
-
-      expect(current.balance.data[0]?.payload).toBe(58.5 - SPRING);
+  describe('When the springs were measured', () => {
+    beforeEach(() => {
+      result = render(true);
     });
 
-    it('should report the weights as they were taken when they were not', () => {
-      const { current } = render(false);
+    it('should land the designed touch on the target, the springs taken off it', () => {
+      expect(result.designed.balance.data[0]?.payload).toBe(
+        TARGET_BALANCE_WEIGHT,
+      );
+    });
 
-      expect(current.balance.data[0]?.payload).toBe(58.5);
+    it('should take the springs off the touch the piano has today', () => {
+      expect(result.current.balance.data[0]?.payload).toBe(58.5 - SPRING);
+    });
+  });
+
+  describe('When the springs were fitted but never weighed', () => {
+    beforeEach(() => {
+      result = render(false);
+    });
+
+    it('should still land the designed touch on the target', () => {
+      expect(result.designed.balance.data[0]?.payload).toBe(
+        TARGET_BALANCE_WEIGHT,
+      );
+    });
+
+    it('should report the touch of today as it was taken', () => {
+      expect(result.current.balance.data[0]?.payload).toBe(58.5);
     });
   });
 });

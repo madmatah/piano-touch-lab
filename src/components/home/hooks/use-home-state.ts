@@ -33,6 +33,43 @@ import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch
  */
 export type HomeStage = 'demo' | 'measuring' | 'measured' | 'designed';
 
+export interface HomeProgress {
+  /** One of the four design parameters asks for something other than "as is". */
+  hasDesign: boolean;
+  isDemoProfile: boolean;
+  isDesignCompleted: boolean;
+  measured: number;
+  total: number;
+}
+
+/** The stage a reader is at, from how far their piano has got. */
+export const homeStageOf = ({
+  hasDesign,
+  isDemoProfile,
+  isDesignCompleted,
+  measured,
+  total,
+}: HomeProgress): HomeStage =>
+  isDemoProfile
+    ? 'demo'
+    : measured < total
+      ? 'measuring'
+      : hasDesign && isDesignCompleted
+        ? 'designed'
+        : 'measured';
+
+/** Where the main call to action leads from each stage: what is left to do. */
+export const RESUME_TO: Record<HomeStage, string> = {
+  // The demo is already loaded: the button opens it rather than reloading.
+  demo: '/analyze/touch-weight',
+  designed: '/design/adjustment-sheet',
+  // The first step of the design. Springs are designed whether or not they
+  // were measured: skipping the step with the option off hid it from whoever
+  // has springs and never measured them.
+  measured: '/design/wippen-support-springs',
+  measuring: '/measure',
+};
+
 export interface HomeState {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
   designedKeyboard: TouchWeightAnalyzedKeyboard;
@@ -85,31 +122,20 @@ export const useHomeState = (): HomeState => {
   }, [keyboard, measures]);
 
   return useMemo(() => {
-    const stage: HomeStage = isDemoProfile
-      ? 'demo'
-      : measured < total
-        ? 'measuring'
-        : hasDesign && isDesignCompleted
-          ? 'designed'
-          : 'measured';
-
-    const resumeTo = {
-      // The demo is already loaded: the button opens it rather than reloading.
-      demo: '/analyze/touch-weight',
-      designed: '/design/adjustment-sheet',
-      // The first step of the design. Springs are designed whether or not
-      // they were measured: skipping the step with the option off hid it
-      // from whoever has springs and never measured them.
-      measured: '/design/wippen-support-springs',
-      measuring: '/measure',
-    }[stage];
+    const stage = homeStageOf({
+      hasDesign,
+      isDemoProfile,
+      isDesignCompleted,
+      measured,
+      total,
+    });
 
     return {
       analyzedKeyboard,
       designedKeyboard,
       measured,
       nextKeyToMeasure,
-      resumeTo,
+      resumeTo: RESUME_TO[stage],
       stage,
       total,
     };

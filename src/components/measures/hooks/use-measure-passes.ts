@@ -13,6 +13,28 @@ export interface MeasurePass {
   number: number;
 }
 
+/** Whether a key has every reading a pass asks for. */
+export const isPassDone = (
+  pass: MeasurePass,
+  key: MeasuredKeyRequirements,
+): boolean => pass.fields.every((field) => key[field] !== null);
+
+/**
+ * How many keys of the keyboard each pass has done. The store may hold more
+ * keys than the keyboard, from a larger one the profile had before.
+ */
+export const passProgress = (
+  passes: readonly MeasurePass[],
+  keys: readonly MeasuredKeyRequirements[],
+  keyCount: number,
+): Map<MeasurePassId, number> =>
+  new Map(
+    passes.map((pass) => [
+      pass.id,
+      keys.slice(0, keyCount).filter((key) => isPassDone(pass, key)).length,
+    ]),
+  );
+
 /**
  * The three passes of a measuring session.
  *
