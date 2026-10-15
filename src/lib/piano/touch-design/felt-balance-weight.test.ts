@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'bun:test';
 import { KeyColor, type KeyWith } from '../keyboard';
 import { FrontWeightCalculator } from './front-weight-calculator/front-weight-calculator';
 import { generateSupportSpringBalanceWeightCurve } from './generate-support-spring-balance-weight-curve';
-import { designedBalanceWeight } from './designed-balance-weight';
+import { feltBalanceWeight, feltWeight } from './felt-balance-weight';
 import { TouchWeightPreviewer } from './touch-weight-previewer/touch-weight-previewer';
 import type { TouchWeightKeyAnalysis } from './touch-weight-key-analysis';
 
@@ -36,7 +36,7 @@ const analyzedKey = (
   },
 });
 
-describe('The designedBalanceWeight() function', () => {
+describe('The feltBalanceWeight() function', () => {
   const calculator = new FrontWeightCalculator();
   const previewer = new TouchWeightPreviewer();
 
@@ -60,7 +60,7 @@ describe('The designedBalanceWeight() function', () => {
     });
 
     it('should land on the target', () => {
-      expect(designedBalanceWeight(previewed)).toBe(TARGET_BALANCE_WEIGHT);
+      expect(feltBalanceWeight(previewed)).toBe(TARGET_BALANCE_WEIGHT);
     });
 
     it('should agree with the static balance weight the previewer reports', () => {
@@ -74,7 +74,7 @@ describe('The designedBalanceWeight() function', () => {
     });
 
     it('should land on the target once the spring is accounted for', () => {
-      expect(designedBalanceWeight(previewed)).toBe(TARGET_BALANCE_WEIGHT);
+      expect(feltBalanceWeight(previewed)).toBe(TARGET_BALANCE_WEIGHT);
     });
 
     it('should leave the static balance weight, measured with no spring helping, one spring above it', () => {
@@ -83,7 +83,7 @@ describe('The designedBalanceWeight() function', () => {
   });
 
   describe('When the design tapers the springs across the keyboard', () => {
-    let result: ReturnType<typeof designedBalanceWeight>[];
+    let result: ReturnType<typeof feltBalanceWeight>[];
 
     beforeEach(() => {
       const curve = generateSupportSpringBalanceWeightCurve({
@@ -92,7 +92,7 @@ describe('The designedBalanceWeight() function', () => {
         tensionDropIndex: 1,
       });
       result = Array.from({ length: 88 }, (_, index) =>
-        designedBalanceWeight(designKey(curve[index] ?? null)),
+        feltBalanceWeight(designKey(curve[index] ?? null)),
       );
     });
 
@@ -100,6 +100,67 @@ describe('The designedBalanceWeight() function', () => {
       for (const balanceWeight of result) {
         expect(balanceWeight).toBeCloseTo(TARGET_BALANCE_WEIGHT, 1);
       }
+    });
+  });
+  describe('When a measured key was weighed with its spring', () => {
+    let felt: ReturnType<typeof feltBalanceWeight>;
+
+    beforeEach(() => {
+      felt = feltBalanceWeight(analyzedKey({}).payload);
+    });
+
+    it('should take what the spring carries off the static balance weight', () => {
+      expect(felt).toBe(58.5 - 12);
+    });
+  });
+
+  describe('When a measured key carries no spring reading', () => {
+    let felt: ReturnType<typeof feltBalanceWeight>;
+
+    beforeEach(() => {
+      felt = feltBalanceWeight(
+        analyzedKey({ supportSpringBalanceWeight: null }).payload,
+      );
+    });
+
+    it('should be the static balance weight', () => {
+      expect(felt).toBe(58.5);
+    });
+  });
+
+  describe('When a key has no balance weight yet', () => {
+    let felt: ReturnType<typeof feltBalanceWeight>;
+
+    beforeEach(() => {
+      felt = feltBalanceWeight(analyzedKey({ balanceWeight: null }).payload);
+    });
+
+    it('should have none to feel', () => {
+      expect(felt).toBeNull();
+    });
+  });
+});
+
+describe('The feltWeight() function', () => {
+  let result: ReturnType<typeof feltWeight>[];
+
+  describe('When a weight is read with and without a spring', () => {
+    beforeEach(() => {
+      result = [feltWeight(66, 14), feltWeight(66, null)];
+    });
+
+    it('should take off what the spring carries, and nothing when there is none', () => {
+      expect(result).toEqual([52, 66]);
+    });
+  });
+
+  describe('When there is no weight', () => {
+    beforeEach(() => {
+      result = [feltWeight(null, 14)];
+    });
+
+    it('should have none to feel', () => {
+      expect(result).toEqual([null]);
     });
   });
 });

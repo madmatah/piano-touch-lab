@@ -4,7 +4,7 @@ import {
   formatGrams,
   formatSignedWeightValue,
 } from '@/lib/format/format-weight';
-import { designedBalanceWeight } from '@/lib/piano/touch-design/designed-balance-weight';
+import { feltBalanceWeight } from '@/lib/piano/touch-design/felt-balance-weight';
 import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
 import { useTextScale } from '@/hooks/use-text-scale';
 import { useTranslation } from '@/hooks/use-translation';
@@ -75,14 +75,16 @@ export const BalanceWeightFigure = ({
       whiteKeyWidth: WHITE_KEY_WIDTH,
     });
 
+    // Felt at the key, as the target is: with the springs counted in, a
+    // static balance weight sits a spring's worth above any design for it.
     const measuredWeights = keys
-      .map((key) => key.payload.balanceWeight)
+      .map((key) => feltBalanceWeight(key.payload))
       .filter((weight): weight is number => weight !== null);
 
     const targetByNumber = new Map<number, number>();
     if (home.stage === 'demo' || home.stage === 'designed') {
       for (const key of home.designedKeyboard.getKeys()) {
-        const aim = designedBalanceWeight(key.payload);
+        const aim = feltBalanceWeight(key.payload);
         if (aim !== null) {
           targetByNumber.set(key.number, aim);
         }
@@ -120,7 +122,7 @@ export const BalanceWeightFigure = ({
       if (place === undefined) {
         continue;
       }
-      const weight = key.payload.balanceWeight;
+      const weight = feltBalanceWeight(key.payload);
       if (weight !== null) {
         measured.push({ x: place, y: y(weight) });
       }
@@ -138,7 +140,7 @@ export const BalanceWeightFigure = ({
 
     const differences = keys
       .map((key) => {
-        const weight = key.payload.balanceWeight;
+        const weight = feltBalanceWeight(key.payload);
         const aim = targetByNumber.get(key.number);
         return weight === null || aim === undefined ? null : aim - weight;
       })
