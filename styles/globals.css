@@ -4,6 +4,12 @@
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
+/*
+ * A window too short for the sidebar at its full spacing: a laptop of 1366 ×
+ * 768 or 1280 × 720, whose browser leaves some 650 px of page. The sidebar
+ * closes up there so that its last group stays in sight.
+ */
+@custom-variant short (@media (max-height: 820px));
 
 /*
  * Piano Touch Lab wears two coats of the same workshop.

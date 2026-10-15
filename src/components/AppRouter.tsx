@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import { Homepage } from './pages/Homepage';
 import { HelpPage } from './pages/HelpPage';
 import { MeasurePage } from './pages/MeasuresPage';
@@ -56,6 +56,8 @@ export const AppRouter = () => {
       <Route path="/help" Component={HelpPage} />
       <Route path="/measure" Component={MeasurePage} />
       <Route path="/piano" Component={PianoPage} />
+      {/* An address that leads nowhere goes home, not to a blank page. */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

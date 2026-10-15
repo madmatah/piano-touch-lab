@@ -6,7 +6,7 @@ import { useImportBackupFile } from '@/hooks/backup/use-import-backup-file';
 import { useTranslation } from '@/hooks/use-translation';
 
 const itemClassName =
-  'flex min-h-10 w-full items-center gap-2.5 rounded-md px-2.5 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none';
+  'flex min-h-10 w-full items-center gap-2.5 rounded-md px-2.5 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none short:min-h-8';
 
 /** What can be done with the profile as a file: start one, save it, load one. */
 export const SidebarFileGroup = () => {

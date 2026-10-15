@@ -41,7 +41,15 @@ export const SidebarPianoCard = ({ label }: SidebarPianoCardProps) => {
           <Badge variant="mono">{t('Demo', { ns: 'navigation' })}</Badge>
         ) : null}
       </span>
-      <span className="font-serif text-[22px] leading-[1.15] font-medium break-words">
+      {/*
+       * Two lines at most: a long make and model ran to six, and pushed the
+       * file actions out of the sidebar. The full name is in the title, and
+       * on the Piano page the card leads to.
+       */}
+      <span
+        title={[brand, model].filter(Boolean).join(' ') || undefined}
+        className="line-clamp-2 font-serif text-[22px] leading-[1.15] font-medium break-words short:text-[19px]"
+      >
         {brand || model ? (
           <>
             {brand}

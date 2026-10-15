@@ -6,6 +6,7 @@ import {
 } from '@/lib/format/format-weight';
 import { designedBalanceWeight } from '@/lib/piano/touch-design/designed-balance-weight';
 import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
+import { useTextScale } from '@/hooks/use-text-scale';
 import { useTranslation } from '@/hooks/use-translation';
 
 import type { HomeState } from './use-home-state';
@@ -219,6 +220,9 @@ export const BalanceWeightFigure = ({
     };
   }, [home]);
 
+  // Its text keeps its size however narrow the column: see useTextScale.
+  const textScale = useTextScale(figure?.width ?? 0);
+
   if (!figure) {
     return null;
   }
@@ -261,6 +265,7 @@ export const BalanceWeightFigure = ({
       </figcaption>
 
       <svg
+        ref={textScale}
         viewBox={`0 0 ${figure.width} ${figure.height}`}
         className="block h-auto w-full"
         role="img"
@@ -307,10 +312,13 @@ export const BalanceWeightFigure = ({
                 className="stroke-border"
               />
               {isNamed ? (
+                // Under 768 px the axis would run into the first keys at its
+                // true size: the caption above gives the range instead.
                 <text
                   x="0"
                   y={row + 3.5}
-                  className="fill-ptl-ink-3 font-mono text-[10px]"
+                  style={{ fontSize: 'calc(10px * var(--ptl-text-scale, 1))' }}
+                  className="fill-ptl-ink-3 font-mono max-md:hidden"
                 >
                   {t('{{weight}} g', { weight })}
                 </text>
@@ -365,11 +373,12 @@ export const BalanceWeightFigure = ({
               y={figure.gapArrow.y}
               // Haloed: it sits in the middle of the hatching it measures.
               style={{
+                fontSize: 'calc(11.5px * var(--ptl-text-scale, 1))',
                 paintOrder: 'stroke',
                 stroke: 'var(--background)',
-                strokeWidth: 3.5,
+                strokeWidth: 'calc(3.5px * var(--ptl-text-scale, 1))',
               }}
-              className="fill-ptl-brass font-mono text-[11.5px] font-semibold"
+              className="fill-ptl-brass font-mono font-semibold"
             >
               {t('{{weight}} g on average', {
                 weight: formatSignedWeightValue(

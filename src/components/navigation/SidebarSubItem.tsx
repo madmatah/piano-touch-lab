@@ -24,7 +24,7 @@ export const SidebarSubItem = ({
     aria-disabled={isDisabled ?? undefined}
     tabIndex={isDisabled ? -1 : undefined}
     className={cn(
-      'flex min-h-9 items-center gap-2.5 rounded-md py-1 pr-2.5 pl-[38px] text-sm text-muted-foreground transition-colors',
+      'flex min-h-9 items-center gap-2.5 rounded-md py-1 pr-2.5 pl-[38px] text-sm text-muted-foreground transition-colors short:min-h-7 short:py-0.5',
       'hover:bg-accent hover:text-foreground',
       'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
       isActive &&

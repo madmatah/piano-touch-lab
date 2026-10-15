@@ -8,7 +8,11 @@ export const SidebarBrand = () => {
 
   return (
     <NavLink to="/" className="flex flex-col gap-2.5 px-2 text-foreground">
-      <span className="font-serif text-[28px] leading-none font-medium">
+      {/*
+       * On one line whatever happens: when the sidebar has to scroll, its
+       * scrollbar takes 15 px from the column and the name broke in two.
+       */}
+      <span className="font-serif text-[28px] leading-none font-medium whitespace-nowrap">
         Piano Touch <span className="ptl-accent">Lab</span>
       </span>
       <span className="flex items-center gap-2">

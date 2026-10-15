@@ -80,7 +80,9 @@ export const useExportBackupFile = () => {
   const exportBackupFile = useCallback(() => {
     const currentDay = formatISO(new Date(), { representation: 'date' });
 
-    const slugifiedPianoName = slug(displayName ?? 'my-piano');
+    // `||`: a profile with no make or model has an empty name, not a missing
+    // one, and was saved as "-2026-10-12.json".
+    const slugifiedPianoName = slug(displayName || 'my-piano');
     const filename = `${slugifiedPianoName}-${currentDay}.json`;
     setIsExporting(true);
     try {
