@@ -28,6 +28,24 @@ const roundToStepPrecision = (value: number, step: number): number => {
   );
 };
 
+/** The decimal separator a reader of this locale writes with. */
+const decimalSeparatorOf = (locale: string | undefined): string =>
+  new Intl.NumberFormat(locale)
+    .formatToParts(1.5)
+    .find((part) => part.type === 'decimal')?.value ?? '.';
+
+/**
+ * What the reader typed, as a number — or NaN unless all of it is one.
+ *
+ * A French reader types a comma, since that is what the label shows them;
+ * `parseFloat` would stop at it and quietly keep the whole part, 9,7 becoming
+ * 9. And a value with anything after it is refused rather than cut short.
+ */
+const parseTypedNumber = (typed: string): number => {
+  const normalised = typed.replaceAll(',', '.').replace(/\s/g, '');
+  return normalised === '' ? NaN : Number(normalised);
+};
+
 const calculateMaxCharacters = (maxValue: number, step: number): number => {
   const decimalPlaces = getDecimalPlaces(step);
   const maxValueStr = maxValue.toFixed(decimalPlaces);
@@ -43,8 +61,19 @@ export const NumericSelector = ({
   labelFormatter,
   maxCharacters,
 }: NumericSelectorProps) => {
-  const { t } = useTranslation();
-  const valueString = useMemo(() => value?.toString() ?? '', [value]);
+  const { currentLanguage, t } = useTranslation();
+  const decimalSeparator = useMemo(
+    () => decimalSeparatorOf(currentLanguage),
+    [currentLanguage],
+  );
+  const asTyped = useCallback(
+    (number: number) => number.toString().replace('.', decimalSeparator),
+    [decimalSeparator],
+  );
+  const valueString = useMemo(
+    () => (value === undefined ? '' : asTyped(value)),
+    [asTyped, value],
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(valueString);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,7 +121,7 @@ export const NumericSelector = ({
 
   const validateAndApplyValue = useCallback(
     (inputVal: string) => {
-      const numValue = parseFloat(inputVal);
+      const numValue = parseTypedNumber(inputVal);
 
       if (isNaN(numValue)) {
         setInputValue(valueString);
@@ -113,9 +142,9 @@ export const NumericSelector = ({
         onChange(roundedValue);
       }
 
-      setInputValue(roundedValue.toString());
+      setInputValue(asTyped(roundedValue));
     },
-    [valueString, value, step, minValue, maxValue, onChange],
+    [asTyped, valueString, value, step, minValue, maxValue, onChange],
   );
 
   const handleInputChange = useCallback(

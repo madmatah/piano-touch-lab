@@ -19,6 +19,13 @@ import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.type
 import { StrikeWeightRatioDesignMode } from '../strike-weight-ratio/StrikeWeightRatioDesign.types';
 import { WippenSupportSpringsDesignMode } from '../wippen-support-springs/WippenSupportSpringsDesign.types';
 
+/**
+ * Between two parts of a step's summary. The space before the dot is one a
+ * line never breaks at: a narrow tile wraps after the dot, never before it,
+ * so no line starts with one.
+ */
+const SEPARATOR = '\u00a0· ';
+
 export type DesignStepId =
   | 'springs'
   | 'front-weight'
@@ -70,16 +77,16 @@ export const useDesignSteps = (): DesignStep[] => {
       const target = springs.wippenSupportSpringsDesignTarget;
       const tension =
         target !== null && typeof target === 'object'
-          ? `${target.numberOfSprings} · ${formatGrams(target.springBalanceWeight, currentLanguage)}`
+          ? `${target.numberOfSprings}${SEPARATOR}${formatGrams(target.springBalanceWeight, currentLanguage)}`
           : null;
 
       switch (springs.wippenSupportSpringsDesignMode) {
         case WippenSupportSpringsDesignMode.AsMeasured:
           return t('As measured');
         case WippenSupportSpringsDesignMode.Constant:
-          return [t('Constant'), tension].filter(Boolean).join(' · ');
+          return [t('Constant'), tension].filter(Boolean).join(SEPARATOR);
         case WippenSupportSpringsDesignMode.SmoothTransition:
-          return [t('Tapered'), tension].filter(Boolean).join(' · ');
+          return [t('Tapered'), tension].filter(Boolean).join(SEPARATOR);
         default:
           return t('None');
       }
@@ -88,7 +95,7 @@ export const useDesignSteps = (): DesignStep[] => {
     const frontWeightValue = () => {
       switch (frontWeight.frontWeightDesignMode) {
         case FrontWeightDesignMode.Computed:
-          return `${t('Computed')} · ${t('BW {{weight}}', {
+          return `${t('Computed')}${SEPARATOR}${t('BW {{weight}}', {
             weight: formatGrams(
               frontWeight.frontWeightDesignComputedBalanceWeightTarget,
               currentLanguage,
@@ -106,7 +113,7 @@ export const useDesignSteps = (): DesignStep[] => {
     const strikeWeightValue = () => {
       switch (strikeWeight.strikeWeightDesignMode) {
         case StrikeWeightDesignMode.Computed:
-          return `${t('Computed')} · ${t('BW {{weight}}', {
+          return `${t('Computed')}${SEPARATOR}${t('BW {{weight}}', {
             weight: formatGrams(
               strikeWeight.strikeWeightDesignComputedBalanceWeightTarget,
               currentLanguage,
@@ -126,7 +133,7 @@ export const useDesignSteps = (): DesignStep[] => {
     const ratioValue = () => {
       switch (ratio.strikeWeightRatioDesignMode) {
         case StrikeWeightRatioDesignMode.FixedValue:
-          return `${t('Constant')} · ${formatRatio(
+          return `${t('Constant')}${SEPARATOR}${formatRatio(
             typeof ratio.strikeWeightRatioDesignLatestFixedTarget === 'number'
               ? ratio.strikeWeightRatioDesignLatestFixedTarget
               : null,

@@ -14,6 +14,13 @@ const withRealMinus = (text: string) => text.replace('-', MINUS_SIGN);
 
 export const EMPTY_VALUE = '—';
 
+/**
+ * Between a number and its unit: a space a line never breaks at. A narrow
+ * box — a tile, a printed summary — otherwise sends the g to a line of its
+ * own, under a figure that no longer says what it counts.
+ */
+const UNIT_SPACE = '\u00a0';
+
 const format = (
   value: number | null | undefined,
   locale: string,
@@ -41,7 +48,7 @@ export const formatGrams = (
   locale: string,
 ): string => {
   const formatted = formatWeightValue(value, locale);
-  return formatted === EMPTY_VALUE ? formatted : `${formatted} g`;
+  return formatted === EMPTY_VALUE ? formatted : `${formatted}${UNIT_SPACE}g`;
 };
 
 /** A weight a technician sets rather than reads, in whole grams: `39 g`. */
@@ -50,7 +57,7 @@ export const formatWholeGrams = (
   locale: string,
 ): string => {
   const formatted = format(value, locale, { maximumFractionDigits: 0 });
-  return formatted === EMPTY_VALUE ? formatted : `${formatted} g`;
+  return formatted === EMPTY_VALUE ? formatted : `${formatted}${UNIT_SPACE}g`;
 };
 
 /** A weight to add or remove, with its sign always shown and no unit: `+15,1`. */
@@ -70,7 +77,7 @@ export const formatSignedGrams = (
   locale: string,
 ): string => {
   const formatted = formatSignedWeightValue(value, locale);
-  return formatted === EMPTY_VALUE ? formatted : `${formatted} g`;
+  return formatted === EMPTY_VALUE ? formatted : `${formatted}${UNIT_SPACE}g`;
 };
 
 /** A leverage ratio, to a hundredth and without a unit: `6,20`. */

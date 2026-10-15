@@ -205,7 +205,10 @@ export const TouchWeightPreview = ({
         caption={
           <figcaption className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border px-[18px] pt-3 pb-4 text-[13px] text-muted-foreground">
             <span>
-              {t('Balance weight once adjusted')} :{' '}
+              {t('{{label}}:', {
+                label: t('Balance weight once adjusted'),
+                nsSeparator: false,
+              })}{' '}
               <span className="font-mono text-foreground">
                 {formatGrams(designedBalance, currentLanguage)}
               </span>{' '}

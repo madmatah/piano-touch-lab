@@ -20,12 +20,12 @@ const normalise = (text: string) =>
 describe('The weight formatters', () => {
   describe('formatGrams', () => {
     it('should always show one decimal', () => {
-      expect(formatGrams(4, 'en')).toBe('4.0 g');
+      expect(formatGrams(4, 'en')).toBe(`4.0${NBSP}g`);
       expect(normalise(formatGrams(4.14, 'fr'))).toBe('4,1 g');
     });
 
     it('should use a real minus sign', () => {
-      expect(formatGrams(-8.9, 'en')).toBe(`${MINUS}8.9 g`);
+      expect(formatGrams(-8.9, 'en')).toBe(`${MINUS}8.9${NBSP}g`);
     });
 
     it('should show a dash when there is nothing to show', () => {
@@ -37,8 +37,8 @@ describe('The weight formatters', () => {
 
   describe('formatSignedGrams', () => {
     it('should always carry a sign', () => {
-      expect(formatSignedGrams(15.1, 'en')).toBe('+15.1 g');
-      expect(formatSignedGrams(-2.5, 'en')).toBe(`${MINUS}2.5 g`);
+      expect(formatSignedGrams(15.1, 'en')).toBe(`+15.1${NBSP}g`);
+      expect(formatSignedGrams(-2.5, 'en')).toBe(`${MINUS}2.5${NBSP}g`);
     });
   });
 

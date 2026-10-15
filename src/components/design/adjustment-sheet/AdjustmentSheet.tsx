@@ -58,28 +58,39 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
             count: summary.frontWeightCount,
             ns: 'navigation',
           })}
-          detail={t('{{weight}} g on average', {
-            weight: formatSignedWeightValue(
-              summary.frontWeightMean,
-              currentLanguage,
-            ),
-          })}
+          // A dash then a unit reads as a figure gone missing, when it
+          // means there is nothing to do.
+          detail={
+            summary.frontWeightMean === null
+              ? t('nothing to adjust')
+              : t('{{weight}} g on average', {
+                  weight: formatSignedWeightValue(
+                    summary.frontWeightMean,
+                    currentLanguage,
+                  ),
+                })
+          }
         />
         <SummaryTile
           label={t('Strike Weight', { ns: 'navigation' })}
           figure={t('{{count}} hammers', { count: summary.strikeWeightCount })}
-          detail={`${t('from {{min}} to {{max}} g', {
-            max: formatSignedWeightValue(
-              summary.strikeWeightMax,
-              currentLanguage,
-            ),
-            min: formatSignedWeightValue(
-              summary.strikeWeightMin,
-              currentLanguage,
-            ),
-          })} · ${t('{{count}} unchanged', {
-            count: summary.strikeWeightUnchanged,
-          })}`}
+          detail={[
+            summary.strikeWeightMin === null || summary.strikeWeightMax === null
+              ? null
+              : t('from {{min}} to {{max}} g', {
+                  max: formatSignedWeightValue(
+                    summary.strikeWeightMax,
+                    currentLanguage,
+                  ),
+                  min: formatSignedWeightValue(
+                    summary.strikeWeightMin,
+                    currentLanguage,
+                  ),
+                }),
+            t('{{count}} unchanged', { count: summary.strikeWeightUnchanged }),
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         />
         {summary.hasSprings ? (
           <SummaryTile
