@@ -1,36 +1,55 @@
-import React, { type ReactElement } from 'react';
+import React from 'react';
+
 import { AppSidebar } from '@/components/navigation/AppSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { AppHeader } from './AppHeader';
-import { DemoProfileInformationCard } from './demo-profile-information/DemoProfileInformationCard';
+import { cn } from '@/lib/utils';
+
+import { DemoProfileBanner } from './layout/DemoProfileBanner';
+import { PageHeader } from './layout/PageHeader';
+import { PianoIdentity } from './layout/PianoIdentity';
 
 export interface MainLayoutProps {
-  pageTitle?: string;
-  pageIcon?: ReactElement<React.HTMLAttributes<HTMLElement>>;
-  shouldDisplayDemoCard?: boolean;
   children: React.ReactNode;
+  /** Replaces the default content container, for pages that run full-bleed. */
+  contentClassName?: string;
+  /** What sits on the right of the thin header bar. */
+  headerRight?: React.ReactNode;
+  /** Hides the demo strip on pages that are not about the instrument. */
+  shouldDisplayDemoBanner?: boolean;
+  /** `bare` drops the header bar and the content container (the home page). */
+  variant?: 'app' | 'bare';
 }
 
 export const MainLayout = ({
-  pageTitle,
-  pageIcon,
   children,
-  shouldDisplayDemoCard = true,
+  contentClassName,
+  headerRight,
+  shouldDisplayDemoBanner = true,
+  variant = 'app',
 }: MainLayoutProps) => {
   return (
     <SidebarProvider
       style={
         {
-          '--header-height': 'calc(var(--spacing) * 12)',
           '--sidebar-width': 'var(--ptl-sidebar-width)',
         } as React.CSSProperties
       }
     >
       <AppSidebar />
       <SidebarInset>
-        {shouldDisplayDemoCard ? <DemoProfileInformationCard /> : null}
-        <AppHeader title={pageTitle} icon={pageIcon} />
-        <div className="flex-1 w-full p-6 pl-10">{children}</div>
+        {variant === 'app' ? (
+          <PageHeader right={headerRight ?? <PianoIdentity />} />
+        ) : null}
+        {shouldDisplayDemoBanner ? <DemoProfileBanner /> : null}
+        <main
+          className={cn(
+            variant === 'app' &&
+              'flex w-full max-w-[1240px] flex-col gap-6 px-10 pt-8 pb-14 max-md:px-4 max-md:pt-6 max-md:pb-10',
+            contentClassName,
+          )}
+        >
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );

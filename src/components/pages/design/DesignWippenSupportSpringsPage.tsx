@@ -1,5 +1,7 @@
+import { Trans } from 'react-i18next';
+
 import { MainLayout } from '../../MainLayout';
-import { Settings2 } from 'lucide-react';
+import { PageHeading } from '../../layout/PageHeading';
 import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { WippenSupportSpringsDesign } from '@/components/design/wippen-support-springs/WippenSupportSpringsDesign';
@@ -9,10 +11,18 @@ export const DesignWippenSupportSpringsPage = () => {
   const { t } = useTranslation();
 
   return (
-    <MainLayout
-      pageTitle={t('Wippen Support Springs')}
-      pageIcon={<Settings2 />}
-    >
+    <MainLayout>
+      <PageHeading
+        eyebrow={t('Design · parameter {{number}} of 4', { number: 1 })}
+        title={
+          <Trans i18nKey="Wippen Support <1>Springs</1>">
+            Wippen Support <em className="ptl-accent">Springs</em>
+          </Trans>
+        }
+        lede={t(
+          'If your wippens carry support springs, work them into your design to reduce the lead needed in the keys.',
+        )}
+      />
       <WippenSupportSpringsDesign analyzedKeyboard={analyzedKeyboard} />
     </MainLayout>
   );

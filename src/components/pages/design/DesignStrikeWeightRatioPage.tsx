@@ -1,5 +1,7 @@
+import { Trans } from 'react-i18next';
+
 import { MainLayout } from '../../MainLayout';
-import { Settings2 } from 'lucide-react';
+import { PageHeading } from '../../layout/PageHeading';
 import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useTranslation } from '@/hooks/use-translation';
 import { StrikeWeightRatioDesign } from '@/components/design/strike-weight-ratio/StrikeWeightRatioDesign';
@@ -10,7 +12,18 @@ export const DesignStrikeWeightRatioPage = () => {
   const { t } = useTranslation();
 
   return (
-    <MainLayout pageTitle={t('Strike Weight Ratio')} pageIcon={<Settings2 />}>
+    <MainLayout>
+      <PageHeading
+        eyebrow={t('Design · parameter {{number}} of 4', { number: 4 })}
+        title={
+          <Trans i18nKey="Strike Weight <1>Ratio</1>">
+            Strike Weight <em className="ptl-accent">Ratio</em>
+          </Trans>
+        }
+        lede={t(
+          'The leverage you are aiming for between hammer and key: kept as measured, brought back to the median or the mean of your measurements, or set to a constant.',
+        )}
+      />
       <StrikeWeightRatioDesign
         analyzedKeyboard={analyzedKeyboard}
         notEnoughDataErrorTitle={t('Not enough data')}
