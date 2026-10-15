@@ -366,6 +366,36 @@ describe('The NumericSelector component', () => {
       });
     });
 
+    describe('When the value is typed with a decimal comma', () => {
+      beforeEach(() => {
+        renderComponent({ step: 0.1 });
+        valueDisplay = screen.getByText('10');
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+        fireEvent.change(input, { target: { value: '9,7' } });
+        fireEvent.keyDown(input, { key: 'Enter' });
+      });
+
+      it('should call onChange with the whole value', () => {
+        expect(onChange).toHaveBeenCalledWith(9.7);
+      });
+    });
+
+    describe('When the value is followed by something else', () => {
+      beforeEach(() => {
+        renderComponent({ step: 0.1 });
+        valueDisplay = screen.getByText('10');
+        fireEvent.click(valueDisplay);
+        input = screen.getByDisplayValue('10');
+        fireEvent.change(input, { target: { value: '9,7 g' } });
+        fireEvent.keyDown(input, { key: 'Enter' });
+      });
+
+      it('should not call onChange', () => {
+        expect(onChange).not.toHaveBeenCalled();
+      });
+    });
+
     describe('When input is non-numeric', () => {
       beforeEach(() => {
         renderComponent();
