@@ -3,6 +3,7 @@ import { enUS, fr } from 'date-fns/locale';
 import { useEffect } from 'react';
 
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
+import { usePrintDate } from '@/hooks/use-print-date';
 import { useTranslation } from '@/hooks/use-translation';
 import { printMarginsRule } from '@/lib/print/print-margins';
 
@@ -16,6 +17,7 @@ import { printMarginsRule } from '@/lib/print/print-margins';
 export const PrintMargins = () => {
   const { currentLanguage, t } = useTranslation();
   const { displayName, serialNumber } = usePianoProfileState();
+  const printDate = usePrintDate();
 
   useEffect(() => {
     const identity = [
@@ -25,7 +27,7 @@ export const PrintMargins = () => {
         ? t('S/N {{serialNumber}}', { ns: 'navigation', serialNumber })
         : null,
       t('Printed on {{date}}', {
-        date: format(new Date(), 'd MMMM yyyy', {
+        date: format(printDate, 'd MMMM yyyy', {
           locale: currentLanguage.startsWith('fr') ? fr : enUS,
         }),
       }),
@@ -41,7 +43,7 @@ export const PrintMargins = () => {
     return () => {
       style.remove();
     };
-  }, [currentLanguage, displayName, serialNumber, t]);
+  }, [currentLanguage, displayName, printDate, serialNumber, t]);
 
   return null;
 };

@@ -9,7 +9,7 @@ export interface PageHeadingProps {
   /** One or two sentences under the title. */
   lede?: React.ReactNode;
   /**
-   * The title. Its accented word is set in brass italic, so pass a `<Trans>`
+   * The title. Its accented word is set in brass italic, so pass a `<Trans t={t}>`
    * rather than a plain string whenever the design calls for one.
    */
   title: React.ReactNode;

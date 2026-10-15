@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 
 export const DesignAdjustmentSheetPage = () => {
   const analyzedKeyboard = useAnalyzedKeyboard();
-  const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+  const designedKeyboard = useDesignedKeyboard();
   const { exportBackupFile } = useExportBackupFile();
   const { t } = useTranslation();
 
@@ -24,7 +24,7 @@ export const DesignAdjustmentSheetPage = () => {
       <PageHeading
         className="print:hidden"
         title={
-          <Trans i18nKey="Adjustment <1>Sheet</1>">
+          <Trans t={t} i18nKey="Adjustment <1>Sheet</1>">
             Adjustment <em className="ptl-accent">Sheet</em>
           </Trans>
         }

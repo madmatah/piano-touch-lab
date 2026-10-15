@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 
@@ -46,7 +46,8 @@ export const useAppStateStore = (): AppStateBoundStore => {
 };
 
 export const useAppState = () => {
-  return useAppStateStore()(
+  return useStore(
+    useAppStateStore(),
     useShallow((state: MeasureOptionsStore) => ({
       hasLoadedDemoData: state.hasLoadedDemoData,
     })),
@@ -54,7 +55,8 @@ export const useAppState = () => {
 };
 
 export const useAppStateActions = () => {
-  return useAppStateStore()(
+  return useStore(
+    useAppStateStore(),
     useShallow((state: MeasureOptionsStore) => ({
       updateSingleState: state.updateSingleState,
       updateState: state.updateState,

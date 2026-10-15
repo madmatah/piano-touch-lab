@@ -59,7 +59,7 @@ export const AnalyzeTouchWeightPage = () => {
     >
       <PageHeading
         title={
-          <Trans i18nKey="Static <1>Balance</1> & Friction">
+          <Trans t={t} i18nKey="Static <1>Balance</1> & Friction">
             Static <em className="ptl-accent">Balance</em> & Friction
           </Trans>
         }

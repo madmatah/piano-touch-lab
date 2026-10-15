@@ -79,7 +79,7 @@ export const Homepage = () => {
       <section className="px-12 pb-24 max-md:px-4 max-md:pb-16">
         <div className="mx-auto flex max-w-[1120px] flex-wrap gap-10 border-t border-border pt-14">
           <h2 className="m-0 flex-[1_1_260px] font-serif text-[42px] leading-[1.05] font-medium">
-            <Trans i18nKey="About <1>this project</1>">
+            <Trans t={t} i18nKey="About <1>this project</1>">
               About <em className="ptl-accent">this project</em>
             </Trans>
           </h2>

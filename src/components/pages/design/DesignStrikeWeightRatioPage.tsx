@@ -28,7 +28,7 @@ export const DesignStrikeWeightRatioPage = () => {
       <DesignStepsBar currentStepId="ratio" />
       <PageHeading
         title={
-          <Trans i18nKey="Strike Weight <1>Ratio</1>">
+          <Trans t={t} i18nKey="Strike Weight <1>Ratio</1>">
             Strike Weight <em className="ptl-accent">Ratio</em>
           </Trans>
         }

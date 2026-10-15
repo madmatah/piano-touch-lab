@@ -146,7 +146,10 @@ export const HomeFeatures = () => {
         <header className="flex flex-col items-center gap-4 text-center">
           <span className="ptl-label">{t('Main features')}</span>
           <h2 className="m-0 font-serif text-[clamp(34px,3.6vw,48px)] leading-[1.1] font-medium text-balance">
-            <Trans i18nKey="Understand your action, <1>then improve it</1>">
+            <Trans
+              t={t}
+              i18nKey="Understand your action, <1>then improve it</1>"
+            >
               Understand your action,
               <em className="ptl-accent"> then improve it</em>
             </Trans>

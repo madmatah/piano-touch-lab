@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { useMeasuresStore } from '@/hooks/store/use-measure-store';
 import { useDesignStore } from '@/hooks/store/use-design-store';
 import { useMeasureOptionsStore } from '@/hooks/store/use-measure-options-store';
@@ -16,7 +17,8 @@ import { useShallow } from 'zustand/shallow';
 import slug from 'slug';
 
 export const useExportBackupFile = () => {
-  const measureStoreState = useMeasuresStore()(
+  const measureStoreState = useStore(
+    useMeasuresStore(),
     useShallow((state) => ({
       keyWeightRatio: state.keyWeightRatio,
       keys: state.keys,
@@ -24,7 +26,8 @@ export const useExportBackupFile = () => {
     })),
   );
 
-  const designStoreState = useDesignStore()(
+  const designStoreState = useStore(
+    useDesignStore(),
     useShallow((state) => ({
       frontWeightDesignComputedBalanceWeightTarget:
         state.frontWeightDesignComputedBalanceWeightTarget,
@@ -56,14 +59,16 @@ export const useExportBackupFile = () => {
     })),
   );
 
-  const measureOptionsState = useMeasureOptionsStore()(
+  const measureOptionsState = useStore(
+    useMeasureOptionsStore(),
     useShallow((state) => ({
       useManualSWRMeasurements: state.useManualSWRMeasurements,
       useSupportSpringMeasurements: state.useSupportSpringMeasurements,
     })),
   );
 
-  const pianoProfileState = usePianoProfileStore()(
+  const pianoProfileState = useStore(
+    usePianoProfileStore(),
     useShallow((state) => ({
       brand: state.brand,
       keyCount: state.keyCount,

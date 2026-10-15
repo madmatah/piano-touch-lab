@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 import {
@@ -265,7 +265,8 @@ export const useDesignStore = (): DesignBoundStore => {
 };
 
 export const useFrontWeightDesign = () => {
-  return useDesignStore()(
+  return useStore(
+    useDesignStore(),
     useShallow((state: DesignStore) => ({
       frontWeightDesignComputedBalanceWeightTarget:
         state.frontWeightDesignComputedBalanceWeightTarget,
@@ -277,7 +278,8 @@ export const useFrontWeightDesign = () => {
 };
 
 export const useStrikeWeightDesign = () => {
-  return useDesignStore()(
+  return useStore(
+    useDesignStore(),
     useShallow((state: DesignStore) => ({
       strikeWeightDesignComputedBalanceWeightTarget:
         state.strikeWeightDesignComputedBalanceWeightTarget,
@@ -292,7 +294,8 @@ export const useStrikeWeightDesign = () => {
 };
 
 export const useStrikeWeightRatioDesign = () => {
-  return useDesignStore()(
+  return useStore(
+    useDesignStore(),
     useShallow((state: DesignStore) => ({
       strikeWeightRatioDesignLatestFixedTarget:
         state.strikeWeightRatioDesignLatestFixedTarget,
@@ -305,7 +308,8 @@ export const useStrikeWeightRatioDesign = () => {
 };
 
 export const useDesignActions = () => {
-  return useDesignStore()(
+  return useStore(
+    useDesignStore(),
     useShallow((state: DesignStore) => ({
       reset: state.reset,
       updateFrontWeightDesign: state.updateFrontWeightDesign,
@@ -317,7 +321,8 @@ export const useDesignActions = () => {
 };
 
 export const useWippenSupportSpringsDesign = () => {
-  return useDesignStore()(
+  return useStore(
+    useDesignStore(),
     useShallow((state: DesignStore) => ({
       wippenSupportSpringsDesignLatestNumberOfSprings:
         state.wippenSupportSpringsDesignLatestNumberOfSprings,

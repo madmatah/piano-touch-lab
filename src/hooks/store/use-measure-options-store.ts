@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 
@@ -57,7 +57,8 @@ export const useMeasureOptionsStore = (): MeasureOptionsBoundStore => {
 };
 
 export const useMeasureOptions = () => {
-  return useMeasureOptionsStore()(
+  return useStore(
+    useMeasureOptionsStore(),
     useShallow((state: MeasureOptionsStore) => ({
       useManualSWRMeasurements: state.useManualSWRMeasurements,
       useSupportSpringMeasurements: state.useSupportSpringMeasurements,
@@ -66,7 +67,8 @@ export const useMeasureOptions = () => {
 };
 
 export const useMeasureOptionsActions = () => {
-  return useMeasureOptionsStore()(
+  return useStore(
+    useMeasureOptionsStore(),
     useShallow((state: MeasureOptionsStore) => ({
       reset: state.reset,
       updateOption: state.updateOption,

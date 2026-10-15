@@ -78,7 +78,7 @@ export const AnalyzeStrikeWeightPage = () => {
     >
       <PageHeading
         title={
-          <Trans i18nKey="Strike <1>Weight</1>">
+          <Trans t={t} i18nKey="Strike <1>Weight</1>">
             Strike <em className="ptl-accent">Weight</em>
           </Trans>
         }

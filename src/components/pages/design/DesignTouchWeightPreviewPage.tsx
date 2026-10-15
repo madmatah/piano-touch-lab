@@ -5,15 +5,13 @@ import { PageHeading } from '../../layout/PageHeading';
 import { PianoIdentity } from '../../layout/PianoIdentity';
 import { PrintButton } from '../../layout/PrintButton';
 import { DesignStepsBar } from '@/components/design/steps/DesignStepsBar';
-import { useAnalyzedKeyboard } from '../../../hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '../../../hooks/keyboard/use-designed-keyboard';
 import { usePrintLandscape } from '@/hooks/use-print-page-size';
 import { useTranslation } from '@/hooks/use-translation';
 import { TouchWeightPreview } from '@/components/design/TouchWeightPreview';
 
 export const DesignTouchWeightPreviewPage = () => {
-  const analyzedKeyboard = useAnalyzedKeyboard();
-  const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+  const designedKeyboard = useDesignedKeyboard();
   const { t } = useTranslation();
   usePrintLandscape();
 
@@ -29,7 +27,7 @@ export const DesignTouchWeightPreviewPage = () => {
       <DesignStepsBar currentStepId="preview" />
       <PageHeading
         title={
-          <Trans i18nKey="Touch Weight <1>Preview</1>">
+          <Trans t={t} i18nKey="Touch Weight <1>Preview</1>">
             Touch Weight <em className="ptl-accent">Preview</em>
           </Trans>
         }

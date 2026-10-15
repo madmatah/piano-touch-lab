@@ -3,6 +3,7 @@ import { enUS, fr } from 'date-fns/locale';
 
 import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
+import { usePrintDate } from '@/hooks/use-print-date';
 import { useTranslation } from '@/hooks/use-translation';
 
 /**
@@ -16,6 +17,7 @@ export const PrintHeader = ({ title }: { title: string }) => {
   const { currentLanguage, t } = useTranslation();
   const { brand, keyCount, model, serialNumber } = usePianoProfileState();
   const { keyboard } = useKeyboard();
+  const printDate = usePrintDate();
 
   const keys = keyboard.getKeys();
   const range =
@@ -55,7 +57,7 @@ export const PrintHeader = ({ title }: { title: string }) => {
         </span>
         <span className="font-mono text-xs text-muted-foreground">
           {t('Printed on {{date}}', {
-            date: format(new Date(), 'd MMMM yyyy', {
+            date: format(printDate, 'd MMMM yyyy', {
               locale: currentLanguage.startsWith('fr') ? fr : enUS,
             }),
           })}
