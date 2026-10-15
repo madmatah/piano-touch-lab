@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useMeasurePasses, type MeasurePassId } from './measure-passes';
 import { MeasureInputField } from './MeasureInputField';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { useAnalyzedKey } from '@/hooks/keyboard/use-analyzed-key';
 import { useKeyMeasurementInconsistency } from './hooks/use-key-measurement-inconsistency';
 
 type MeasuredProperty = keyof Pick<
@@ -31,9 +32,8 @@ type MeasuredProperty = keyof Pick<
 >;
 
 export interface KeyMeasurementProps {
-  balanceWeight: OptionalNumber;
   currentPassId: MeasurePassId;
-  frictionWeight: OptionalNumber;
+
   isBlackKey: boolean;
   keyName: string;
   keyNumber: number;
@@ -48,9 +48,7 @@ const computedCellClassName = cn(
 
 /** One key of the measure table: the fields to fill, then what they give. */
 export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
-  balanceWeight,
   currentPassId,
-  frictionWeight,
   isBlackKey,
   keyName,
   keyNumber,
@@ -68,6 +66,9 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
     computedStrikeWeightRatio,
     isKeyMeasurementInconsistent,
   } = useKeyMeasurementInconsistency(keyNumber);
+  // Read here rather than taken as a prop: the row then depends on its own
+  // key alone, and the table does not rebuild the keyboard to fill them in.
+  const { analyzedKey } = useAnalyzedKey(keyNumber);
 
   const onUpdateKeyProperty = useCallback(
     (keyProperty: keyof MeasuredKeyRequirements) => (value: OptionalNumber) => {
@@ -130,7 +131,7 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
           {keyNumber}
           {isKeyMeasurementInconsistent && (
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger aria-label={t('Inconsistent measurement')}>
                 <MessageCircleWarning className="size-4 text-destructive" />
               </TooltipTrigger>
               <TooltipContent side="right" variant="destructive">
@@ -180,10 +181,13 @@ export const KeyMeasurement: React.FC<KeyMeasurementProps> = ({
         </td>
       ))}
       <td className={computedCellClassName}>
-        {formatWeightValue(balanceWeight, currentLanguage)}
+        {formatWeightValue(analyzedKey?.balanceWeight ?? null, currentLanguage)}
       </td>
       <td className={computedCellClassName}>
-        {formatWeightValue(frictionWeight, currentLanguage)}
+        {formatWeightValue(
+          analyzedKey?.frictionWeight ?? null,
+          currentLanguage,
+        )}
       </td>
     </tr>
   );

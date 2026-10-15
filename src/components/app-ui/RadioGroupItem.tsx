@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { RadioGroupItem } from '../ui/radio-group';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -10,7 +10,6 @@ export interface RadioGroupItemProps<T extends string> {
   disabledReason?: string;
   isDisabled?: boolean;
   label: string;
-  onClick: (value: T) => void;
   value: T;
 }
 
@@ -29,12 +28,7 @@ export const RadioItem = <T extends string>({
   isDisabled,
   label,
   value,
-  onClick,
 }: RadioGroupItemProps<T>) => {
-  const onClickHandler = useCallback(() => {
-    onClick(value);
-  }, [onClick, value]);
-
   const shouldDisplayTooltip = useMemo(() => {
     return !!isDisabled && disabledReason;
   }, [disabledReason, isDisabled]);
@@ -52,10 +46,14 @@ export const RadioItem = <T extends string>({
     () => (
       <>
         <div className="flex items-start gap-3">
+          {/*
+           * Selection is reported by the group's `onValueChange`, which the
+           * keyboard raises too; an `onClick` here would report a mouse
+           * click twice and leave the arrow keys reporting nothing.
+           */}
           <RadioGroupItem
             value={value}
             className="mt-0.5"
-            onClick={onClickHandler}
             disabled={!!isDisabled}
           />
           <div className="flex flex-col gap-[3px]">
@@ -70,7 +68,7 @@ export const RadioItem = <T extends string>({
         {children ? <div className="pl-7">{children}</div> : null}
       </>
     ),
-    [children, value, onClickHandler, isDisabled, label, description],
+    [children, value, isDisabled, label, description],
   );
 
   return shouldDisplayTooltip ? (

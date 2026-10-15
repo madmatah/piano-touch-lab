@@ -5,7 +5,7 @@ import { Keyboard } from '@/lib/piano/keyboard';
 import { TouchDesignSerieVariant } from '../KeyboardChart';
 import { KeyColor } from '@/lib/piano/keyboard';
 import type { KeyWith } from '@/lib/piano/keyboard';
-import type { EchartsDataItemStyle, TouchDesignSerie } from '../interfaces';
+import type { TouchDesignSerie } from '../interfaces';
 
 describe('The useGenerateSerie hook', () => {
   interface TestPayload {
@@ -84,11 +84,7 @@ describe('The useGenerateSerie hook', () => {
               payload: 12,
             },
           ],
-          flatItemStyle: undefined,
           name: fakeName,
-          sharpItemStyle: undefined,
-          shouldDisplayInLegend: true,
-          shouldDisplayInTooltip: true,
           variant: fakeVariant,
         });
       });
@@ -105,53 +101,6 @@ describe('The useGenerateSerie hook', () => {
         expect(result.data[0]?.color).toBe(KeyColor.White);
         expect(result.data[0]?.name).toBe('C1');
         expect(result.data[0]?.octave).toBe(1);
-      });
-    });
-
-    describe('When called with custom item styles', () => {
-      const fakeFlatItemStyle: EchartsDataItemStyle = { color: '#ffffff' };
-      const fakeSharpItemStyle: EchartsDataItemStyle = { color: '#000000' };
-
-      beforeEach(() => {
-        result = generateSerie(fakeValueSelector, fakeName, fakeVariant, {
-          flatItemStyle: fakeFlatItemStyle,
-          sharpItemStyle: fakeSharpItemStyle,
-        });
-      });
-
-      it('should include the custom item styles', () => {
-        expect(result.flatItemStyle).toBe(fakeFlatItemStyle);
-        expect(result.sharpItemStyle).toBe(fakeSharpItemStyle);
-      });
-    });
-
-    describe('When called with only flat item style', () => {
-      const fakeFlatItemStyle: EchartsDataItemStyle = { color: '#ffffff' };
-
-      beforeEach(() => {
-        result = generateSerie(fakeValueSelector, fakeName, fakeVariant, {
-          flatItemStyle: fakeFlatItemStyle,
-        });
-      });
-
-      it('should include only the flat item style', () => {
-        expect(result.flatItemStyle).toBe(fakeFlatItemStyle);
-        expect(result.sharpItemStyle).toBeUndefined();
-      });
-    });
-
-    describe('When called with only sharp item style', () => {
-      const fakeSharpItemStyle: EchartsDataItemStyle = { color: '#000000' };
-
-      beforeEach(() => {
-        result = generateSerie(fakeValueSelector, fakeName, fakeVariant, {
-          sharpItemStyle: fakeSharpItemStyle,
-        });
-      });
-
-      it('should include only the sharp item style', () => {
-        expect(result.flatItemStyle).toBeUndefined();
-        expect(result.sharpItemStyle).toBe(fakeSharpItemStyle);
       });
     });
 
@@ -208,8 +157,6 @@ describe('The useGenerateSerie hook', () => {
       it('should still include other properties', () => {
         expect(result.name).toBe(fakeName);
         expect(result.variant).toBe(fakeVariant);
-        expect(result.flatItemStyle).toBeUndefined();
-        expect(result.sharpItemStyle).toBeUndefined();
       });
     });
   });

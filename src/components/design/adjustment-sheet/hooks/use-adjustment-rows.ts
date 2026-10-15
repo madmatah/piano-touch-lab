@@ -3,10 +3,9 @@ import { useMemo } from 'react';
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { TouchWeightAnalyzedKeyboard } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 
-import type { KeyAdjustmentPayload } from '../AdjustmentSheet.types';
+import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
 
-/** Below this, a change is not worth a trip to the bench. */
-export const ADJUSTMENT_THRESHOLD = 0.1;
+import type { KeyAdjustmentPayload } from '../AdjustmentSheet.types';
 
 export interface AdjustmentSummary {
   /** Keys whose front weight moves by at least the threshold. */

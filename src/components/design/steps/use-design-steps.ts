@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useDesignedKeyboard } from '@/hooks/keyboard/use-designed-keyboard';
+import { useIsDesignCompleted } from '@/hooks/keyboard/use-design-completion';
 import {
   useFrontWeightDesign,
   useStrikeWeightDesign,
@@ -11,6 +12,7 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import { SmoothStrategy } from '@/lib/geometry/curve-smoother/smooth-strategy.enum';
 import { formatGrams, formatRatio } from '@/lib/format/format-weight';
+import { designedBalanceWeight } from '@/lib/piano/touch-design/designed-balance-weight';
 
 import { FrontWeightDesignMode } from '../front-weight/FrontWeightDesign.types';
 import { StrikeWeightDesignMode } from '../strike-weight/StrikeWeightDesign.types';
@@ -56,6 +58,7 @@ export const useDesignSteps = (): DesignStep[] => {
   const { currentLanguage, t } = useTranslation();
   const analyzedKeyboard = useAnalyzedKeyboard();
   const designedKeyboard = useDesignedKeyboard(analyzedKeyboard);
+  const isDesignCompleted = useIsDesignCompleted(designedKeyboard);
 
   const springs = useWippenSupportSpringsDesign();
   const frontWeight = useFrontWeightDesign();
@@ -139,13 +142,17 @@ export const useDesignSteps = (): DesignStep[] => {
       }
     };
 
-    const designedBalanceWeights = designedKeyboard.mapToArray(
-      (key) => key.payload.balanceWeight,
+    // Only the keys the previewer actually resolved: a balance weight on
+    // its own proves nothing, it survives from the measurements. The sidebar
+    // opens the same two pages on the same predicate — they have to agree,
+    // they are on screen together.
+    const designedKeys = designedKeyboard
+      .getKeys()
+      .filter((key) => key.payload.downWeightWithoutSpringSupport !== null);
+    const designedCount = designedKeys.length;
+    const designedBalanceWeights = designedKeys.map((key) =>
+      designedBalanceWeight(key.payload),
     );
-    const designedCount = designedBalanceWeights.filter(
-      (weight) => weight !== null,
-    ).length;
-    const isResolved = designedCount > 0;
 
     return [
       {
@@ -186,7 +193,7 @@ export const useDesignSteps = (): DesignStep[] => {
       },
       {
         id: 'preview' as const,
-        isAvailable: isResolved,
+        isAvailable: isDesignCompleted,
         kind: 'result' as const,
         label: `→ ${t('Touch Weight Preview', { ns: 'navigation' })}`,
         name: t('Touch Weight Preview', { ns: 'navigation' }),
@@ -197,7 +204,7 @@ export const useDesignSteps = (): DesignStep[] => {
       },
       {
         id: 'sheet' as const,
-        isAvailable: isResolved,
+        isAvailable: isDesignCompleted,
         kind: 'result' as const,
         label: `→ ${t('Adjustment Sheet', { ns: 'navigation' })}`,
         name: t('Adjustment Sheet', { ns: 'navigation' }),
@@ -211,6 +218,7 @@ export const useDesignSteps = (): DesignStep[] => {
   }, [
     currentLanguage,
     designedKeyboard,
+    isDesignCompleted,
     frontWeight,
     ratio,
     springs,

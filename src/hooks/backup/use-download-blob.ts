@@ -9,7 +9,10 @@ export const useDownloadBlob = () => {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    // Not in this task: a browser that has not started fetching the blob
+    // yet would be left with a link to nothing, and the download would
+    // silently never appear.
+    setTimeout(() => URL.revokeObjectURL(url), 0);
   }, []);
 
   return { downloadBlob } as const;

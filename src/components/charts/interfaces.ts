@@ -1,14 +1,6 @@
 import type { KeyWith } from '@/lib/piano/keyboard';
 import type { TouchDesignSerieVariant } from './KeyboardChart';
 
-export interface EchartsDataItemStyle {
-  color?: string;
-  borderColor?: string;
-  borderWidth?: number;
-}
-
-export type TouchDesignDataPointOld = number | undefined | [number, undefined];
-
 export type TouchDesignDataPoint = KeyWith<number | undefined>;
 
 export interface TouchDesignSerie {
@@ -16,10 +8,6 @@ export interface TouchDesignSerie {
   data: readonly TouchDesignDataPoint[];
   variant?: TouchDesignSerieVariant;
   color?: string;
-  shouldDisplayInTooltip?: boolean;
-  shouldDisplayInLegend?: boolean;
-  sharpItemStyle?: EchartsDataItemStyle;
-  flatItemStyle?: EchartsDataItemStyle;
 }
 
 /**

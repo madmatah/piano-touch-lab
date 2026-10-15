@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
+import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { KeyColor } from '@/lib/piano/keyboard';
@@ -29,7 +29,10 @@ export const KeyMeasureList = ({
   onFocusKey,
 }: KeyMeasureListProps) => {
   const { t } = useTranslation();
-  const analyzedKeyboard = useAnalyzedKeyboard();
+  // The bare keyboard, which never changes while someone types: a row reads
+  // its own key out of the store, so a keystroke re-renders that row alone.
+  const { keyboard } = useKeyboard();
+  const keys = useMemo(() => keyboard.getKeys(), [keyboard]);
   const { useManualSWRMeasurements, useSupportSpringMeasurements } =
     useMeasureOptions();
 
@@ -125,12 +128,10 @@ export const KeyMeasureList = ({
             </tr>
           </thead>
           <tbody>
-            {analyzedKeyboard.mapToArray((key) => (
+            {keys.map((key) => (
               <KeyMeasurement
                 key={key.number}
-                balanceWeight={key.payload.balanceWeight}
                 currentPassId={currentPassId}
-                frictionWeight={key.payload.frictionWeight}
                 isBlackKey={key.color === KeyColor.Black}
                 keyName={key.name}
                 keyNumber={key.number}

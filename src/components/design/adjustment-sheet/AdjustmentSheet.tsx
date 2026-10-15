@@ -7,6 +7,7 @@ import {
   formatWeightValue,
 } from '@/lib/format/format-weight';
 import { KeyColor } from '@/lib/piano/keyboard';
+import { ADJUSTMENT_THRESHOLD } from '@/lib/piano/touch-design/adjustment-threshold';
 
 import { type AdjustmentSheetProps } from './AdjustmentSheet.types';
 import { AdjustmentSheetTableRow } from './AdjustmentSheetTableRow';
@@ -182,7 +183,9 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
       <p className="ptl-print-only m-0 text-[12px] leading-[1.5] text-muted-foreground">
         {t(
           'Values in grams: current → target, then the difference to apply (+ to add, − to remove). “unchanged”: a difference below {{threshold}} g.',
-          { threshold: formatWeightValue(0.1, currentLanguage) },
+          {
+            threshold: formatWeightValue(ADJUSTMENT_THRESHOLD, currentLanguage),
+          },
         )}
       </p>
     </div>

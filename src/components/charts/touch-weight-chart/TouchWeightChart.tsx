@@ -88,11 +88,7 @@ export const TouchWeightChart = ({
   const { currentLanguage, t } = useTranslation();
   const tokens = useChartTokens();
   // Two grids: the pointer has to be followed over the friction panel too.
-  const { geometry, hover, keys } = useChartFigure(
-    analyzedKeyboard,
-    undefined,
-    2,
-  );
+  const { geometry, hover, keys } = useChartFigure(analyzedKeyboard, 2);
   const series = useTouchWeightSeries(
     analyzedKeyboard,
     useSupportSpringMeasurements,

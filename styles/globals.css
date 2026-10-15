@@ -449,7 +449,7 @@
     display: none !important;
   }
 
-  [data-slot='sidebar-inset'] > main {
+  [data-slot='page-content'] {
     max-width: none;
     padding: 0;
   }

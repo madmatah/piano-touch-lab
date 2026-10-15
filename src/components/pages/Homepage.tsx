@@ -79,12 +79,7 @@ export const Homepage = () => {
           <div className="flex flex-[2_1_420px] flex-col gap-4">
             <p className="m-0 text-[16.5px] leading-[1.75] text-muted-foreground">
               {t(
-                'Piano Touch Lab was born where two enthusiasms meet: the piano and software. Curious to understand the mechanics of the instrument, I set out to explore the principles behind its geometry and its touch. That search led me to the work of David C. Stanwood, whose “Equation of Balance” and “New Touch Weight Metrology” shaped much of my thinking.',
-              )}
-            </p>
-            <p className="m-0 text-[16.5px] leading-[1.75] text-muted-foreground">
-              {t(
-                'What began as a personal learning tool gradually became an application in its own right, shared as open source.',
+                'Piano Touch Lab was born from my curiosity as an amateur pianist and software developer, eager to understand the piano’s mechanics in depth. In exploring the fundamentals of piano geometry and touch, I discovered the work of David C. Stanwood and created this tool to experiment with his “Equation of Balance” and the “New Touch Weight Metrology”. What began as a way to deepen my own understanding gradually evolved into a full-fledged application, which I decided to share as open source, so that others can explore, learn, and build upon it.',
               )}
             </p>
             <Button asChild variant="outlineStrong" className="self-start">

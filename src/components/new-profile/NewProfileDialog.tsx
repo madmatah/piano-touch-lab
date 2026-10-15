@@ -48,7 +48,8 @@ export const NewProfileDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      {/* No description: the two fields and the warning say it all. */}
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader className="gap-2 pr-9">
           <span className="ptl-label">
             {t('File', { ns: 'navigation' })} ·{' '}
@@ -77,24 +78,28 @@ export const NewProfileDialog = ({
         {isDemoProfile ? null : (
           <Alert variant="warn">
             <TriangleAlert />
-            <AlertDescription className="gap-2">
-              <span>
-                {t(
-                  'All data from the current profile will be deleted. Please save your work first!',
-                )}
-              </span>
-              {/* A way out, right where the warning is raised. */}
-              <button
-                type="button"
-                onClick={exportBackupFile}
-                className="inline-flex cursor-pointer items-center gap-1.5 font-semibold text-ptl-brass transition-colors hover:text-foreground"
-              >
-                <Download className="size-[15px]" />
-                {t('Export the current profile')}
-              </button>
+            <AlertDescription>
+              {t(
+                'All data from the current profile will be deleted. Please save your work first!',
+              )}
             </AlertDescription>
           </Alert>
         )}
+
+        {/*
+         * The way out stands outside the warning: the profile on screen is
+         * not always the one the flag says it is — a measures-only import
+         * leaves the demonstration flag up — and an export costs nothing
+         * when there is nothing to lose.
+         */}
+        <button
+          type="button"
+          onClick={exportBackupFile}
+          className="inline-flex cursor-pointer items-center gap-1.5 self-start text-[14px] font-semibold text-ptl-brass transition-colors hover:text-foreground"
+        >
+          <Download className="size-[15px]" />
+          {t('Export the current profile')}
+        </button>
 
         <DialogFooter>
           <Button variant="outlineStrong" onClick={handleCancel}>

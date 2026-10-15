@@ -52,7 +52,12 @@ export const MainLayout = ({
           <AppSidebarTrigger className="mt-4 ml-4" />
         )}
         {shouldDisplayDemoBanner ? <DemoProfileBanner /> : null}
-        <main
+        {/*
+         * A div, not a `main`: the sidebar inset above is already the page's
+         * `main` landmark, and nesting two is invalid.
+         */}
+        <div
+          data-slot="page-content"
           className={cn(
             variant === 'app' &&
               'flex w-full max-w-[1240px] flex-col gap-6 px-10 pt-8 pb-14 max-md:px-4 max-md:pt-6 max-md:pb-10',
@@ -60,7 +65,7 @@ export const MainLayout = ({
           )}
         >
           {children}
-        </main>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

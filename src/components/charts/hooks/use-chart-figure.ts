@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import { computeKeyboardGeometry } from '@/lib/piano/keyboard/keyboard-geometry';
@@ -13,7 +13,6 @@ import { useHoveredKey, type HoveredKeyApi } from './use-hovered-key';
  */
 export const useChartFigure = <T>(
   keyboard: KeyboardLike<KeyWith<T>>,
-  onHoveredKeyChange?: (keyNumber: number | null) => void,
   gridCount = 1,
 ) => {
   const keys = useMemo(() => keyboard.getKeys(), [keyboard]);
@@ -26,11 +25,5 @@ export const useChartFigure = <T>(
     keyboard.size,
     gridCount,
   );
-  const { hoveredKey } = hover;
-
-  useEffect(() => {
-    onHoveredKeyChange?.(hoveredKey);
-  }, [hoveredKey, onHoveredKeyChange]);
-
   return { geometry, hover, keys };
 };

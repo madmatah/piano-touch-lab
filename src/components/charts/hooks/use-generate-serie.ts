@@ -2,11 +2,7 @@ import type { KeyboardLike, KeyWith } from '@/lib/piano/keyboard';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import { useCallback } from 'react';
 import type { TouchDesignSerieVariant } from '../KeyboardChart';
-import type {
-  EchartsDataItemStyle,
-  TouchDesignDataPoint,
-  TouchDesignSerie,
-} from '../interfaces';
+import type { TouchDesignDataPoint, TouchDesignSerie } from '../interfaces';
 
 export const useGenerateSerie = <T>(keyboard: KeyboardLike<KeyWith<T>>) => {
   const generateSerie = useCallback(
@@ -14,31 +10,12 @@ export const useGenerateSerie = <T>(keyboard: KeyboardLike<KeyWith<T>>) => {
       valueSelector: (key: KeyWith<T>) => OptionalNumber,
       name: string,
       variant: TouchDesignSerieVariant,
-      options?: {
-        flatItemStyle?: EchartsDataItemStyle;
-        sharpItemStyle?: EchartsDataItemStyle;
-        shouldDisplayInLegend?: boolean;
-        shouldDisplayInTooltip?: boolean;
-      },
     ): TouchDesignSerie => {
-      const flatItemStyle = options?.flatItemStyle;
-      const sharpItemStyle = options?.sharpItemStyle;
-      const shouldDisplayInTooltip = options?.shouldDisplayInTooltip ?? true;
-      const shouldDisplayInLegend = options?.shouldDisplayInLegend ?? true;
-
       const data: readonly TouchDesignDataPoint[] = keyboard
         .map<number | undefined>((key) => valueSelector(key) ?? undefined)
         .getKeys();
 
-      return {
-        data,
-        flatItemStyle,
-        name,
-        sharpItemStyle,
-        shouldDisplayInLegend,
-        shouldDisplayInTooltip,
-        variant,
-      };
+      return { data, name, variant };
     },
     [keyboard],
   );

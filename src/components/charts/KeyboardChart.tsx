@@ -96,7 +96,8 @@ const serieStyleByVariant = (
  * A chart whose horizontal axis is the keyboard itself.
  *
  * Points are placed at the physical centre of their key rather than at their
- * key number, so that a measurement sits above the key it was taken on — which
+ * key number, so that a measurement sits above the back of the key it was
+ * taken on — which
  * a linear axis over 88 numbers would miss by up to a third of a key.
  */
 export const KeyboardChart = ({
