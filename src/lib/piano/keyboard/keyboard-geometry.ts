@@ -54,6 +54,12 @@ const DEFAULTS = {
   whiteKeyWidth: 20,
 } as const;
 
+/**
+ * How much longer a white key is than it is wide, as far as the player sees
+ * it: about 150 mm by 23 mm.
+ */
+export const WHITE_KEY_LENGTH_RATIO = 6.5;
+
 const WHITE_KEY_INSET = 0.6;
 
 /** Black keys reach a little under two thirds down the white ones. */

@@ -78,6 +78,8 @@ export const usePrintableChart = (
   onReady?: (chart: EChartsType) => void,
 ): PrintableChart => {
   const chart = useRef<EChartsType | null>(null);
+  const boxWatch = useRef<ResizeObserver | null>(null);
+  const isOnPaper = useRef(false);
   const [state, setState] = useState(() => ({
     isPrinting: false,
     printedPlotHeight: printablePlotHeight(PRINT_FURNITURE[variant]),
@@ -110,6 +112,7 @@ export const usePrintableChart = (
       width: number | 'auto',
       printedPlotHeight?: number,
     ) => {
+      isOnPaper.current = isPrinting;
       flushSync(() =>
         setState((current) => ({
           isPrinting,
@@ -183,9 +186,33 @@ export const usePrintableChart = (
     };
   }, [option, variant]);
 
+  useEffect(
+    () => () => {
+      boxWatch.current?.disconnect();
+    },
+    [],
+  );
+
   const onChartReady = useCallback(
     (instance: EChartsType) => {
       chart.current = instance;
+      // The wrapper drops the first size its sensor reports, to spare the
+      // opening animation. When the box has already changed by then — a
+      // scrollbar coming in with the keyboard under the plot — the drawing
+      // keeps the width it was first given, and overruns its box for good.
+      // Paper is left out: the sheet sets its own widths, see `settle`.
+      const box = instance.getDom();
+      boxWatch.current?.disconnect();
+      boxWatch.current = new ResizeObserver(() => {
+        if (
+          !isOnPaper.current &&
+          !instance.isDisposed() &&
+          Math.abs(instance.getWidth() - box.clientWidth) >= 1
+        ) {
+          instance.resize();
+        }
+      });
+      boxWatch.current.observe(box);
       onReady?.(instance);
     },
     [onReady],

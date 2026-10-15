@@ -1,6 +1,58 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
 
-import { screenPlotHeight } from './chart-geometry';
+import {
+  chartKeyboardHeight,
+  chartKeyboardLayout,
+  screenPlotHeight,
+} from './chart-geometry';
+
+describe('The chartKeyboardLayout() function', () => {
+  let result: number;
+
+  describe('When the white keys are drawn 15 px wide', () => {
+    beforeEach(() => {
+      result = chartKeyboardLayout(780, 52).keyHeight;
+    });
+
+    it('should draw them six and a half times as long, as on the instrument', () => {
+      expect(result).toBe(97.5);
+    });
+  });
+
+  describe('When the white keys are drawn 30 px wide', () => {
+    beforeEach(() => {
+      result = chartKeyboardLayout(1560, 52).keyHeight;
+    });
+
+    it('should stop them at 120 px long', () => {
+      expect(result).toBe(120);
+    });
+  });
+
+  describe('When the keyboard has fewer keys over the same width', () => {
+    beforeEach(() => {
+      result = chartKeyboardLayout(780, 39).whiteKeyWidth;
+    });
+
+    it('should draw each one wider', () => {
+      expect(result).toBe(20);
+    });
+  });
+});
+
+describe('The chartKeyboardHeight() function', () => {
+  let result: number;
+
+  describe('When the keys are at their longest', () => {
+    beforeEach(() => {
+      result = chartKeyboardHeight(1560);
+    });
+
+    it('should add the sticks, the felt and the keybed to the keys', () => {
+      expect(result).toBe(146);
+    });
+  });
+});
 
 describe('The screenPlotHeight() function', () => {
   let result: number[];
@@ -24,7 +76,7 @@ describe('The screenPlotHeight() function', () => {
     });
 
     it('should take the room it offers', () => {
-      expect(result).toEqual([481]);
+      expect(result).toEqual([397]);
     });
   });
 
@@ -76,7 +128,7 @@ describe('The screenPlotHeight() function', () => {
     });
 
     it('should grow the plot only once the target has had its room', () => {
-      expect(result).toEqual([268, 425]);
+      expect(result).toEqual([268, 341]);
     });
   });
 });

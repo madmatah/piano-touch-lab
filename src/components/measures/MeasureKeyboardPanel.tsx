@@ -1,10 +1,8 @@
 import { useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 
-import {
-  PianoKeyboard,
-  type PianoKeyTone,
-} from '@/components/piano/PianoKeyboard';
+import { type PianoKeyTone } from '@/components/piano/KeyboardPlate';
+import { PianoKeyboard } from '@/components/piano/PianoKeyboard';
 import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { useStickyHeight } from '@/hooks/use-sticky-height';
 import {

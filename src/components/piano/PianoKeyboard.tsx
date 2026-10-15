@@ -9,19 +9,12 @@ import {
 import type { Key } from '@/lib/piano/keyboard/key';
 import { cn } from '@/lib/utils';
 
-/**
- * How a single key is painted: plain, tinted brass (a key already measured,
- * or an end of the range) or the red felt of the key being worked on.
- */
-export type PianoKeyTone = 'plain' | 'marked' | 'current';
-
-export interface PianoKeyboardLabel {
-  /** The key the label sits under, or an edge of the keyboard. */
-  at: number | 'start' | 'end';
-  isMuted?: boolean;
-  isStrong?: boolean;
-  text: string;
-}
+import { KeyboardLabelRow, type PianoKeyboardLabel } from './KeyboardLabelRow';
+import {
+  KeyboardPlate,
+  keybedHeight,
+  type PianoKeyTone,
+} from './KeyboardPlate';
 
 export interface PianoKeyboardProps {
   className?: string;
@@ -34,18 +27,8 @@ export interface PianoKeyboardProps {
   labels?: readonly PianoKeyboardLabel[];
   onKeyHover?: (keyNumber: number | null) => void;
   onKeySelect?: (keyNumber: number) => void;
-  /**
-   * Stretch the drawing to the width of its container at this fixed height,
-   * so it can sit under a chart and serve as its x axis.
-   */
-  stretchToHeight?: number;
   toneByKeyNumber?: ReadonlyMap<number, PianoKeyTone>;
 }
-
-/** The keybed shows a sliver of itself below the front of the keys. */
-const KEYBED_OVERHANG = 3;
-
-const joinPaths = (paths: string[]) => paths.join('');
 
 /**
  * The keyboard of the instrument, drawn to scale.
@@ -63,7 +46,6 @@ export const PianoKeyboard = ({
   labels,
   onKeyHover,
   onKeySelect,
-  stretchToHeight,
   toneByKeyNumber,
 }: PianoKeyboardProps) => {
   const geometry = useMemo(
@@ -71,37 +53,7 @@ export const PianoKeyboard = ({
     [keys, geometryOptions],
   );
 
-  const paths = useMemo(() => {
-    const toneOf = (keyNumber: number): PianoKeyTone =>
-      keyNumber === highlightedKey
-        ? 'marked'
-        : (toneByKeyNumber?.get(keyNumber) ?? 'plain');
-    const pick = (source: typeof geometry.whiteKeys, tone: PianoKeyTone) =>
-      joinPaths(
-        source.filter((key) => toneOf(key.number) === tone).map((k) => k.path),
-      );
-
-    return {
-      blackMarked: pick(geometry.blackKeys, 'marked'),
-      blacks: joinPaths(geometry.blackKeys.map((key) => key.path)),
-      current: joinPaths(
-        [...geometry.whiteKeys, ...geometry.blackKeys]
-          .filter((key) => toneOf(key.number) === 'current')
-          .map((key) => key.path),
-      ),
-      // The stick of the key being read is cut out of the board in the wash
-      // of the reading band above it, so the two make one column from the
-      // plot down to the key.
-      readLever:
-        highlightedKey === null || highlightedKey === undefined
-          ? ''
-          : (geometry.keysByNumber.get(highlightedKey)?.leverPath ?? ''),
-      whiteMarked: pick(geometry.whiteKeys, 'marked'),
-      whites: joinPaths(geometry.whiteKeys.map((key) => key.path)),
-    };
-  }, [geometry, highlightedKey, toneByKeyNumber]);
-
-  const keybedHeight = geometry.height + KEYBED_OVERHANG;
+  const height = keybedHeight(geometry);
 
   /**
    * Turns a pointer position over the drawing into a key number.
@@ -117,12 +69,12 @@ export const PianoKeyboard = ({
         return null;
       }
       const x = ((event.clientX - bounds.left) / bounds.width) * geometry.width;
-      const y = ((event.clientY - bounds.top) / bounds.height) * keybedHeight;
+      const y = ((event.clientY - bounds.top) / bounds.height) * height;
       return y < geometry.leverHeight
         ? findKeyAtBackPosition(geometry, x)
         : findKeyAtPosition(geometry, x);
     },
-    [geometry, keybedHeight],
+    [geometry, height],
   );
 
   const handleMouseMove = useCallback(
@@ -146,105 +98,32 @@ export const PianoKeyboard = ({
     [keyAtEvent, onKeySelect],
   );
 
-  const labelPosition = (at: PianoKeyboardLabel['at']) => {
-    if (at === 'start') {
-      return { left: 0 };
-    }
-    if (at === 'end') {
-      return { right: 0 };
-    }
-    const center = geometry.keysByNumber.get(at)?.center ?? 0;
-    return {
-      left: `${(center / geometry.width) * 100}%`,
-      transform: 'translateX(-50%)',
-    };
-  };
+  /** A label sits under the key a player would press, not under its stick. */
+  const placeOf = useCallback(
+    (keyNumber: number) =>
+      (geometry.keysByNumber.get(keyNumber)?.center ?? 0) / geometry.width,
+    [geometry],
+  );
 
   return (
     <div className={cn('w-full', className)}>
       <svg
-        viewBox={`0 0 ${geometry.width} ${keybedHeight}`}
-        preserveAspectRatio={stretchToHeight ? 'none' : undefined}
-        style={stretchToHeight ? { height: stretchToHeight } : undefined}
-        className={cn('block w-full', !stretchToHeight && 'h-auto')}
+        viewBox={`0 0 ${geometry.width} ${height}`}
+        className="block h-auto w-full"
         role="img"
         aria-label={description}
         onMouseMove={onKeyHover ? handleMouseMove : undefined}
         onMouseLeave={onKeyHover ? handleMouseLeave : undefined}
         onClick={onKeySelect ? handleClick : undefined}
       >
-        <rect
-          x="0"
-          y="0"
-          width={geometry.width}
-          height={keybedHeight}
-          rx="3"
-          className="fill-ptl-keybed"
+        <KeyboardPlate
+          geometry={geometry}
+          highlightedKey={highlightedKey}
+          toneByKeyNumber={toneByKeyNumber}
         />
-        {/*
-         * The sticks are left as one unbroken board: eighty-seven saw
-         * lines across the back of the figure drowned out the plot above
-         * them. Only the key being read is cut out of it, which is enough
-         * to show where the wood goes.
-         */}
-        {geometry.leverHeight > 0 && (
-          <rect
-            x="0"
-            y="0"
-            width={geometry.width}
-            height={geometry.leverHeight}
-            // The colour of the card it lies on, in both themes: painted as
-            // a white key it vanished on paper-white and stood out as an
-            // ivory band in the dark, where the keys are the ivory.
-            className="fill-card"
-          />
-        )}
-        {paths.readLever && (
-          <path d={paths.readLever} className="fill-ptl-brass-soft" />
-        )}
-        <rect
-          x="0"
-          y={geometry.leverHeight}
-          width={geometry.width}
-          height={geometry.feltHeight}
-          className="fill-ptl-felt"
-        />
-        <path
-          d={paths.whites}
-          strokeWidth="0.8"
-          vectorEffect="non-scaling-stroke"
-          className="fill-ptl-key-white stroke-ptl-key-white-edge"
-        />
-        {paths.whiteMarked && (
-          <path d={paths.whiteMarked} className="fill-ptl-key-white-done" />
-        )}
-        <path d={paths.blacks} className="fill-ptl-key-black" />
-        {paths.blackMarked && (
-          <path d={paths.blackMarked} className="fill-ptl-key-black-done" />
-        )}
-        {paths.current && (
-          <path d={paths.current} className="fill-ptl-current" />
-        )}
       </svg>
       {labels?.length ? (
-        <div
-          aria-hidden="true"
-          className="relative h-[18px] font-mono text-[11px] text-muted-foreground"
-        >
-          {labels.map((label) => (
-            <span
-              key={`${String(label.at)}-${label.text}`}
-              className={cn(
-                'absolute top-1 whitespace-nowrap',
-                label.isMuted && 'text-ptl-ink-3',
-                label.isStrong && 'font-bold text-ptl-brass',
-              )}
-              style={labelPosition(label.at)}
-            >
-              {label.text}
-            </span>
-          ))}
-        </div>
+        <KeyboardLabelRow labels={labels} placeOf={placeOf} />
       ) : null}
     </div>
   );

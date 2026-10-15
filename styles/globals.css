@@ -597,15 +597,6 @@
   }
 
   /*
-   * The drawn keyboard is a landmark worth its height on a screen you can
-   * scrub along. On a sheet it costs a fifth of the figure to say what the
-   * octave labels under it already say, so only they are kept.
-   */
-  [data-slot='chart-keyboard'] svg {
-    display: none;
-  }
-
-  /*
    * And the frame gives back the rest, from its own padding rather than from
    * the plot: the friction panel sits under the weights in the same box, so
    * shortening it crushes one of the two.

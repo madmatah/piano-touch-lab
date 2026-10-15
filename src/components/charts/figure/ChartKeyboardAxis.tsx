@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
-import {
-  PianoKeyboard,
-  type PianoKeyTone,
-} from '@/components/piano/PianoKeyboard';
-import { CHART_HEIGHTS, PLOT_INSET } from '../chart-geometry';
+import { type PianoKeyTone } from '@/components/piano/KeyboardPlate';
+import { PianoKeyboard } from '@/components/piano/PianoKeyboard';
+import { useElementWidth } from '@/hooks/use-element-width';
+
+import { chartKeyboardLayout, PLOT_INSET } from '../chart-geometry';
+import { ChartKeyTicks } from './ChartKeyTicks';
 import type { Key } from '@/lib/piano/keyboard/key';
 import { KeyColor } from '@/lib/piano/keyboard/key-color.enum';
 import { octaveMarks } from '@/lib/piano/keyboard/keyboard-geometry';
@@ -24,9 +25,6 @@ export interface ChartKeyboardAxisProps {
   onKeyHover?: (keyNumber: number | null) => void;
 }
 
-/** Hoisted: a fresh object would re-cut all 88 keys on every render. */
-const KEYBOARD_GEOMETRY = { leverHeight: 46 };
-
 /**
  * The keyboard standing in for the x axis.
  *
@@ -44,6 +42,19 @@ export const ChartKeyboardAxis = ({
   marks = 'all',
   onKeyHover,
 }: ChartKeyboardAxisProps) => {
+  const [axis, width] = useElementWidth<HTMLDivElement>();
+
+  // Laid out for the width it is given rather than stretched to it, so that
+  // a key keeps the shape of a key at any width of the plot.
+  const whiteKeyCount = useMemo(
+    () => keys.filter((key) => key.color === KeyColor.White).length,
+    [keys],
+  );
+  const geometry = useMemo(
+    () => chartKeyboardLayout(width, whiteKeyCount),
+    [whiteKeyCount, width],
+  );
+
   const tones = useMemo(
     () =>
       markedKeys
@@ -74,21 +85,29 @@ export const ChartKeyboardAxis = ({
 
   return (
     <div
+      ref={axis}
       data-slot="chart-keyboard"
       style={{
         marginLeft: PLOT_INSET.left,
         marginRight: PLOT_INSET.right,
       }}
     >
-      <PianoKeyboard
-        geometry={KEYBOARD_GEOMETRY}
+      {width > 0 ? (
+        <PianoKeyboard
+          className="print:hidden"
+          geometry={geometry}
+          keys={keys}
+          description={description}
+          highlightedKey={highlightedKey}
+          labels={labels}
+          onKeyHover={onKeyHover}
+          toneByKeyNumber={tones}
+        />
+      ) : null}
+      <ChartKeyTicks
+        className="hidden print:block"
         keys={keys}
-        description={description}
-        highlightedKey={highlightedKey}
         labels={labels}
-        onKeyHover={onKeyHover}
-        stretchToHeight={CHART_HEIGHTS.keyboard}
-        toneByKeyNumber={tones}
       />
     </div>
   );
