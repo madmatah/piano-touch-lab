@@ -116,15 +116,11 @@ export const AnalyzeStrikeWeightRatioPage = () => {
       }
     >
       <PageHeading
-        eyebrow={t('Fig. {{number}} — Analyze', { number: FIGURE_NUMBER })}
         title={
           <Trans i18nKey="Strike Weight <1>Ratio</1>">
             Strike Weight <em className="ptl-accent">Ratio</em>
           </Trans>
         }
-        lede={t(
-          'The weight to place at the measuring point to balance 1 g of strike weight: the leverage of the shank, the wippen and the key. Computed from your measurements, R = (FW + BW − WBW) / SW.',
-        )}
       />
       <StrikeWeightRatioChart
         keyboard={analyzedKeyboard}

@@ -186,7 +186,6 @@ export const HelpPage = () => {
   return (
     <MainLayout shouldDisplayDemoBanner={false} contentClassName="gap-10">
       <PageHeading
-        eyebrow={t('Help', { ns: 'navigation' })}
         title={
           <Trans i18nKey="Touch weight <1>metrology</1> cheat sheet">
             Touch weight <em className="ptl-accent">metrology</em> cheat sheet

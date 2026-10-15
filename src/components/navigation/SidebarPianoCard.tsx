@@ -1,41 +1,29 @@
 import { NavLink, useLocation } from 'react-router-dom';
 
 import { Badge } from '@/components/ui/badge';
-import { useKeyboard } from '@/hooks/keyboard/use-keyboard';
 import { usePianoProfileState } from '@/hooks/store/use-piano-profile-store';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
 export interface SidebarPianoCardProps {
-  number: string;
   label: string;
 }
 
 /**
- * The instrument being worked on, at the top of the sidebar: step number,
- * demo badge, name in serif, and the specification line in mono.
+ * The instrument being worked on, at the top of the sidebar: its name in
+ * serif, the demo badge, and the serial number in mono.
  */
-export const SidebarPianoCard = ({ label, number }: SidebarPianoCardProps) => {
+export const SidebarPianoCard = ({ label }: SidebarPianoCardProps) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const { brand, isDemoProfile, keyCount, model, serialNumber } =
-    usePianoProfileState();
-  const { keyboard } = useKeyboard();
+  const { brand, isDemoProfile, model, serialNumber } = usePianoProfileState();
 
   const isActive = pathname === '/piano';
-  const keys = keyboard.getKeys();
-  const range =
-    keys.length > 0 ? `${keys[0]!.name}–${keys[keys.length - 1]!.name}` : null;
-
-  const specification = [
-    serialNumber
-      ? t('S/N {{serialNumber}}', { ns: 'navigation', serialNumber })
-      : null,
-    t('{{count}} keys', { count: keyCount, ns: 'navigation' }),
-    range,
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  // The key count and the range are on the Piano page, where they can be
+  // changed; repeating them under every screen told the reader nothing.
+  const specification = serialNumber
+    ? t('S/N {{serialNumber}}', { ns: 'navigation', serialNumber })
+    : null;
 
   return (
     <NavLink
@@ -48,9 +36,7 @@ export const SidebarPianoCard = ({ label, number }: SidebarPianoCardProps) => {
       )}
     >
       <span className="flex items-center justify-between gap-2">
-        <span className="ptl-label">
-          {number} · {label}
-        </span>
+        <span className="ptl-label">{label}</span>
         {isDemoProfile ? (
           <Badge variant="mono">{t('Demo', { ns: 'navigation' })}</Badge>
         ) : null}
@@ -66,9 +52,11 @@ export const SidebarPianoCard = ({ label, number }: SidebarPianoCardProps) => {
           label
         )}
       </span>
-      <span className="font-mono text-[11px] text-muted-foreground">
-        {specification}
-      </span>
+      {specification ? (
+        <span className="font-mono text-[11px] text-muted-foreground">
+          {specification}
+        </span>
+      ) : null}
     </NavLink>
   );
 };

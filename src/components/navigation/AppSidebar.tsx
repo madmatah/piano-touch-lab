@@ -30,9 +30,7 @@ export const AppSidebar = ({ steps }: { steps: NavigationStep[] }) => {
     <Sidebar collapsible="offcanvas" className="border-r border-border">
       <SidebarContent className="gap-6 overflow-y-auto px-3.5 pt-[26px] pb-5">
         <SidebarBrand />
-        {pianoStep ? (
-          <SidebarPianoCard label={pianoStep.label} number={pianoStep.number} />
-        ) : null}
+        {pianoStep ? <SidebarPianoCard label={pianoStep.label} /> : null}
 
         <nav
           aria-label={t('Workflow', { ns: 'navigation' })}
@@ -49,7 +47,7 @@ export const AppSidebar = ({ steps }: { steps: NavigationStep[] }) => {
                 <SidebarStepItem
                   isActive={isActive && !hasLinks}
                   label={step.label}
-                  number={step.number}
+                  number={step.number ?? ''}
                   to={step.to}
                   trailing={
                     hasLinks ? (

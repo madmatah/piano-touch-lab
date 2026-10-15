@@ -16,7 +16,6 @@ export const DesignStrikeWeightPage = () => {
     <MainLayout>
       <DesignStepsBar currentStepId="strike-weight" />
       <PageHeading
-        eyebrow={t('Design · parameter {{number}} of 4', { number: 3 })}
         title={
           <Trans i18nKey="Strike <1>Weight</1>">
             Strike <em className="ptl-accent">Weight</em>

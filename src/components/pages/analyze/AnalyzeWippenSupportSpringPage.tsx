@@ -96,15 +96,11 @@ export const AnalyzeWippenSupportSpringPage = () => {
       }
     >
       <PageHeading
-        eyebrow={t('Fig. {{number}} — Analyze', { number: FIGURE_NUMBER })}
         title={
           <Trans i18nKey="Wippen Support <1>Springs</1>">
             Wippen Support <em className="ptl-accent">Springs</em>
           </Trans>
         }
-        lede={t(
-          'The weight each wippen support spring takes off the measuring point: the difference between the down weight without the spring and with it.',
-        )}
       />
       <SupportSpringBalanceWeightChart
         keyboard={analyzedKeyboard}

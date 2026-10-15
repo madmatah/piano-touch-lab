@@ -4,8 +4,6 @@ export interface PageHeadingProps {
   /** Buttons on the heading's baseline, aligned right. Never printed. */
   actions?: React.ReactNode;
   className?: string;
-  /** The mono label above the title: "Step 00", "Fig. 02.2 — Analyze". */
-  eyebrow?: string;
   /** How wide the lede is allowed to run, in characters. */
   ledeWidth?: string;
   /** One or two sentences under the title. */
@@ -21,7 +19,6 @@ export interface PageHeadingProps {
 export const PageHeading = ({
   actions,
   className,
-  eyebrow,
   lede,
   ledeWidth = '66ch',
   title,
@@ -30,7 +27,6 @@ export const PageHeading = ({
     className={cn('flex flex-wrap items-end justify-between gap-4', className)}
   >
     <div className="flex flex-col gap-2.5">
-      {eyebrow ? <span className="ptl-label">{eyebrow}</span> : null}
       <h1 className="ptl-display m-0 text-[clamp(38px,4.6vw,58px)] leading-none">
         {title}
       </h1>

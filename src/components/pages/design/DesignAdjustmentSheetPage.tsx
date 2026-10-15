@@ -23,7 +23,6 @@ export const DesignAdjustmentSheetPage = () => {
       <DesignStepsBar currentStepId="sheet" />
       <PageHeading
         className="print:hidden"
-        eyebrow={t('Design · result')}
         title={
           <Trans i18nKey="Adjustment <1>Sheet</1>">
             Adjustment <em className="ptl-accent">Sheet</em>

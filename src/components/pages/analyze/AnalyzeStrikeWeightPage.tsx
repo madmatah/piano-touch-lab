@@ -108,15 +108,11 @@ export const AnalyzeStrikeWeightPage = () => {
       }
     >
       <PageHeading
-        eyebrow={t('Fig. {{number}} — Analyze', { number: FIGURE_NUMBER })}
         title={
           <Trans i18nKey="Strike <1>Weight</1>">
             Strike <em className="ptl-accent">Weight</em>
           </Trans>
         }
-        lede={t(
-          'The weight of the hammer and its shank, pivoting without friction at its centre, shank horizontal, measured at the strike line radius. Compared against the 13 standard curves.',
-        )}
       />
       <StrikeWeightChart
         keyboard={analyzedKeyboard}
