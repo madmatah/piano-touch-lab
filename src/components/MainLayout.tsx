@@ -4,6 +4,7 @@ import { AppSidebar } from '@/components/navigation/AppSidebar';
 import { AppSidebarTrigger } from '@/components/navigation/AppSidebarTrigger';
 import { useAppNavigation } from '@/components/navigation/app-navigation';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
 import { DemoProfileBanner } from './layout/DemoProfileBanner';
@@ -35,6 +36,7 @@ export const MainLayout = ({
   // the whole keyboard, and the sidebar and the breadcrumb both read it.
   const steps = useAppNavigation();
   useDocumentTitle(steps);
+  const { t } = useTranslation();
 
   return (
     <SidebarProvider
@@ -44,6 +46,16 @@ export const MainLayout = ({
         } as React.CSSProperties
       }
     >
+      {/*
+       * The first stop of the keyboard: past the sidebar, the header and the
+       * banner, some twenty-five Tabs before a figure. Hidden until focused.
+       */}
+      <a
+        href="#page-content"
+        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-card focus-visible:px-4 focus-visible:py-2.5 focus-visible:text-sm focus-visible:font-semibold focus-visible:shadow-md"
+      >
+        {t('Skip to content')}
+      </a>
       <AppSidebar steps={steps} />
       <PrintMargins />
       {/*
@@ -69,6 +81,8 @@ export const MainLayout = ({
          * `main` landmark, and nesting two is invalid.
          */}
         <div
+          id="page-content"
+          tabIndex={-1}
           data-slot="page-content"
           className={cn(
             variant === 'app' &&

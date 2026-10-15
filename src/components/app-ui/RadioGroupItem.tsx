@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
+import { useId } from 'react';
 import { RadioGroupItem } from '../ui/radio-group';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { Info } from 'lucide-react';
 
 export interface RadioGroupItemProps<T extends string> {
@@ -19,7 +18,13 @@ export interface RadioGroupItemProps<T extends string> {
  *
  * `children` are rendered inside the card, under the description — the design
  * tucks the controls belonging to a choice (a target weight, a curve) into the
- * card itself rather than beside it.
+ * card itself rather than beside it. They sit outside the `<label>`, though:
+ * inside it, every stepper button and figure of the card was read out as the
+ * name of the radio, and a label may hold one control only.
+ *
+ * Why a choice is unavailable is written in the card, not in a tooltip: a
+ * tooltip opens on a mouse hover, and on a tablet the card was greyed out
+ * with nothing to say why.
  */
 export const RadioItem = <T extends string>({
   children,
@@ -29,65 +34,65 @@ export const RadioItem = <T extends string>({
   label,
   value,
 }: RadioGroupItemProps<T>) => {
-  const shouldDisplayTooltip = useMemo(() => {
-    return !!isDisabled && disabledReason;
-  }, [disabledReason, isDisabled]);
+  const id = useId();
+  const titleId = `${id}-title`;
+  const descriptionId = description ? `${id}-description` : null;
+  const reasonId = isDisabled && disabledReason ? `${id}-reason` : null;
 
-  const labelClassName = useMemo(() => {
-    return cn(
-      'flex cursor-pointer select-none flex-col gap-3.5 rounded-md border border-border bg-card px-4 py-3.5 transition-colors',
-      'hover:bg-accent/60',
-      'has-[[data-state=checked]]:border-ptl-rule-strong has-[[data-state=checked]]:shadow-[inset_0_0_0_1px_var(--ptl-rule-strong)]',
-      isDisabled && 'cursor-not-allowed opacity-70 hover:bg-card',
-    );
-  }, [isDisabled]);
-
-  const itemContent = useMemo(
-    () => (
-      <>
-        <div className="flex items-start gap-3">
-          {/*
-           * Selection is reported by the group's `onValueChange`, which the
-           * keyboard raises too; an `onClick` here would report a mouse
-           * click twice and leave the arrow keys reporting nothing.
-           */}
-          <RadioGroupItem
-            value={value}
-            className="mt-0.5"
-            disabled={!!isDisabled}
-          />
-          <div className="flex flex-col gap-[3px]">
-            <span className="text-[14.5px] font-semibold">{label}</span>
-            {description ? (
-              <span className="text-[13px] leading-[1.5] text-muted-foreground">
-                {description}
-              </span>
-            ) : null}
-          </div>
-        </div>
-        {children ? <div className="pl-7">{children}</div> : null}
-      </>
-    ),
-    [children, value, isDisabled, label, description],
-  );
-
-  return shouldDisplayTooltip ? (
-    <div>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <label className={labelClassName}>{itemContent}</label>
-        </TooltipTrigger>
-        <TooltipContent className="font-semibold">
-          <div className="inline-flex items-center gap-2">
-            <span>
-              <Info className="h-4 w-4" />
+  return (
+    <div
+      className={cn(
+        'flex flex-col gap-3.5 rounded-md border border-border bg-card px-4 py-3.5 transition-colors',
+        'has-[[data-state=checked]]:border-ptl-rule-strong has-[[data-state=checked]]:shadow-[inset_0_0_0_1px_var(--ptl-rule-strong)]',
+        !isDisabled && 'hover:bg-accent/60',
+      )}
+    >
+      <label
+        className={cn(
+          'flex cursor-pointer items-start gap-3 select-none',
+          isDisabled && 'cursor-not-allowed',
+        )}
+      >
+        {/*
+         * Selection is reported by the group's `onValueChange`, which the
+         * keyboard raises too; an `onClick` here would report a mouse click
+         * twice and leave the arrow keys reporting nothing.
+         */}
+        <RadioGroupItem
+          value={value}
+          className="mt-0.5"
+          disabled={!!isDisabled}
+          aria-labelledby={titleId}
+          aria-describedby={
+            [descriptionId, reasonId].filter(Boolean).join(' ') || undefined
+          }
+        />
+        <span
+          className={cn('flex flex-col gap-[3px]', isDisabled && 'opacity-70')}
+        >
+          <span id={titleId} className="text-[14.5px] font-semibold">
+            {label}
+          </span>
+          {description ? (
+            <span
+              id={descriptionId ?? undefined}
+              className="text-[13px] leading-[1.5] text-muted-foreground"
+            >
+              {description}
             </span>
-            <span>{disabledReason}</span>
-          </div>
-        </TooltipContent>
-      </Tooltip>
+          ) : null}
+        </span>
+      </label>
+      {reasonId ? (
+        <p
+          id={reasonId}
+          className="m-0 flex items-start gap-2 pl-7 text-[12.5px] leading-[1.5] text-muted-foreground"
+        >
+          <Info aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+          {disabledReason}
+        </p>
+      ) : null}
+      {children ? <div className="pl-7">{children}</div> : null}
     </div>
-  ) : (
-    <label className={labelClassName}>{itemContent}</label>
   );
 };

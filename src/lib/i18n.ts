@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+import { keepDocumentLanguage } from './document-language';
+
 import frNavigation from '../locales/fr/navigation.json';
 import frTranslation from '../locales/fr/translation.json';
 
@@ -18,6 +20,9 @@ const resources = {
     translation: frTranslation,
   },
 };
+
+// Before init, so the language detected at start-up is caught as well.
+keepDocumentLanguage(i18n);
 
 void i18n
   .use(LanguageDetector)

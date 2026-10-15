@@ -10,7 +10,7 @@ export const useValidatedNumericInputField = (
   onUpdate: (value: OptionalNumber) => void,
   validator: Joi.Schema = Joi.number().optional(),
 ) => {
-  const { currentLanguage } = useTranslation();
+  const { currentLanguage, t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
 
   // A stored value is shown with the reader's decimal separator, as every
@@ -39,14 +39,34 @@ export const useValidatedNumericInputField = (
     return isNaN(numValue) ? null : numValue;
   };
 
+  // Joi writes its messages in English, about a field it calls "value": the
+  // reader gets them in their own language, about the number they typed.
+  const messageOf = useCallback(
+    (error: Joi.ValidationError): string => {
+      const detail = error.details[0];
+      const limit =
+        typeof detail?.context?.limit === 'number'
+          ? asText(detail.context.limit)
+          : '';
+      switch (detail?.type) {
+        case 'number.min':
+          return t('At least {{limit}}', { limit });
+        case 'number.max':
+          return t('At most {{limit}}', { limit });
+        default:
+          return t('Enter a number');
+      }
+    },
+    [asText, t],
+  );
+
   const checkIsInputValid = useCallback(
     (currentValue: string): boolean => {
       const { error } = validator.allow('', '-').validate(currentValue);
-      const hasError = !!error?.message;
-      setError(error?.message ?? null);
-      return !hasError;
+      setError(error ? messageOf(error) : null);
+      return !error;
     },
-    [validator],
+    [messageOf, validator],
   );
 
   const onInputChange = useCallback(

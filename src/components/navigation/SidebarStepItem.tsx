@@ -28,7 +28,15 @@ export const SidebarStepItem = ({
       isActive && 'bg-accent shadow-[inset_0_0_0_1px_var(--input)]',
     )}
   >
-    <span className="w-[18px] font-mono text-[11px] text-ptl-brass">
+    <span
+      className={cn(
+        'w-[18px] font-mono text-[11px] text-ptl-brass',
+        // On the brass-tinted row of the page in hand, brass alone fell to
+        // 4.3:1; a touch of ink brings it to 4.8.
+        isActive &&
+          'text-[color-mix(in_oklab,var(--ptl-brass)_88%,var(--foreground))]',
+      )}
+    >
       {number}
     </span>
     {label}

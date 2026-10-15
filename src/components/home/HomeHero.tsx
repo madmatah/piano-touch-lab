@@ -67,7 +67,9 @@ export const HomeHero = ({
             <button
               type="button"
               onClick={onLoadDemo}
-              className="ptl-link font-semibold"
+              // Underlined, as the mockup has it: in a sentence, brass and
+              // weight alone set it apart at 1.06:1.
+              className="ptl-link font-semibold underline"
             >
               {t('Load the demonstration piano…')}
             </button>
