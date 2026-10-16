@@ -18,6 +18,13 @@ export interface AdjustmentSheetTableRowProps {
 const cellClassName =
   'h-[42px] px-3 align-middle font-mono text-sm print:h-7 print:px-1.5 print:text-[13px]';
 
+/*
+ * On paper the pills flatten to plain text, and the change to one weight ran
+ * into the reading of the next: each column after the note is ruled off from
+ * the one before it. On screen the pills keep them apart.
+ */
+const ruledCellClassName = `${cellClassName} print:border-l`;
+
 const Adjustment = ({
   actualValue,
   targetValue,
@@ -25,7 +32,7 @@ const Adjustment = ({
   actualValue: number | null;
   targetValue: number | null;
 }) => (
-  <td className={cellClassName}>
+  <td className={ruledCellClassName}>
     <div className="flex items-center gap-2">
       <AdjustmentValue actualValue={actualValue} targetValue={targetValue} />
     </div>
@@ -83,10 +90,10 @@ export const AdjustmentSheetTableRow: React.FC<
      * looked like a checkbox, and a click on it did nothing. In ink, for a
      * pale box vanishes from a black and white laser.
      */}
-    <td className={`${cellClassName} ptl-print-only text-center`}>
+    <td className={`${ruledCellClassName} ptl-print-only text-center`}>
       <span className="inline-block size-[15px] rounded-[2px] border-[1.5px] border-foreground align-middle" />
     </td>
     {/* Room to write on the printed sheet; nothing to show on screen. */}
-    <td className={`${cellClassName} ptl-print-only border-l`} />
+    <td className={`${ruledCellClassName} ptl-print-only`} />
   </tr>
 );
