@@ -52,15 +52,13 @@ export const KeyboardPlate = ({
         source.filter((key) => toneOf(key.number) === tone).map((k) => k.path),
       );
 
+    // Each tone is painted in two layers, white keys then black: a white key
+    // is drawn whole, and the black keys have to come over it afterwards.
     return {
+      blackCurrent: pick(geometry.blackKeys, 'current'),
       blackMarked: pick(geometry.blackKeys, 'marked'),
       blackPending: pick(geometry.blackKeys, 'pending'),
       blacks: joinPaths(geometry.blackKeys.map((key) => key.path)),
-      current: joinPaths(
-        [...geometry.whiteKeys, ...geometry.blackKeys]
-          .filter((key) => toneOf(key.number) === 'current')
-          .map((key) => key.path),
-      ),
       // The stick of the key being read is cut out of the board in the wash
       // of the reading band above it, so the two make one column from the
       // plot down to the key.
@@ -68,6 +66,7 @@ export const KeyboardPlate = ({
         highlightedKey === null || highlightedKey === undefined
           ? ''
           : (geometry.keysByNumber.get(highlightedKey)?.leverPath ?? ''),
+      whiteCurrent: pick(geometry.whiteKeys, 'current'),
       whiteMarked: pick(geometry.whiteKeys, 'marked'),
       whitePending: pick(geometry.whiteKeys, 'pending'),
       whites: joinPaths(geometry.whiteKeys.map((key) => key.path)),
@@ -124,6 +123,9 @@ export const KeyboardPlate = ({
       {paths.whiteMarked && (
         <path d={paths.whiteMarked} className="fill-ptl-key-white-done" />
       )}
+      {paths.whiteCurrent && (
+        <path d={paths.whiteCurrent} className="fill-ptl-current" />
+      )}
       <path d={paths.blacks} className="fill-ptl-key-black" />
       {paths.blackPending && (
         <path d={paths.blackPending} className="fill-ptl-key-black-pending" />
@@ -131,7 +133,9 @@ export const KeyboardPlate = ({
       {paths.blackMarked && (
         <path d={paths.blackMarked} className="fill-ptl-key-black-done" />
       )}
-      {paths.current && <path d={paths.current} className="fill-ptl-current" />}
+      {paths.blackCurrent && (
+        <path d={paths.blackCurrent} className="fill-ptl-current" />
+      )}
       {children}
     </>
   );
