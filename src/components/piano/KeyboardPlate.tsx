@@ -3,10 +3,11 @@ import { useMemo } from 'react';
 import type { KeyboardDrawing } from './keyboard-drawing';
 
 /**
- * How a single key is painted: plain, tinted brass (a key already measured,
- * or an end of the range) or the red felt of the key being worked on.
+ * How a single key is painted: plain, tinted brass (the key under the
+ * pointer, or an end of the range), stone (a key still to measure) or the red
+ * felt of the key being worked on.
  */
-export type PianoKeyTone = 'plain' | 'marked' | 'current';
+export type PianoKeyTone = 'plain' | 'marked' | 'pending' | 'current';
 
 export interface KeyboardPlateProps {
   /** Drawn over the keys, in the same coordinates. */
@@ -53,6 +54,7 @@ export const KeyboardPlate = ({
 
     return {
       blackMarked: pick(geometry.blackKeys, 'marked'),
+      blackPending: pick(geometry.blackKeys, 'pending'),
       blacks: joinPaths(geometry.blackKeys.map((key) => key.path)),
       current: joinPaths(
         [...geometry.whiteKeys, ...geometry.blackKeys]
@@ -67,6 +69,7 @@ export const KeyboardPlate = ({
           ? ''
           : (geometry.keysByNumber.get(highlightedKey)?.leverPath ?? ''),
       whiteMarked: pick(geometry.whiteKeys, 'marked'),
+      whitePending: pick(geometry.whiteKeys, 'pending'),
       whites: joinPaths(geometry.whiteKeys.map((key) => key.path)),
     };
   }, [geometry, highlightedKey, toneByKeyNumber]);
@@ -115,10 +118,16 @@ export const KeyboardPlate = ({
         vectorEffect="non-scaling-stroke"
         className="fill-ptl-key-white stroke-ptl-key-white-edge"
       />
+      {paths.whitePending && (
+        <path d={paths.whitePending} className="fill-ptl-key-white-pending" />
+      )}
       {paths.whiteMarked && (
         <path d={paths.whiteMarked} className="fill-ptl-key-white-done" />
       )}
       <path d={paths.blacks} className="fill-ptl-key-black" />
+      {paths.blackPending && (
+        <path d={paths.blackPending} className="fill-ptl-key-black-pending" />
+      )}
       {paths.blackMarked && (
         <path d={paths.blackMarked} className="fill-ptl-key-black-done" />
       )}

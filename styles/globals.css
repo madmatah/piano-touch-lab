@@ -90,6 +90,13 @@
   --ptl-key-white-done: #e8d3a3;
   --ptl-key-black: #1a1612;
   --ptl-key-black-done: #7a5c25;
+  /*
+   * A key still to measure: stone, as if not lit yet. The keyboard comes
+   * up to its own colours as it is measured, rather than being painted
+   * over key by key.
+   */
+  --ptl-key-white-pending: #e2dccf;
+  --ptl-key-black-pending: #6b6357;
   --ptl-keybed: #2a241f;
   --ptl-felt: #9e3a2c;
 
@@ -198,6 +205,8 @@
     --ptl-key-white-done: #c9a35f;
     --ptl-key-black: #0d0b0a;
     --ptl-key-black-done: #8a6c3a;
+    --ptl-key-white-pending: #6f685d;
+    --ptl-key-black-pending: #3a332c;
     --ptl-keybed: #0b0908;
     --ptl-felt: #9e3a2c;
 
@@ -265,8 +274,10 @@
   --color-ptl-delta-plus: var(--ptl-delta-plus);
   --color-ptl-ink-3: var(--ptl-ink-3);
   --color-ptl-key-black-done: var(--ptl-key-black-done);
+  --color-ptl-key-black-pending: var(--ptl-key-black-pending);
   --color-ptl-key-black: var(--ptl-key-black);
   --color-ptl-key-white-done: var(--ptl-key-white-done);
+  --color-ptl-key-white-pending: var(--ptl-key-white-pending);
   --color-ptl-key-white-edge: var(--ptl-key-white-edge);
   --color-ptl-key-white: var(--ptl-key-white);
   --color-ptl-keybed: var(--ptl-keybed);
