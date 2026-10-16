@@ -118,7 +118,8 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
               <col />
               <col />
               {summary.hasSprings ? <col /> : null}
-              <col className="w-[64px]" />
+              {/* The box to tick: on screen its column would stay, empty. */}
+              <col className="ptl-print-only w-[64px]" />
             </colgroup>
             <thead>
               <tr>
