@@ -33,7 +33,8 @@ const Adjustment = ({
   targetValue: number | null;
 }) => (
   <td className={ruledCellClassName}>
-    <div className="flex items-center gap-2">
+    {/* On their baseline: the change is set smaller than the weights. */}
+    <div className="flex items-baseline gap-2">
       <AdjustmentValue actualValue={actualValue} targetValue={targetValue} />
     </div>
   </td>
