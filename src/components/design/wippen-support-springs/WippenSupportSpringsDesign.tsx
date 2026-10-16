@@ -13,7 +13,6 @@ import {
 } from '@/lib/piano/touch-design/design/wippen-support-springs-design';
 import { type WippenSupportSpringsDesignProps } from './WippenSupportSpringsDesign.types';
 import { SupportSpringBalanceWeightChart } from '@/components/charts/SupportSpringBalanceWeightChart';
-import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
 import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
 import { useWippenSupportSpringsTargetSelector } from './hooks/use-wippen-support-springs-target-selector';
@@ -26,7 +25,7 @@ import { benchAdjustment } from '@/lib/piano/touch-design/bench-adjustment';
 export const WippenSupportSpringsDesign: React.FC<
   WippenSupportSpringsDesignProps
 > = ({ analyzedKeyboard }) => {
-  const { currentLanguage, t } = useTranslation();
+  const { t } = useTranslation();
   const { useSupportSpringMeasurements } = useMeasureOptions();
   const {
     wippenSupportSpringsDesignMode,
@@ -144,38 +143,6 @@ export const WippenSupportSpringsDesign: React.FC<
     [sprungPoints],
   );
 
-  const summaryEntries = useMemo(() => {
-    if (sprungPoints.length === 0) {
-      return [{ label: t('Springs'), value: '0' }];
-    }
-    const first = sprungPoints[0]!;
-    const last = sprungPoints[sprungPoints.length - 1]!;
-
-    return [
-      { label: t('Springs'), value: sprungPoints.length.toString() },
-      {
-        label: t('Tension'),
-        // A constant tension has nothing to read as a range.
-        value:
-          first.payload === last.payload
-            ? formatGrams(first.payload, currentLanguage)
-            : t('from {{from}} ({{fromNote}}) to {{to}} ({{toNote}})', {
-                from: formatGrams(first.payload, currentLanguage),
-                fromNote: first.name,
-                to: formatGrams(last.payload, currentLanguage),
-                toNote: last.name,
-              }),
-      },
-      {
-        label: t('Keys with a spring'),
-        value: t('{{from}} to {{to}}', {
-          from: first.number,
-          to: last.number,
-        }),
-      },
-    ];
-  }, [currentLanguage, sprungPoints, t]);
-
   return (
     <DesignLayout
       objective={
@@ -206,7 +173,6 @@ export const WippenSupportSpringsDesign: React.FC<
               mark: 'line-thick' as const,
             },
           ]}
-          caption={<DesignChartSummary entries={summaryEntries} />}
         />
       }
     />

@@ -1,6 +1,4 @@
-import { ArrowRight } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 
 import { KeyReadingStrip } from '../analyze/key-reading/KeyReadingStrip';
 import { DesignPrintSummary } from './steps/DesignPrintSummary';
@@ -142,8 +140,6 @@ export const TouchWeightPreview = ({
     });
   }, [currentLanguage, currentSeries, designedKeys, designedSeries, t]);
 
-  const designedBalance = averageOf(designedSeries.balance, designedKeys);
-
   // The designed weights of the key under the pointer: the per-key answer
   // the averages above cannot give.
   const renderReading = useCallback(
@@ -184,29 +180,6 @@ export const TouchWeightPreview = ({
         analyzedKeyboard={designedKeyboard}
         renderReading={renderReading}
         useSupportSpringMeasurements={DESIGN_INCLUDES_SPRING_SUPPORT}
-        caption={
-          <figcaption className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border px-[18px] pt-3 pb-4 text-[13px] text-muted-foreground">
-            <span>
-              {t('{{label}}:', {
-                label: t('Balance weight once adjusted'),
-                nsSeparator: false,
-              })}{' '}
-              <span className="font-mono text-foreground">
-                {formatGrams(designedBalance, currentLanguage)}
-              </span>{' '}
-              {t('across the {{count}} keys', {
-                count: designedKeys.size,
-              })}
-            </span>
-            <Link
-              to="/design/adjustment-sheet"
-              className="inline-flex items-center gap-2 font-semibold text-ptl-brass transition-colors hover:text-foreground print:hidden"
-            >
-              {t('See the adjustment sheet')}
-              <ArrowRight className="size-4" />
-            </Link>
-          </figcaption>
-        }
       />
     </div>
   );

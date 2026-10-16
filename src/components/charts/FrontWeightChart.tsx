@@ -28,7 +28,6 @@ const FRONT_WEIGHT_SCALE = { interval: 10, max: 45, min: -10, unit: 'g' };
 type KeyWithFrontWeight<T> = T & Pick<MeasuredKeyRequirements, 'frontWeight'>;
 
 export interface FrontWeightChartProps<T> {
-  caption?: React.ReactNode;
   /** Said over the empty figure, until there is something to draw. */
   emptyState?: React.ReactNode;
   defaultFrontWeightLevelsToInclude?: FrontWeightLevel[];
@@ -46,7 +45,6 @@ export interface FrontWeightChartProps<T> {
 }
 
 export const FrontWeightChart = <T,>({
-  caption,
   emptyState,
   defaultFrontWeightLevelsToInclude,
   extraLegendItems,
@@ -168,7 +166,6 @@ export const FrontWeightChart = <T,>({
       geometry={geometry}
       highlightedKey={hover.hoveredKey}
       header={<ChartLegend items={legendItems} />}
-      caption={caption}
       keyboard={
         <ChartKeyboardAxis
           keys={keys}

@@ -67,7 +67,6 @@ const ALL_VISIBLE: Record<TouchWeightSerieId, boolean> = {
 
 export interface TouchWeightChartProps {
   analyzedKeyboard: TouchWeightAnalyzedKeyboard;
-  caption?: React.ReactNode;
   /** Said over the empty figure, until there is something to draw. */
   emptyState?: React.ReactNode;
   /**
@@ -82,7 +81,6 @@ export interface TouchWeightChartProps {
 
 export const TouchWeightChart = ({
   analyzedKeyboard,
-  caption,
   emptyState,
   renderReading,
   useSupportSpringMeasurements,
@@ -197,7 +195,6 @@ export const TouchWeightChart = ({
       geometry={geometry}
       highlightedKey={hoveredKey}
       header={<ChartLegend items={legendItems} />}
-      caption={caption}
       keyboard={
         <ChartKeyboardAxis
           keys={keys}
