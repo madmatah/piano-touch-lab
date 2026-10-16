@@ -100,14 +100,13 @@
   --ptl-series-friction: #857c6e;
   --ptl-series-target: #8c6a2c;
   /*
-   * The standard curves and the ghost of today's balance are what a reading
-   * is compared with: graphics that carry meaning, held to 3:1 on the card
-   * (#b3a994 and #b9af9e, the mockup's, gave 2.2 and 2.1). The intermediate
-   * curves are a texture between them and keep their pale tone.
+   * The standard curves are what a reading is compared with: graphics that
+   * carry meaning, held to 3:1 on the card (#b3a994, the mockup's, gave 2.2).
+   * The intermediate curves are a texture between them and keep their pale
+   * tone.
    */
   --ptl-series-standard: #948c7a;
   --ptl-series-standard-soft: #d3caba;
-  --ptl-series-ghost: #91897b;
   --ptl-series-target-area: #b07f2529;
 
   /*
@@ -209,7 +208,6 @@
     --ptl-series-target: #c9a35f;
     --ptl-series-standard: #786a54;
     --ptl-series-standard-soft: #3a322b;
-    --ptl-series-ghost: #796f65;
     --ptl-series-target-area: #c9a35f29;
 
     --ptl-chart-grid: #2a241f;
@@ -285,7 +283,6 @@
   --color-ptl-series-balance: var(--ptl-series-balance);
   --color-ptl-series-down: var(--ptl-series-down);
   --color-ptl-series-friction: var(--ptl-series-friction);
-  --color-ptl-series-ghost: var(--ptl-series-ghost);
   --color-ptl-series-standard-soft: var(--ptl-series-standard-soft);
   --color-ptl-series-standard: var(--ptl-series-standard);
   --color-ptl-series-target-area: var(--ptl-series-target-area);

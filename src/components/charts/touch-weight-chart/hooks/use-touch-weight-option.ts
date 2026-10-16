@@ -225,36 +225,12 @@ const buildBaselineSerie = (
   yAxisIndex: gridIndex,
 });
 
-/** The state the design is compared against, drawn hollow behind it. */
-const buildGhostSerie = (
-  serie: TouchDesignSerie,
-  geometry: KeyboardPlacement,
-  tokens: ChartTokens,
-): SeriesOption => ({
-  data: pointsOf(serie, geometry),
-  itemStyle: {
-    borderColor: tokens.seriesGhost,
-    borderWidth: 1.4,
-    color: 'transparent',
-  },
-  name: serie.name,
-  silent: true,
-  symbol: 'diamond',
-  symbolSize: 7,
-  type: 'scatter',
-  xAxisIndex: WEIGHT_GRID,
-  yAxisIndex: WEIGHT_GRID,
-  z: 2,
-});
-
 export interface TouchWeightOptionInput {
   /** Room a printed sheet has left over, which the weight panel takes. */
   extraWeightHeight?: number;
   /** The reference bands behind the friction panel. */
   frictionZones: SeriesOption[];
   geometry: KeyboardPlacement;
-  /** The piano as it stands, drawn hollow behind the designed readings. */
-  ghostSerie?: TouchDesignSerie | null;
   locale: string;
   panelTitles: { friction: string; weight: string };
   series: TouchWeightSeries;
@@ -279,7 +255,6 @@ export const useTouchWeightOption = (
     extraWeightHeight = 0,
     frictionZones,
     geometry,
-    ghostSerie,
     locale,
     panelTitles,
     series,
@@ -292,12 +267,7 @@ export const useTouchWeightOption = (
     // series off should not move the grid under the others.
     const weightScale = scaleFromReadings(
       WEIGHT_SCALE,
-      valuesOf([
-        series.down,
-        series.up,
-        series.balance,
-        ...(ghostSerie ? [ghostSerie] : []),
-      ]),
+      valuesOf([series.down, series.up, series.balance]),
     );
     const frictionScale = scaleOver(
       FRICTION_SCALE,
@@ -312,7 +282,6 @@ export const useTouchWeightOption = (
       ...(visibleSeries.down && visibleSeries.up
         ? [buildRangeSerie(series.down, series.up, geometry, tokens)]
         : []),
-      ...(ghostSerie ? [buildGhostSerie(ghostSerie, geometry, tokens)] : []),
       ...TOUCH_WEIGHT_SERIE_IDS.filter((id) => visibleSeries[id]).map((id) =>
         buildScatterSerie(series[id], SERIE_STYLES[id], geometry, tokens),
       ),
@@ -364,7 +333,6 @@ export const useTouchWeightOption = (
     extraWeightHeight,
     frictionZones,
     geometry,
-    ghostSerie,
     locale,
     panelTitles,
     series,

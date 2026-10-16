@@ -7,8 +7,7 @@ export type ChartLegendMarkKind =
   | 'line-thick'
   | 'triangle-down'
   | 'triangle-up'
-  | 'diamond'
-  | 'diamond-hollow';
+  | 'diamond';
 
 /**
  * Drawn in `currentColor`, so a legend item carries its colour as a text
@@ -38,17 +37,6 @@ export const ChartLegendMark = ({ kind }: { kind: ChartLegendMarkKind }) => {
       return (
         <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
           <path d="M5 0l5 5-5 5-5-5z" fill="currentColor" />
-        </svg>
-      );
-    case 'diamond-hollow':
-      return (
-        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-          <path
-            d="M5 1l4 4-4 4-4-4z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
         </svg>
       );
     case 'line-thick':
