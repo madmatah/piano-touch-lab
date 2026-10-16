@@ -19,10 +19,10 @@ jobs:
       APP_ENV: demo
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5.0.0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2.2.0
         with:
           bun-version: latest
 
@@ -41,7 +41,7 @@ jobs:
         timeout-minutes: 3
 
       - name: Run the action
-        uses: guibranco/github-status-action-v2@v1.1.13
+        uses: guibranco/github-status-action-v2@v1.2.4
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: ${{ env.is_live_deploy == 'true' && 'Netlify live URL' || 'Netlify preview URL' }}
