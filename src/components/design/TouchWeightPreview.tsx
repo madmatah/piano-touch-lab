@@ -4,10 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { KeyReadingStrip } from '../analyze/key-reading/KeyReadingStrip';
 import { DesignPrintSummary } from './steps/DesignPrintSummary';
-import {
-  readingMark,
-  touchWeightReadingRows,
-} from '../analyze/key-reading/touch-weight-reading';
+import { touchWeightReadingRows } from '../analyze/key-reading/touch-weight-reading';
 import {
   TouchWeightChart,
   type TouchWeightReadingContext,
@@ -16,7 +13,7 @@ import {
   DESIGN_INCLUDES_SPRING_SUPPORT,
   useTouchWeightPreviewSeries,
 } from './hooks/use-touch-weight-preview-series';
-import { serieValueAt, type TouchDesignSerie } from '../charts/interfaces';
+import { type TouchDesignSerie } from '../charts/interfaces';
 import { useAnalyzedKeyboard } from '@/hooks/keyboard/use-analyzed-keyboard';
 import { useMeasureOptions } from '@/hooks/store/use-measure-options-store';
 import { useTranslation } from '@/hooks/use-translation';
@@ -92,9 +89,10 @@ const ComparisonTile = ({
 /**
  * The touch the design gives, against the touch the piano has today.
  *
- * Four figures say what changes at a glance; the chart underneath shows where
- * along the keyboard it changes, with the current balance weight drawn hollow
- * behind the designed one.
+ * Four figures say what changes at a glance; the chart underneath shows the
+ * touch the design gives, key by key. Today's balance weight is not drawn
+ * behind it: a second cloud of points over the designed one made both of them
+ * harder to read.
  */
 export const TouchWeightPreview = ({
   designedKeyboard,
@@ -109,11 +107,6 @@ export const TouchWeightPreview = ({
       analyzedKeyboard,
       useSupportSpringMeasurements,
     );
-
-  const ghostSerie = useMemo<TouchDesignSerie>(
-    () => ({ ...currentSeries.balance, name: t('Balance, as it stands') }),
-    [currentSeries.balance, t],
-  );
 
   const designedKeys = useMemo(
     () => designedKeysOf(designedSeries.balance),
@@ -151,8 +144,8 @@ export const TouchWeightPreview = ({
 
   const designedBalance = averageOf(designedSeries.balance, designedKeys);
 
-  // The designed weights of the key under the pointer, and the balance it
-  // has today: the per-key answer the averages above cannot give.
+  // The designed weights of the key under the pointer: the per-key answer
+  // the averages above cannot give.
   const renderReading = useCallback(
     ({ hoveredKey, series }: TouchWeightReadingContext) => (
       <KeyReadingStrip
@@ -160,21 +153,11 @@ export const TouchWeightPreview = ({
           keyNumber: hoveredKey,
           noteName:
             designedKeyboard.getKeyByNumber(hoveredKey ?? 0)?.name ?? null,
-          rows: [
-            ...touchWeightReadingRows(series, hoveredKey, currentLanguage),
-            {
-              label: ghostSerie.name,
-              mark: readingMark('diamond-hollow', 'text-ptl-reading-muted'),
-              value: formatGrams(
-                serieValueAt(ghostSerie, hoveredKey),
-                currentLanguage,
-              ),
-            },
-          ],
+          rows: touchWeightReadingRows(series, hoveredKey, currentLanguage),
         }}
       />
     ),
-    [currentLanguage, designedKeyboard, ghostSerie],
+    [currentLanguage, designedKeyboard],
   );
 
   return (
@@ -199,7 +182,6 @@ export const TouchWeightPreview = ({
       <TouchWeightChart
         variant="design"
         analyzedKeyboard={designedKeyboard}
-        ghostSerie={ghostSerie}
         renderReading={renderReading}
         useSupportSpringMeasurements={DESIGN_INCLUDES_SPRING_SUPPORT}
         caption={

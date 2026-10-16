@@ -14,7 +14,7 @@ import { useChartFigure } from '../hooks/use-chart-figure';
 import { usePrintableChart } from '../hooks/use-printable-chart';
 import { useScreenPlotHeight } from '../hooks/use-screen-plot-height';
 import { SVG_RENDERER } from '../renderer';
-import { serieValueAt, type TouchDesignSerie } from '../interfaces';
+import { serieValueAt } from '../interfaces';
 import {
   frictionZoneAt,
   useFrictionZonesSeries,
@@ -71,11 +71,6 @@ export interface TouchWeightChartProps {
   /** Said over the empty figure, until there is something to draw. */
   emptyState?: React.ReactNode;
   /**
-   * The balance weight of the instrument as it stands, drawn hollow behind
-   * the designed one so the two can be read against each other.
-   */
-  ghostSerie?: TouchDesignSerie;
-  /**
    * The reading strip at the head of the figure. It is a function so that the
    * strip reads the very series the chart draws, rather than computing them
    * again.
@@ -89,7 +84,6 @@ export const TouchWeightChart = ({
   analyzedKeyboard,
   caption,
   emptyState,
-  ghostSerie,
   renderReading,
   useSupportSpringMeasurements,
   variant = 'analyze',
@@ -115,7 +109,6 @@ export const TouchWeightChart = ({
   );
 
   const [visibleSeries, setVisibleSeries] = useState(ALL_VISIBLE);
-  const [isGhostVisible, setIsGhostVisible] = useState(true);
   const toggleSerie = useCallback((id: TouchWeightSerieId) => {
     setVisibleSeries((current) => ({ ...current, [id]: !current[id] }));
   }, []);
@@ -140,7 +133,6 @@ export const TouchWeightChart = ({
     extraWeightHeight,
     frictionZones,
     geometry,
-    ghostSerie: ghostSerie && isGhostVisible ? ghostSerie : null,
     locale: currentLanguage,
     panelTitles,
     series,
@@ -154,8 +146,8 @@ export const TouchWeightChart = ({
   }, [nextOption]);
 
   const legendItems = useMemo<ChartLegendItem[]>(
-    () => [
-      ...TOUCH_WEIGHT_SERIE_IDS.map((id) => ({
+    () =>
+      TOUCH_WEIGHT_SERIE_IDS.map((id) => ({
         colorClassName: LEGEND_MARKS[id].colorClassName,
         id,
         isVisible: visibleSeries[id],
@@ -163,20 +155,7 @@ export const TouchWeightChart = ({
         mark: LEGEND_MARKS[id].mark,
         onToggle: () => toggleSerie(id),
       })),
-      ...(ghostSerie
-        ? [
-            {
-              colorClassName: 'text-ptl-series-ghost',
-              id: 'ghost',
-              isVisible: isGhostVisible,
-              label: ghostSerie.name,
-              mark: 'diamond-hollow' as const,
-              onToggle: () => setIsGhostVisible((current) => !current),
-            },
-          ]
-        : []),
-    ],
-    [ghostSerie, isGhostVisible, series, toggleSerie, visibleSeries],
+    [series, toggleSerie, visibleSeries],
   );
 
   const { hoveredKey } = hover;
