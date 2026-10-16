@@ -106,7 +106,8 @@ If you want to contribute to Piano Touch Lab or run it locally:
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) (JavaScript runtime and package manager)
+- [Bun](https://bun.sh) (JavaScript runtime and package manager), in the
+  version named by the `packageManager` field of `package.json`
 
 ### Installation
 
