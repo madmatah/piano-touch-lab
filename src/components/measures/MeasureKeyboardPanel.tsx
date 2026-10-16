@@ -1,5 +1,5 @@
 import { useStore } from 'zustand';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { type PianoKeyTone } from '@/components/piano/KeyboardPlate';
@@ -51,6 +51,7 @@ export const MeasureKeyboardPanel = ({
   const { t } = useTranslation();
   const { keyboard } = useKeyboard();
   const panel = useRef<HTMLElement>(null);
+  const [hoveredKey, setHoveredKey] = useState<number | null>(null);
 
   useStickyHeight(panel, '--ptl-sticky-top');
 
@@ -164,7 +165,12 @@ export const MeasureKeyboardPanel = ({
         keys={keys}
         description={t('Keyboard: click a key to jump to it')}
         geometry={KEYBOARD_GEOMETRY}
+        // The key a click would jump to lights up in brass, as the key read
+        // on a chart does, so that a click lands where it was meant to. The
+        // key being filled keeps its red: pointing at it changes nothing.
+        highlightedKey={hoveredKey === currentKeyNumber ? null : hoveredKey}
         labels={labels}
+        onKeyHover={setHoveredKey}
         onKeySelect={onKeySelect}
         toneByKeyNumber={tones}
       />

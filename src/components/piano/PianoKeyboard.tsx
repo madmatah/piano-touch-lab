@@ -111,7 +111,7 @@ export const PianoKeyboard = ({
     <div className={cn('w-full', className)}>
       <svg
         viewBox={`0 0 ${geometry.width} ${height}`}
-        className="block h-auto w-full"
+        className={cn('block h-auto w-full', onKeySelect && 'cursor-pointer')}
         role="img"
         aria-label={description}
         onMouseMove={onKeyHover ? handleMouseMove : undefined}
