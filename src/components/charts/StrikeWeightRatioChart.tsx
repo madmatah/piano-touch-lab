@@ -179,7 +179,6 @@ const ChartReferenceOverlay = ({
 };
 
 export interface StrikeWeightRatioChartProps<T> {
-  caption?: React.ReactNode;
   /** Said over the empty figure, until there is something to draw. */
   emptyState?: React.ReactNode;
   /** Draws the hand-measured ratio beside the computed one. */
@@ -198,7 +197,6 @@ export interface StrikeWeightRatioChartProps<T> {
 }
 
 export const StrikeWeightRatioChart = <T,>({
-  caption,
   emptyState,
   displayBothManualAndComputed,
   extraLegendItems,
@@ -383,7 +381,6 @@ export const StrikeWeightRatioChart = <T,>({
           <ChartLegend items={legendItems} />
         )
       }
-      caption={caption}
       keyboard={
         <ChartKeyboardAxis
           keys={keys}

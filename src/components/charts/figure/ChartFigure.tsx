@@ -4,8 +4,6 @@ import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
 export interface ChartFigureProps {
-  /** Reading of the figure, under a rule at its foot. */
-  caption?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   /** Legend and toggles, above a rule at its head. */
@@ -27,11 +25,10 @@ export interface ChartFigureProps {
 }
 
 /**
- * The frame every chart sits in: a header carrying its legend, the plot with
- * its keyboard axis, and a reading underneath.
+ * The frame every chart sits in: a header carrying its legend, the reading of
+ * the key under the pointer, and the plot with its keyboard axis.
  */
 export const ChartFigure = ({
-  caption,
   children,
   className,
   geometry,
@@ -101,7 +98,6 @@ export const ChartFigure = ({
           {keyboard}
         </div>
       </div>
-      {caption}
     </figure>
   );
 };

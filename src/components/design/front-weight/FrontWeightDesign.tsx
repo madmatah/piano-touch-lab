@@ -10,7 +10,6 @@ import {
 import { type FrontWeightDesignProps } from './FrontWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
 import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
 import { HourglassIcon } from 'lucide-react';
@@ -32,7 +31,7 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
-  const { currentLanguage, t } = useTranslation();
+  const { t } = useTranslation();
   const {
     frontWeightDesignMode,
     frontWeightDesignTarget,
@@ -167,52 +166,6 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
     );
   }, [frontWeightDesignMode, targetSerie]);
 
-  const summaryEntries = useMemo(() => {
-    const points = (targetSerie?.data ?? []).filter(
-      (point) => point.payload !== undefined && point.payload !== null,
-    );
-    if (points.length === 0) {
-      return [];
-    }
-    const first = points[0]!;
-    const last = points[points.length - 1]!;
-    const differences = points
-      .map((point) => {
-        const measured = analyzedKeyboard.getKeyByNumber(point.number)?.payload
-          .frontWeight;
-        return measured === null || measured === undefined
-          ? null
-          : point.payload! - measured;
-      })
-      .filter((value): value is number => value !== null);
-
-    return [
-      {
-        label: t('Target'),
-        value: t('from {{from}} ({{fromNote}}) to {{to}} ({{toNote}})', {
-          from: formatGrams(first.payload ?? null, currentLanguage),
-          fromNote: first.name,
-          to: formatGrams(last.payload ?? null, currentLanguage),
-          toNote: last.name,
-        }),
-      },
-      ...(differences.length === 0
-        ? []
-        : [
-            {
-              label: t('Difference with the measured values'),
-              value: t('{{weight}} on average', {
-                weight: formatSignedGrams(
-                  differences.reduce((total, value) => total + value, 0) /
-                    differences.length,
-                  currentLanguage,
-                ),
-              }),
-            },
-          ]),
-    ];
-  }, [analyzedKeyboard, currentLanguage, t, targetSerie]);
-
   return !hasEnoughInputData ? (
     <NotEnoughData
       title={notEnoughDataErrorTitle}
@@ -261,7 +214,6 @@ export const FrontWeightDesign: React.FC<FrontWeightDesignProps> = ({
                   ]
                 : undefined
             }
-            caption={<DesignChartSummary entries={summaryEntries} />}
           />
         )
       }

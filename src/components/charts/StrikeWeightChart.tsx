@@ -31,7 +31,6 @@ const ALL_STRIKE_WEIGHT_LEVELS = Object.values(StrikeWeightLevel);
 type KeyWithStrikeWeight<T> = T & Pick<MeasuredKeyRequirements, 'strikeWeight'>;
 
 export interface StrikeWeightChartProps<T> {
-  caption?: React.ReactNode;
   /** Said over the empty figure, until there is something to draw. */
   emptyState?: React.ReactNode;
   defaultHammerWeightLevelsToInclude?: StrikeWeightLevel[];
@@ -49,7 +48,6 @@ export interface StrikeWeightChartProps<T> {
 }
 
 export const StrikeWeightChart = <T,>({
-  caption,
   emptyState,
   defaultHammerWeightLevelsToInclude,
   extraLegendItems,
@@ -178,7 +176,6 @@ export const StrikeWeightChart = <T,>({
       geometry={geometry}
       highlightedKey={hover.hoveredKey}
       header={<ChartLegend items={legendItems} />}
-      caption={caption}
       keyboard={
         <ChartKeyboardAxis
           keys={keys}

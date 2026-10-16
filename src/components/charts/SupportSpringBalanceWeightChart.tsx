@@ -46,7 +46,6 @@ export interface SprungKeys {
 }
 
 export interface SupportSpringBalanceWeightChartProps<T> {
-  caption?: React.ReactNode;
   /**
    * The buttons of the empty state. Passing them is what turns an empty chart
    * into the "nothing measured yet" panel: the page owns the buttons because
@@ -75,7 +74,6 @@ export interface SupportSpringBalanceWeightChartProps<T> {
 }
 
 export const SupportSpringBalanceWeightChart = <T,>({
-  caption,
   emptyStateActions,
   extraLegendItems,
   keyboard,
@@ -240,7 +238,6 @@ export const SupportSpringBalanceWeightChart = <T,>({
       header={
         legendItems.length > 0 ? <ChartLegend items={legendItems} /> : undefined
       }
-      caption={caption}
       keyboard={
         <ChartKeyboardAxis
           keys={keys}

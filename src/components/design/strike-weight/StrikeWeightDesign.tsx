@@ -15,13 +15,8 @@ import { type StrikeWeightDesignProps } from './StrikeWeightDesign.types';
 
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { HourglassIcon } from 'lucide-react';
-import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
-import {
-  formatGrams,
-  formatSignedGrams,
-  formatSignedWeightValue,
-} from '@/lib/format/format-weight';
+import { formatGrams, formatSignedGrams } from '@/lib/format/format-weight';
 import { useFrontWeightDesign } from '@/hooks/store/use-design-store';
 import { useStrikeWeightTargetSelector } from './hooks/use-strike-weight-target-selector';
 import { useStrikeWeightRecommendation } from './hooks/use-strike-weight-recommendation';
@@ -45,7 +40,7 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
   notEnoughDataErrorTitle,
   notEnoughDataErrorDescription,
 }) => {
-  const { currentLanguage, t } = useTranslation();
+  const { t } = useTranslation();
   const {
     strikeWeightDesignMode,
     strikeWeightDesignTarget,
@@ -177,59 +172,6 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
     ],
   );
 
-  // What the target curve costs in grams: where it starts and ends, and how
-  // far the hammers have to move from what was measured.
-  const summaryEntries = useMemo(() => {
-    const points = (targetSerie?.data ?? []).filter(
-      (point) => point.payload !== undefined && point.payload !== null,
-    );
-    if (points.length === 0) {
-      return [];
-    }
-    const first = points[0]!;
-    const last = points[points.length - 1]!;
-    const differences = points
-      .map((point) => {
-        const measured = analyzedKeyboard.getKeyByNumber(point.number)?.payload
-          .strikeWeight;
-        return measured === null || measured === undefined
-          ? null
-          : point.payload! - measured;
-      })
-      .filter((value): value is number => value !== null);
-
-    return [
-      {
-        label: t('Target'),
-        value: t('from {{from}} ({{fromNote}}) to {{to}} ({{toNote}})', {
-          from: formatGrams(first.payload ?? null, currentLanguage),
-          fromNote: first.name,
-          to: formatGrams(last.payload ?? null, currentLanguage),
-          toNote: last.name,
-        }),
-      },
-      ...(differences.length === 0
-        ? []
-        : [
-            {
-              label: t('Difference with the measured values'),
-              // A range, not a mean: hammers move by a few tenths either way,
-              // and the two cancel out to a meaningless "+0.0 g on average".
-              value: t('from {{min}} to {{max}} g', {
-                max: formatSignedWeightValue(
-                  Math.max(...differences),
-                  currentLanguage,
-                ),
-                min: formatSignedWeightValue(
-                  Math.min(...differences),
-                  currentLanguage,
-                ),
-              }),
-            },
-          ]),
-    ];
-  }, [analyzedKeyboard, currentLanguage, t, targetSerie]);
-
   return !hasEnoughData ? (
     <NotEnoughData
       title={notEnoughDataErrorTitle}
@@ -278,7 +220,6 @@ export const StrikeWeightDesign: React.FC<StrikeWeightDesignProps> = ({
                   ]
                 : undefined
             }
-            caption={<DesignChartSummary entries={summaryEntries} />}
           />
         )
       }

@@ -21,7 +21,6 @@ import type { KeyWith } from '@/lib/piano/keyboard';
 import type { OptionalNumber } from '@/lib/piano/touch-design/measured-key.requirements';
 import type { TouchWeightKeyAnalysis } from '@/lib/piano/touch-design/touch-weight-key-analysis';
 import { cn } from '@/lib/utils';
-import { DesignChartSummary } from '../DesignChartSummary';
 import { DesignLayout } from '../DesignLayout';
 import { useTargetSeries } from '../hooks/use-target-series';
 import { useStrikeWeightRatioRecommendation } from './hooks/use-strike-weight-ratio-recommendation';
@@ -228,49 +227,8 @@ export const StrikeWeightRatioDesign: React.FC<
     ],
   );
 
-  const targetValues = targetSerie.data
-    .map((point) => point.payload)
-    .filter(
-      (value): value is number => value !== undefined && !Number.isNaN(value),
-    );
-  const targetKeyCount = targetValues.length;
-  const lowestTarget = Math.min(...targetValues);
-  // Every mode but "as measured" aims at a single value for the whole
-  // keyboard, and that one figure is the entire reading of the curve. Where
-  // the target follows the measurements, stating it under the plot would only
-  // repeat the line beside it.
-  const constantTarget =
-    targetKeyCount > 0 && lowestTarget === Math.max(...targetValues)
-      ? lowestTarget
-      : null;
-
-  const summaryEntries = useMemo(
-    () => [
-      ...(constantTarget === null
-        ? []
-        : [
-            {
-              label: t('Target'),
-              value: `${formatRatio(constantTarget, currentLanguage)} ${t(
-                'across the {{count}} keys',
-                { count: targetKeyCount },
-              )}`,
-            },
-          ]),
-      ...(stats.count === 0
-        ? []
-        : [
-            {
-              label: t('Your measurements'),
-              value: t('from {{min}} to {{max}}, median {{median}}', {
-                max: formatRatio(stats.max, currentLanguage),
-                median: formatRatio(stats.median, currentLanguage),
-                min: formatRatio(stats.min, currentLanguage),
-              }),
-            },
-          ]),
-    ],
-    [constantTarget, currentLanguage, stats, t, targetKeyCount],
+  const hasTarget = targetSerie.data.some(
+    (point) => point.payload !== undefined && !Number.isNaN(point.payload),
   );
 
   return !hasEnoughData ? (
@@ -298,9 +256,8 @@ export const StrikeWeightRatioDesign: React.FC<
           targetSerie={targetSerie}
           displayBothManualAndComputed={false}
           extraLegendItems={
-            targetKeyCount === 0
-              ? undefined
-              : [
+            hasTarget
+              ? [
                   {
                     colorClassName: 'text-ptl-series-target',
                     id: 'target',
@@ -308,8 +265,8 @@ export const StrikeWeightRatioDesign: React.FC<
                     mark: 'line-thick' as const,
                   },
                 ]
+              : undefined
           }
-          caption={<DesignChartSummary entries={summaryEntries} />}
         />
       }
     />
