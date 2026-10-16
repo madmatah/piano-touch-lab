@@ -129,27 +129,27 @@ export const AdjustmentSheet: React.FC<AdjustmentSheetProps> = ({
                 <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold text-ptl-ink-3">
                   {t('Note')}
                 </th>
-                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold">
+                <th className="h-12 border-b border-b-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold print:border-l">
                   <span className="mr-2 font-mono text-[11.5px] font-medium text-ptl-brass">
                     FW
                   </span>
                   {t('Front Weight', { ns: 'navigation' })}
                 </th>
-                <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold">
+                <th className="h-12 border-b border-b-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold print:border-l">
                   <span className="mr-2 font-mono text-[11.5px] font-medium text-ptl-brass">
                     SW
                   </span>
                   {t('Strike Weight', { ns: 'navigation' })}
                 </th>
                 {summary.hasSprings ? (
-                  <th className="h-12 border-b border-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold">
+                  <th className="h-12 border-b border-b-ptl-rule-strong bg-card px-3 text-left align-middle text-[13px] font-semibold print:border-l">
                     <span className="mr-2 font-mono text-[11.5px] font-medium text-ptl-brass">
                       BWS
                     </span>
                     {t('Wippen Support Springs', { ns: 'navigation' })}
                   </th>
                 ) : null}
-                <th className="ptl-print-only h-12 border-b border-ptl-rule-strong bg-card px-3 text-center align-middle text-[13px] font-semibold">
+                <th className="ptl-print-only h-12 border-b border-b-ptl-rule-strong border-l border-l-border bg-card px-3 text-center align-middle text-[13px] font-semibold">
                   {t('Done')}
                 </th>
                 <th className="ptl-print-only h-12 border-b border-b-ptl-rule-strong border-l border-l-border px-3 text-left align-middle text-[13px] font-semibold">
