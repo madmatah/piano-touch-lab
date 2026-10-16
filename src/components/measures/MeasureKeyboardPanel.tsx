@@ -81,8 +81,8 @@ export const MeasureKeyboardPanel = ({
     }
     keys.forEach((key) => {
       const measured = measuredKeys[key.number - 1];
-      if (measured && isPassDone(pass, measured)) {
-        map.set(key.number, 'marked');
+      if (!measured || !isPassDone(pass, measured)) {
+        map.set(key.number, 'pending');
       }
     });
     if (currentKeyNumber !== null) {
@@ -172,7 +172,7 @@ export const MeasureKeyboardPanel = ({
       <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 text-[12.5px] text-muted-foreground">
         <div className="flex flex-wrap gap-4">
           <span className="inline-flex items-center gap-[7px]">
-            <span className="size-3 rounded-sm bg-ptl-key-white-done shadow-[inset_0_0_0_1px_var(--input)]" />
+            <span className="size-3 rounded-sm bg-ptl-key-white shadow-[inset_0_0_0_1px_var(--input)]" />
             {t('Measured in this pass')}
           </span>
           <span className="inline-flex items-center gap-[7px]">
@@ -180,7 +180,7 @@ export const MeasureKeyboardPanel = ({
             {t('Current')}
           </span>
           <span className="inline-flex items-center gap-[7px]">
-            <span className="size-3 rounded-sm bg-ptl-key-white shadow-[inset_0_0_0_1px_var(--input)]" />
+            <span className="size-3 rounded-sm bg-ptl-key-white-pending shadow-[inset_0_0_0_1px_var(--input)]" />
             {t('Still to measure')}
           </span>
         </div>
