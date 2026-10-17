@@ -38,3 +38,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # the worktrees agents work in
 .claude/worktrees/
+
+# the local settings of Claude Code
+.claude/settings.local.json
