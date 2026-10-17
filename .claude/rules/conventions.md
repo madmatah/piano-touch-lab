@@ -36,7 +36,7 @@ The names and the structure say what the code does, and the tests state the busi
 - **Allowed directives,** as comments: the ESLint suppression comment (`eslint-disable-next-line <rule>`), `@ts-expect-error`, and triple-slash references. A directive that suppresses a check states its reason after `--`.
 - **A version label next to a pinned commit SHA is allowed,** such as `# v7.0.1` after an action in a GitHub Actions workflow: it names the release, which the SHA cannot say.
 - **Forbidden:** commented-out code, and banners.
-- **Scope:** every file but prose documents, configuration and scripts included. No tool of the gate checks comments.
+- **Scope:** every file but prose documents, configuration and scripts included. No tool of the gate checks comments: the review does.
 
 ## TypeScript
 
