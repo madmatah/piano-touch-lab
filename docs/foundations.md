@@ -116,7 +116,7 @@ Two departures from `.claude/rules/architecture.md` show in no row: `src/compone
 
 ```
 piano-touch-lab/
-├── .claude/                     # Claude Code: the rules files
+├── .claude/                     # Claude Code: settings and rules
 ├── .github/
 │   ├── dependabot.yml           # Weekly upgrades of the dependencies
 │   └── workflows/               # CI: the gate, and the deploy of the demo
