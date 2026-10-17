@@ -35,7 +35,6 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "bun-plugin-tailwind": "^0.0.15",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "commons-math-interpolation": "^2.2.4",
@@ -81,11 +80,13 @@
     "@types/react-dom": "^19",
     "@types/slug": "^5.0.9",
     "babel-plugin-react-compiler": "^1.0.0",
+    "bun-plugin-tailwind": "^0.0.15",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^7.0.0",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "i18next-parser": "^9.3.0",
     "prettier": "^3.3.3",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0"
   }
 }
