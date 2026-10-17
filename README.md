@@ -133,3 +133,9 @@ bun run build.ts
 bun test
 
 ```
+
+## Credits
+
+[`CREDITS.md`](CREDITS.md) lists the external work Piano Touch Lab reuses: David C.
+Stanwood's standard curves, the fonts, the shadcn/ui components and the
+libraries the build ships, with their licenses.
