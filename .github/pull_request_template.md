@@ -29,7 +29,7 @@
 
 ### History
 
-- [ ] Each commit is atomic, its subject is a gitmoji and an imperative English sentence, and its body says why; no `fixup!` commit is left.
+- [ ] Each commit is atomic, follows the style of `CLAUDE.md` > Workflow, "Commits", and its body says why; no `fixup!` commit is left.
 
 ### Documentation
 
