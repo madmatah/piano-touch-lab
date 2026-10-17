@@ -19,16 +19,16 @@ jobs:
       APP_ENV: demo
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2.2.0
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
       - name: Install Netlify CLI
         run: bun install -g netlify-cli
 
       - name: Deploy to Netlify
-        uses: jsmrcaga/action-netlify-deploy@v2.0.0
+        uses: jsmrcaga/action-netlify-deploy@ae36ac1b3d1ad3646eecb5631977e7314d3a6a2f # v2.4.0
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -39,7 +39,7 @@ jobs:
         timeout-minutes: 3
 
       - name: Run the action
-        uses: guibranco/github-status-action-v2@v1.2.4
+        uses: guibranco/github-status-action-v2@77639353504055053524efa7a3719aaf0b731ce9 # v1.2.4
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: ${{ env.is_live_deploy == 'true' && 'Netlify live URL' || 'Netlify preview URL' }}
