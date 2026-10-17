@@ -19,8 +19,8 @@ export default defineConfig(
       'sort-keys-fix': sortKeysFix,
     },
     rules: {
-      'sort-keys-fix/sort-keys-fix': 'warn',
       'no-console': 'error',
+      'sort-keys-fix/sort-keys-fix': 'error',
     },
   },
   {
