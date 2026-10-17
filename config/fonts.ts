@@ -27,18 +27,34 @@ const FONTSOURCE_FILES = [
   'jetbrains-mono/files/jetbrains-mono-latin-ext-wght-normal.woff2',
 ] as const;
 
+/**
+ * The SIL Open Font License lets the fonts be redistributed only if each copy
+ * carries its copyright notice and the license itself (condition 2), so the
+ * license of each family is served beside its files.
+ */
+const FONTSOURCE_FAMILIES = [
+  ...new Set(FONTSOURCE_FILES.map((file) => file.slice(0, file.indexOf('/')))),
+];
+
 export interface FontAsset {
   /** Absolute path of the file inside `node_modules`. */
   sourcePath: string;
-  /** Path the browser requests, matching the `url()` in `styles/fonts.css`. */
   publicPath: string;
 }
 
-export const fontAssets = (): FontAsset[] =>
-  FONTSOURCE_FILES.map((file) => {
-    const specifier = `@fontsource-variable/${file}`;
-    return {
-      publicPath: `/fonts/${file.slice(file.lastIndexOf('/') + 1)}`,
-      sourcePath: Bun.resolveSync(specifier, import.meta.dir),
-    };
-  });
+export const listFontAssets = (): FontAsset[] => [
+  ...FONTSOURCE_FILES.map((file) => ({
+    publicPath: `/fonts/${file.slice(file.lastIndexOf('/') + 1)}`,
+    sourcePath: Bun.resolveSync(
+      `@fontsource-variable/${file}`,
+      import.meta.dir,
+    ),
+  })),
+  ...FONTSOURCE_FAMILIES.map((family) => ({
+    publicPath: `/fonts/${family}-LICENSE.txt`,
+    sourcePath: Bun.resolveSync(
+      `@fontsource-variable/${family}/LICENSE`,
+      import.meta.dir,
+    ),
+  })),
+];
