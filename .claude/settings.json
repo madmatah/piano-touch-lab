@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$(git rev-parse --show-toplevel)\" && if [ ! -d node_modules ]; then if bun install --frozen-lockfile >/dev/null 2>&1; then echo \"Installed the dependencies of this checkout.\"; else rm -rf node_modules; echo \"Installing the dependencies failed: run bun install --frozen-lockfile in this checkout to see why.\"; fi; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
