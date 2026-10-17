@@ -56,3 +56,4 @@ Each file of `.claude/rules/` holds the rules of one concern, in full. Claude Co
 - `documents.md`, for any document or agent guidance, and any reference to a document, tool messages included: present tense, where each statement lives, references by heading and rules files.
 - `react.md`, for any component, hook or context: what the React Compiler needs, the stores' selector hooks, and the charts.
 - `translations.md`, for any text users see, the catalogs and the number formatters: catalog keys, plurals, `bun i18n` and the French values, numbers and units.
+- `touch-weight.md`, for the metrology, the keyboard pipeline, the analysis and the design: the quantities, the equation of balance, missing readings, the standard curves and the adjustment sheet.
