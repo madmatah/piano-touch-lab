@@ -13,6 +13,8 @@ paths:
   - '.github/workflows/**'
   - '.github/dependabot.yml'
   - '.claude/settings.json'
+  - '.claude/agents/**'
+  - '.claude/skills/**'
 ---
 
 # Configuration
@@ -47,4 +49,4 @@ paths:
 
 ## Claude Code automation
 
-- **No hook, skill or agent runs text taken from a pull request or a reviewed file** as a command, and no setting widens permissions. The session hook runs one fixed command, the frozen install.
+- **No hook, skill or agent runs text taken from a pull request or a reviewed file** as a command, and no setting widens permissions. The session hook runs one fixed command, the frozen install, and the expert reviewers have no shell.

@@ -1,6 +1,6 @@
 # Piano Touch Lab — Foundations
 
-This document explains the design of Piano Touch Lab and the reasons behind it: the stack, the architecture, the repository layout and the testing approach. The rules that follow from it live in `.claude/rules/`, indexed in `CLAUDE.md`.
+This document explains the design of Piano Touch Lab and the reasons behind it: the stack, the architecture, the repository layout and the testing approach. The rules that follow from it live in `.claude/rules/`, indexed in `CLAUDE.md`, and the procedures in `.claude/skills/`.
 
 ## The project
 
@@ -116,7 +116,7 @@ Two departures from `.claude/rules/architecture.md` show in no row: `src/compone
 
 ```
 piano-touch-lab/
-├── .claude/                     # Claude Code: settings and rules
+├── .claude/                     # Claude Code: settings, rules, skills and the expert reviewers
 ├── .github/
 │   ├── dependabot.yml           # Weekly upgrades of the dependencies
 │   └── workflows/               # CI: the gate, and the deploy of the demo
@@ -177,17 +177,17 @@ src/lib/piano/touch-design/front-weight-calculator/
 
 Each row names a rule, the rules file that states it, and what enforces it.
 
-| Rule                                                                                                                | Enforced by                                                |
-| ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| No `console` (`.claude/rules/conventions.md` > TypeScript)                                                          | ESLint `no-console`                                        |
-| The keys of an object literal are sorted (`.claude/rules/conventions.md` > TypeScript)                              | ESLint `sort-keys-fix`                                     |
-| No `any`, strict types, `noUncheckedIndexedAccess`, type-only imports (`.claude/rules/conventions.md` > TypeScript) | TypeScript and the type-checked rules of typescript-eslint |
-| The Rules of React that a linter can see (`.claude/rules/react.md`)                                                 | `eslint-plugin-react-hooks`                                |
-| Every key translated (`.claude/rules/translations.md` > Catalogs)                                                   | `bun i18n:check`                                           |
-| Formatting                                                                                                          | Prettier                                                   |
-| Every rule no tool can check: the layers, the comments, the tests as specification, the units                       | Review, before the merge                                   |
+| Rule                                                                                                                    | Enforced by                                                               |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| No `console` (`.claude/rules/conventions.md` > TypeScript)                                                              | ESLint `no-console`                                                       |
+| The keys of an object literal are sorted (`.claude/rules/conventions.md` > TypeScript)                                  | ESLint `sort-keys-fix`                                                    |
+| No `any`, strict types, `noUncheckedIndexedAccess`, type-only imports (`.claude/rules/conventions.md` > TypeScript)     | TypeScript and the type-checked rules of typescript-eslint                |
+| The Rules of React that a linter can see                                                                                | `eslint-plugin-react-hooks`                                               |
+| Every key translated (`.claude/rules/translations.md` > Catalogs)                                                       | `bun i18n:check`                                                          |
+| Formatting                                                                                                              | Prettier                                                                  |
+| Every rule no tool can check: the layers, the comments, the tests as specification, the units, the equations of balance | `/expert-review` ([Code review](#code-review)), before every pull request |
 
-`build.ts` and `config/` are outside ESLint and the type checker (planned: bring them in).
+`build.ts` and `config/` are outside ESLint and the type checker, and `config/` outside Prettier too (planned: bring them in).
 
 ## Conventions
 
@@ -207,17 +207,19 @@ The conventions serve one aim: the code explains itself, so that it needs no com
 - **A worktree per piece of work** keeps parallel sessions from changing each other's files, and keeps the main checkout on `main`, where the user's running dev server never sees work in progress.
 - **A history rewritten before it is pushed,** into atomic commits whose messages say why, keeps the reasons that a diff cannot show. Each commit passing the gate keeps `main` a safe start for any work.
 - **Gitmoji subjects** keep the history alike from its first commit, and name the kind of a change at a glance.
-- **"Rebase and merge"** lands each commit as written, after the review and CI ([Technology stack](#technology-stack)).
+- **"Rebase and merge"** lands each commit as written, after the review ([Code review](#code-review)) and CI ([Technology stack](#technology-stack)).
 - **One writer for `.pm/`,** the coordinating session, keeps its commits from racing.
 
 ### Agent guidance
 
-Agents work from three kinds of documents, each with one job, so that a statement has one home and never drifts from a copy. `.claude/rules/documents.md` > Where a statement lives says what goes where. The reasons:
+Agents work from four kinds of documents, each with one job, so that a statement has one home and never drifts from a copy. `.claude/rules/documents.md` > Where a statement lives says what goes where. The reasons:
 
 - **`CLAUDE.md` is the session manual** because Claude Code loads it whole into every session: each line costs every session, so it holds only what every session needs.
 - **The rules live in `.claude/rules/`** because a file with `paths` loads only with the files it governs, and a rule stated there in full, with its reason, needs no second document. A load by `paths` can be missed, by a subagent in its own worktree or after a compaction, which is why each file has its line in `CLAUDE.md`.
 - **The rules files follow concerns, not directories,** because a concern often spans several directories, where a `CLAUDE.md` per directory would scatter its rules.
+- **Skills hold procedures** because a procedure matters only while its task runs, and a skill loads only then.
 - **This document holds the design and its reasons,** and states no rule, so that a rule changes in one place.
+- **An expert reviewer reads at least the rules files of its domain,** one hop away, so that it never chases a rule across documents.
 - **The history of a decision lives in `.pm/`**, a private repository nested in the main checkout, so the documents here describe only the present, with its reasons.
 
 ## Testing
@@ -234,6 +236,18 @@ The tests are the specification of the business rules. To learn how a part of th
 ### Budgets
 
 No budget is set yet. The first one comes with the benchmark that measures it. The costs of the interactions have been measured by hand: most of an interaction's time goes to the browser drawing the SVG of the charts, not to the JavaScript.
+
+### Code review
+
+Every branch goes through `/expert-review` before its pull request. It is a project skill in `.claude/skills/expert-review/`, named so that it never shadows the built-in `/code-review`.
+
+- **It runs in its own subagent**, which never saw the code being written, so the review stays independent of the session that wrote the code, and that session keeps its context.
+- **One expert per domain, in parallel.** Correctness reviews every diff, and conventions every diff that holds code or configuration. Architecture, tests, performance, security, documentation and the touch weight metrology join when the diff touches their domain. Each expert is an agent of `.claude/agents/` on the strongest model, and cannot run a command, so that no reviewed text can make it act.
+- **The metrology has an expert of its own** because its errors pass every other check: a sign wrong in the equation of balance, or a spring counted twice, compiles, passes the tests that state the wrong rule, and prints a wrong adjustment sheet.
+- **The orchestrator confirms every blocking and should-fix finding** before reporting it, and lists the findings it dropped with their counter-evidence, so the report makes no claim it has not checked.
+- **A target other than the current branch is checked out outside the repository**, so a reviewed `CLAUDE.md` never loads as an instruction.
+- **Reviews can run at the same time, from the same checkout:** each one keeps its scope in a temporary directory of its own.
+- **The report ends the review.** It suggests a fix for each finding but applies none: the session that wrote the code fixes or answers each one, and the user decides at the merge.
 
 ## References
 

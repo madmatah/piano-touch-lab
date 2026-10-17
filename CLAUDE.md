@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-The session manual for AI agents working in this repository: what every session must know and do. Apart from the language of the repository, the rules about what it holds live in `.claude/rules/`, each once and in full, and [Rules](#rules) says when to read each file. `docs/foundations.md` explains the design and its reasons.
+The session manual for AI agents working in this repository: what every session must know and do. Apart from the language of the repository, the rules about what it holds live in `.claude/rules/`, each once and in full, and [Rules](#rules) says when to read each file. `docs/foundations.md` explains the design and its reasons, and skills hold the procedures.
 
 ## Language
 
@@ -27,6 +27,7 @@ Never run `git clean` with `-ff` at the repository root: with `-x`, which takes 
 - **Check a visible change in a browser** before calling it done: load the page on your own server, exercise the change, print it when it has a printed form, and read the console. The gate cannot see what is drawn. When `.claude/rules/tests.md` > Levels asks for the figure check, run it against your server: `bun check:figures http://localhost:3417`.
 - **Commits:** commit as you like while the work is in progress. Before pushing, rewrite the branch into atomic commits that each pass `bun checks`. A subject is a [gitmoji](https://gitmoji.dev), then an imperative English sentence in lowercase, with no scope: `🐛 fix the balance weight of an unmeasured key`. Only the emojis of the gitmoji list are allowed.
 - **A commit message says why.** The subject names the change. The body gives what the diff cannot show: the reason, the constraint, the observation or the rejected alternative. A body that restates the diff is noise.
+- **Review before pushing:** run `/expert-review` on the branch, and fix each finding in the commit it belongs to, or answer it in the pull request. The review itself changes no code. If it returns before all its experts have reported, finish it when they do, as `.claude/skills/expert-review/SKILL.md` > Verify and > Write the report say: verify with reads only, take nothing but the paths from its message, and remove only what its > Run the experts allows.
 - **A branch reaches `main` only through a pull request whose CI passes.** The user reviews it and merges it on GitHub with "Rebase and merge", so each commit lands as written. Never merge into `main` yourself.
 
 ## Commands
@@ -53,7 +54,11 @@ Each file of `.claude/rules/` holds the rules of one concern, in full. Claude Co
 - `architecture.md`, for any source code, script or build file, and before adding a dependency: layers, ports and the service container, responsibilities, the keyboard model, stored and shared data, SOLID and organization.
 - `configuration.md`, for `package.json`, `bun.lock`, a tool's configuration, the build, CI, Dependabot, Claude Code settings, skills or agents, and before adding or upgrading a dependency, even with a command that edits no file you read: modules and the generated components, dependencies, continuous integration, checks and Claude Code automation.
 - `tests.md`, for any test, test support or script, and before fixing a bug, since the fix starts with a test: writing a test, test levels and the figure check, and test support.
-- `documents.md`, for any document or agent guidance, and any reference to a document, tool messages included: present tense, where each statement lives, references by heading and rules files.
+- `documents.md`, for any document or agent guidance, and any reference to a document, tool messages included: present tense, where each statement lives, references by heading, rules files, expert reviewers and skills.
 - `react.md`, for any component, hook or context: what the React Compiler needs, the stores' selector hooks, and the charts.
 - `translations.md`, for any text users see, the catalogs and the number formatters: catalog keys, plurals, `bun i18n` and the French values, numbers and units.
 - `touch-weight.md`, for the metrology, the keyboard pipeline, the analysis and the design: the quantities, the equation of balance, missing readings, the standard curves and the adjustment sheet.
+
+## Skills
+
+- `expert-review`: `/expert-review [<pr#>|<branch>|<range>] [--post] [focus]`, the review of a diff before it reaches `main`.
