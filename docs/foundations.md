@@ -69,7 +69,7 @@ The project follows Clean Architecture: the rules live in a pure domain at the c
 - **The domain is pure,** so its tests need no DOM, no React and no browser, and the metrology can be read and checked on its own.
 - **React is the platform of the application and the adapters.** The application's orchestration is made of hooks, which read the stores and call the domain, so that each page computes from the same pipeline.
 - **The keyboard is computed once per page.** A provider measures, analyzes and designs it, and every component reads the result, because the same keyboard feeds the layout, the step bar, the page and the printed summary.
-- **Services are bound in one container,** `src/app-container.ts`, with a `Symbol` per port. Hooks resolve them by `Symbol`, and the curve smoothers by name, so a smoothing strategy is chosen as data.
+- **Services are bound in one container,** `src/app-container.ts`, with a `Symbol` per port. Hooks resolve them by `Symbol`, and the curve smoothers by name, so a smoothing strategy is chosen as data. A test of the gate resolves every port, so the graph is checked before its first use, as the types would check a graph wired by hand.
 - **What is stored or exported is plain data, and only raw inputs,** so it saves, travels in a backup file and replays as it is, and a derived value can never disagree with its source.
 - **SOLID applies to modules, functions and types,** so a new design mode or a new smoother is added beside the others, without rewriting them.
 
@@ -180,6 +180,7 @@ Each row names a rule, the rules file that states it, and what enforces it.
 
 | Rule                                                                                                                    | Enforced by                                                               |
 | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Every binding of the service container builds (`.claude/rules/architecture.md` > Ports and wiring)                      | `src/app-container.test.ts`, in `bun test`                                |
 | No `console` (`.claude/rules/conventions.md` > TypeScript)                                                              | ESLint `no-console`                                                       |
 | The keys of an object literal are sorted (`.claude/rules/conventions.md` > TypeScript)                                  | ESLint `sort-keys-fix`                                                    |
 | No `any`, strict types, `noUncheckedIndexedAccess`, type-only imports (`.claude/rules/conventions.md` > TypeScript)     | TypeScript and the type-checked rules of typescript-eslint                |
