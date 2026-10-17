@@ -26,3 +26,10 @@ updates:
     ignore:
       - dependency-name: '@types/bun'
         update-types: ['version-update:semver-major']
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'friday'
+      time: '15:00'
+      timezone: 'UTC'
