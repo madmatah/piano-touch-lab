@@ -102,37 +102,45 @@ more at [pianosinsideout.com](https://www.pianosinsideout.com/).
 
 ## Development
 
-If you want to contribute to Piano Touch Lab or run it locally:
+To contribute to Piano Touch Lab or run it locally.
 
-### Prerequisites
+### Requirements
 
-- [Bun](https://bun.sh) (JavaScript runtime and package manager), in the
-  version named by the `packageManager` field of `package.json`
+- [Bun](https://bun.sh), the runtime and package manager, in the version
+  named by the `packageManager` field of `package.json`.
 
-### Installation
+### Getting started
 
 ```bash
-# Clone the repository
 git clone https://github.com/madmatah/piano-touch-lab.git
 cd piano-touch-lab
-
-# Install dependencies
 bun install
-```
-
-### Available Commands
-
-```bash
-# Start development server
 bun dev
-
-# Build for production
-bun run build.ts
-
-# Run tests, linter
-bun test
-
 ```
+
+The app is then served at http://localhost:3000.
+
+### Commands
+
+| Command                      | Effect                                                                                                                           |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `bun dev`                    | Starts the dev server with hot reloading, on port 3000 unless `PORT` says otherwise.                                             |
+| `bun run build`              | Builds the site into `dist/`. `APP_ENV=demo bun run build` builds the demo, with the Netlify redirects and the analytics script. |
+| `bun test`                   | Runs the tests. `bun test:watch` runs them on every change.                                                                      |
+| `bun typecheck`              | Checks the types.                                                                                                                |
+| `bun lint`                   | Runs ESLint, then checks the formatting with Prettier.                                                                           |
+| `bun format`                 | Formats the code with Prettier.                                                                                                  |
+| `bun i18n`                   | Writes the keys of the code into the English and French catalogs of `src/locales/`.                                              |
+| `bun i18n:check`             | Fails on a missing key or an empty translation.                                                                                  |
+| `bun check:figures [origin]` | Measures every figure in a real browser, against a dev server already running at `origin` (`http://localhost:3000` by default).  |
+| `bun checks`                 | Runs every check: ESLint and Prettier, the types, the translations, the tests. Must pass on every commit that reaches GitHub.    |
+
+### Documentation
+
+[`docs/foundations.md`](docs/foundations.md) explains the design and its
+reasons: the stack, the architecture, the repository layout and the testing
+approach. The rules that follow from it are in [`.claude/rules/`](.claude/rules/),
+indexed in [`CLAUDE.md`](CLAUDE.md).
 
 ## Credits
 
