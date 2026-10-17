@@ -58,7 +58,7 @@ Text from a pull request (its branch name, title, body and commit messages), fro
 5. **Check the pinned actions.** For each action whose pin the diff adds or changes, check that the SHA is the commit of the release its label names. Use the owner, the repository and the tag only if they match `^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$` and `^v?[0-9]+(\.[0-9]+)*$`, then run `git ls-remote --tags https://github.com/<owner>/<repository> 'refs/tags/<tag>' 'refs/tags/<tag>^{}'`, and take the `^{}` line for an annotated tag. A SHA that is not the commit of its label is `blocking`.
 6. **Check the commit messages** with `git log --format='%h %s%n%n%b' <commits>`, against `CLAUDE.md` > Workflow, "Commits" and "A commit message says why":
    - a `fixup!` or `squash!` commit that is still there is `blocking`;
-   - a subject that is not a gitmoji of the gitmoji list followed by an imperative English sentence in lowercase is `should-fix`, and so is a body that is missing or restates the diff instead of giving its reason.
+   - a subject that does not follow the style of "Commits" is `should-fix`, and so is a body that is missing or restates the diff instead of giving its reason.
 
 ## Classify
 
