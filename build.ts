@@ -7,7 +7,7 @@ import path from 'path';
 
 import { externalFontsPlugin } from './config/external-fonts-plugin';
 import { reactCompilerPlugin } from './config/react-compiler-plugin';
-import { fontAssets } from './config/fonts';
+import { listFontAssets } from './config/fonts';
 
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
   console.log(`
@@ -150,9 +150,9 @@ const result = await Bun.build({
   ...cliConfig,
 });
 
-console.log('🔤 Copying webfonts...');
+console.log('🔤 Copying webfonts and their licenses...');
 await Promise.all(
-  fontAssets().map((font) =>
+  listFontAssets().map((font) =>
     cp(font.sourcePath, path.join(outdir, font.publicPath)),
   ),
 );

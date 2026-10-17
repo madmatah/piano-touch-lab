@@ -1,6 +1,6 @@
 import { serve } from 'bun';
 import index from './index.html';
-import { fontAssets } from '../config/fonts';
+import { listFontAssets } from '../config/fonts';
 
 /**
  * In production the webfonts are copied to `dist/fonts/` by the build; in
@@ -8,7 +8,7 @@ import { fontAssets } from '../config/fonts';
  * `styles/fonts.css` can point at the same `/fonts/…` URLs either way.
  */
 const fontRoutes = Object.fromEntries(
-  fontAssets().map((font) => [
+  listFontAssets().map((font) => [
     font.publicPath,
     new Response(Bun.file(font.sourcePath)),
   ]),
