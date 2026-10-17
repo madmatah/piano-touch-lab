@@ -119,6 +119,7 @@ piano-touch-lab/
 ├── .claude/                     # Claude Code: settings, rules, skills and the expert reviewers
 ├── .github/
 │   ├── dependabot.yml           # Weekly upgrades of the dependencies
+│   ├── pull_request_template.md # The body of every pull request, with its checklist
 │   └── workflows/               # CI: the gate, and the deploy of the demo
 ├── .vscode/                     # Formatting on save
 ├── config/
@@ -202,9 +203,10 @@ The conventions serve one aim: the code explains itself, so that it needs no com
 
 ### Git
 
-`CLAUDE.md` > Workflow says how a session works. The reasons behind it:
+`CLAUDE.md` > Workflow says how a session works, and the `pull-request` skill holds the procedure. The reasons behind them:
 
 - **A worktree per piece of work** keeps parallel sessions from changing each other's files, and keeps the main checkout on `main`, where the user's running dev server never sees work in progress.
+- **A stacked branch** costs only a rebase of its own commits when its base is rewritten, so no work waits for a merge.
 - **A history rewritten before it is pushed,** into atomic commits whose messages say why, keeps the reasons that a diff cannot show. Each commit passing the gate keeps `main` a safe start for any work.
 - **Gitmoji subjects** keep the history alike from its first commit, and name the kind of a change at a glance.
 - **"Rebase and merge"** lands each commit as written, after the review ([Code review](#code-review)) and CI ([Technology stack](#technology-stack)).
