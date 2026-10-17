@@ -9,8 +9,8 @@ description: Takes a piece of work in Piano Touch Lab from a new branch to a mer
 
 ## Start a branch
 
-1. Run `git fetch origin`, then `git worktree add --no-track -b <kind>/<topic> "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/.claude/worktrees/<name>" origin/main`, with a kind from `CLAUDE.md` > Workflow, "Each piece of work has its own short-lived branch". The path starts from the main checkout, so that a worktree added from another one never nests inside it.
-2. A worktree started with `claude --worktree <name>` instead has a branch named `worktree-<name>`: rename it with `git branch -m <kind>/<topic>`.
+1. Run `git fetch origin`, then `git worktree add --no-track -b <type>/<topic> "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/.claude/worktrees/<name>" origin/main`, with a type from `CLAUDE.md` > Workflow, "Commits". The path starts from the main checkout, so that a worktree added from another one never nests inside it.
+2. A worktree started with `claude --worktree <name>` instead has a branch named `worktree-<name>`: rename it with `git branch -m <type>/<topic>`.
 3. Install the dependencies of a worktree you add during a session, as `CLAUDE.md` > Workflow, "Dependencies" says.
 
 ## Stack on an unmerged branch
